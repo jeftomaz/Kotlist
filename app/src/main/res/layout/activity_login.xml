@@ -6,7 +6,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".LoginActivity">
 
     <ImageView
         android:id="@+id/app_logo"
@@ -28,7 +28,7 @@
         android:layout_margin="@dimen/margin_medium"
         app:layout_constraintStart_toStartOf="parent"
         android:text="Acesse Sua Conta"
-        style="@style/Widget.App.TextInputEditText"/>
+        style="@style/Widget.App.Heading1"/>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/email_input"
@@ -42,7 +42,8 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/switzer_regular"/>
     </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -60,7 +61,8 @@
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPassword"/>
+            android:inputType="textPassword"
+            android:fontFamily="@font/switzer_regular" />
     </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -68,6 +70,7 @@
         android:id="@+id/login_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        style="@style/Widget.App.Button.Primary"
         android:text="Acessar Conta"
         android:layout_margin="@dimen/margin_medium"
         app:layout_constraintTop_toBottomOf="@id/password_input"
@@ -78,6 +81,7 @@
         android:id="@+id/create_account_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        style="@style/Widget.App.Button.Secondary"
         android:text="Crie Sua Conta"
         android:layout_margin="@dimen/margin_medium"
         app:layout_constraintTop_toBottomOf="@id/login_button"
