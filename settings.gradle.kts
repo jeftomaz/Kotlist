@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "ProjectLists"
+rootProject.name = "Kotlist"
 include(":app")

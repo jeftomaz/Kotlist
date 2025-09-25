@@ -1,9 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <style name="Base.Theme.ProjectLists" parent="Theme.Material3.DayNight.NoActionBar">
-
+    <style name="Base.Theme.Kotlist" parent="Theme.Material3.DayNight.NoActionBar">
     </style>
-    
-
-
-    <style name="Theme.ProjectLists" parent="Base.Theme.ProjectLists" />
+    <style name="Theme.Kotlist" parent="Base.Theme.Kotlist" />
 </resources>

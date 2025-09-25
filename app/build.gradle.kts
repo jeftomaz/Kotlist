@@ -4,17 +4,21 @@ plugins {
 }
 
 android {
-    namespace = "com.example.projectlists"
+    namespace = "com.example.kotlist"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.projectlists"
+        applicationId = "com.example.kotlist"
         minSdk = 25
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildFeatures {
+        viewBinding = true
     }
 
     buildTypes {
