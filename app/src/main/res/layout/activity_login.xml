@@ -31,19 +31,20 @@
         style="@style/Widget.App.Heading1"/>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/email_input"
+        android:id="@+id/login_email_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_medium"
         app:layout_constraintTop_toBottomOf="@id/login_screen_label"
+        app:layout_constraintBottom_toTopOf="@id/password_input"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:hint="E-mail">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/switzer_regular"/>
+            android:layout_height="wrap_content"/>
+<!--            android:fontFamily="@font/switzer_regular"/>-->
     </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -51,7 +52,7 @@
         android:id="@+id/password_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/email_input"
+        app:layout_constraintTop_toBottomOf="@id/login_email_input"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_margin="@dimen/margin_medium"
@@ -61,8 +62,8 @@
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPassword"
-            android:fontFamily="@font/switzer_regular" />
+            android:inputType="textPassword"/>
+<!--            android:fontFamily="@font/switzer_regular" />-->
     </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -73,7 +74,7 @@
         style="@style/Widget.App.Button.Primary"
         android:text="Acessar Conta"
         android:layout_margin="@dimen/margin_medium"
-        app:layout_constraintTop_toBottomOf="@id/password_input"
+        app:layout_constraintBottom_toTopOf="@id/create_account_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -84,7 +85,7 @@
         style="@style/Widget.App.Button.Secondary"
         android:text="Crie Sua Conta"
         android:layout_margin="@dimen/margin_medium"
-        app:layout_constraintTop_toBottomOf="@id/login_button"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
