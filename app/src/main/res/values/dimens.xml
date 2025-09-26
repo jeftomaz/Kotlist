@@ -4,4 +4,10 @@
     <dimen name="margin_large">36dp</dimen>
     <dimen name="margin_medium">16dp</dimen>
     <dimen name="margin_small">8dp</dimen>
+
+    <dimen name="headline_small">24sp</dimen>
+    <dimen name="title_large">22sp</dimen>
+    <dimen name="body_large">16sp</dimen>
+    <dimen name="label_small">11sp</dimen>
+    <dimen name="label_large">14sp</dimen>
 </resources>

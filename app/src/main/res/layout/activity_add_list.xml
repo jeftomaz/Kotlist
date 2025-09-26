@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/margin_small">
+
+    <TextView
+        android:id="@+id/add_list_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Adicionar Nova Lista"
+        android:textSize="@dimen/title_large"
+        android:textStyle="bold"
+        android:layout_margin="@dimen/margin_medium"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/edit_list_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_medium"
+        app:layout_constraintTop_toBottomOf="@id/add_list_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:hint="Nome da Lista (Ex: Compras, Viagem)">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <!--            android:fontFamily="@font/switzer_regular"/>-->
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <LinearLayout
+        android:id="@+id/layout_image_selector"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="@dimen/margin_small"
+        android:layout_margin="@dimen/title_large"
+        app:layout_constraintTop_toBottomOf="@id/edit_list_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:id="@+id/image_placeholder"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:scaleType="centerCrop"
+            android:src="@color/design_default_color_background"
+            android:background="@color/cardview_shadow_end_color"
+            android:contentDescription="Foto da Lista" />
+
+        <TextView
+            android:id="@+id/image_placeholder_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Adicionar Foto da Lista"
+            android:layout_margin="@dimen/margin_medium"
+            android:textSize="@dimen/label_large"
+            android:layout_marginStart="@dimen/margin_medium"/>
+    </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/signup_signup_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/Widget.App.Button.Primary"
+        android:text="Adicionar Lista"
+        android:layout_margin="@dimen/margin_medium"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
