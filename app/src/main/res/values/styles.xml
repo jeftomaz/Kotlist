@@ -1,16 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Widget.App.Heading1" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+    <style name="Widget.App.Heading1" parent="TextAppearance.Material3.HeadlineLarge">
         <item name="android:textSize">32sp</item>
         <item name="android:textStyle">bold</item>
         <item name="fontFamily">@font/switzer_bold</item>
     </style>
 
-    <style name="Widget.App.InputWrapper" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+    <style name="Widget.App.InputWrapper" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/input_color_set</item>
+
+        <item name="android:textColorHint">@color/input_color_set</item>
+        <item name="hintTextColor">@color/input_color_set</item>
+
+        <item name="endIconTint">@color/input_color_set</item>
+
+        <item name="boxStrokeErrorColor">@color/inputError</item>
+        <item name="errorTextColor">@color/inputError</item>
+        <item name="errorIconTint">@color/inputError</item>
+
+        <item name="android:fontFamily">@font/switzer_regular</item>
         <item name="boxCornerRadiusTopStart">8dp</item>
         <item name="boxCornerRadiusTopEnd">8dp</item>
         <item name="boxCornerRadiusBottomStart">8dp</item>
         <item name="boxCornerRadiusBottomEnd">8dp</item>
+    </style>
+
+    <style name="Widget.App.Input" parent="Widget.Material3.TextInputEditText.OutlinedBox">
+        <item name="fontFamily">@font/switzer_regular</item>
+        <item name="android:textColor">@color/softBlack</item>
     </style>
 
     <style name="Widget.App.Button.Primary" parent="Widget.MaterialComponents.Button">
