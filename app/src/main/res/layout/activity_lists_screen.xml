@@ -28,8 +28,8 @@
 
     <ImageView
         android:id="@+id/image_view_settings"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_medium"
         android:padding="@dimen/margin_small"
         android:src="@drawable/m3_split_button_chevron_avd"
