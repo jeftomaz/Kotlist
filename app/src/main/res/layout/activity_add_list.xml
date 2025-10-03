@@ -2,69 +2,100 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/add_list_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/margin_small">
+    android:padding="@dimen/margin_small"
+    android:background="@color/white">
 
     <TextView
         android:id="@+id/add_list_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Adicionar Nova Lista"
-        android:textSize="@dimen/title_large"
         android:textStyle="bold"
         android:layout_margin="@dimen/margin_medium"
+        android:textColor="@color/softBlack"
+        style="@style/Widget.App.Heading1"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/edit_list_title"
+        android:id="@+id/add_list_list_name_input_wrapper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_medium"
+        android:hint="Nome da lista (Ex: Compras, Viagem)"
+        style="@style/Widget.App.InputWrapper"
         app:layout_constraintTop_toBottomOf="@id/add_list_title"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:hint="Nome da Lista (Ex: Compras, Viagem)">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-        <!--            android:fontFamily="@font/switzer_regular"/>-->
-    </com.google.android.material.textfield.TextInputLayout>
-
-
-    <LinearLayout
-        android:id="@+id/layout_image_selector"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:padding="@dimen/margin_small"
-        android:layout_margin="@dimen/title_large"
-        app:layout_constraintTop_toBottomOf="@id/edit_list_title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <ImageView
-            android:id="@+id/image_placeholder"
-            android:layout_width="300dp"
-            android:layout_height="300dp"
-            android:scaleType="centerCrop"
-            android:src="@color/design_default_color_background"
-            android:background="@color/cardview_shadow_end_color"
-            android:contentDescription="Foto da Lista" />
-
-        <TextView
-            android:id="@+id/image_placeholder_description"
-            android:layout_width="wrap_content"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/add_list_list_name_input"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Adicionar Foto da Lista"
-            android:layout_margin="@dimen/margin_medium"
-            android:textSize="@dimen/label_large"
-            android:layout_marginStart="@dimen/margin_medium"/>
-    </LinearLayout>
+            style="@style/Widget.App.Input"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/add_list_image_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Imagem da lista"
+        android:textColor="@color/softBlack"
+        android:layout_marginHorizontal="@dimen/margin_medium"
+        android:layout_marginTop="@dimen/margin_large"
+        style="@style/Widget.App.Paragraph"
+        app:layout_constraintTop_toBottomOf="@id/add_list_list_name_input_wrapper"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/image_placeholder"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="1:1"
+        android:scaleType="centerCrop"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:layout_marginHorizontal="@dimen/margin_medium"
+        android:background="@color/softBlack"
+        android:contentDescription="Foto da lista"
+        app:shapeAppearanceOverlay="@style/Widget.App.RoundedImageView"
+        app:layout_constraintTop_toBottomOf="@id/add_list_image_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!--    <LinearLayout-->
+<!--        android:id="@+id/layout_image_selector"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:orientation="vertical"-->
+<!--        android:gravity="center"-->
+<!--        android:padding="@dimen/margin_small"-->
+<!--        android:layout_margin="@dimen/title_large"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/add_list_list_name_input_wrapper"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent">-->
+
+<!--        <ImageView-->
+<!--            android:id="@+id/image_placeholder"-->
+<!--            android:layout_width="300dp"-->
+<!--            android:layout_height="300dp"-->
+<!--            android:scaleType="centerCrop"-->
+<!--            android:background="@color/softBlack"-->
+<!--            android:contentDescription="Foto da Lista" />-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/image_placeholder_description"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Adicionar Foto da Lista"-->
+<!--            android:layout_margin="@dimen/margin_medium"-->
+<!--            android:textSize="@dimen/label_large"-->
+<!--            android:layout_marginStart="@dimen/margin_medium"/>-->
+<!--    </LinearLayout>-->
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/signup_signup_button"

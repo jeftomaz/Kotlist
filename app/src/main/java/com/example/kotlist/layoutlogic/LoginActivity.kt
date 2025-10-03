@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.kotlist.R
+import com.example.kotlist.data.model.User
 import com.example.kotlist.data.repository.UserRepository
 import com.example.kotlist.databinding.ActivityLoginBinding
 import com.example.kotlist.util.PasswordHasher
@@ -43,7 +44,8 @@ class LoginActivity : AppCompatActivity() {
             val email = binding.loginEmailInput.text.toString().trim()
             val password = binding.loginPasswordInput.text.toString().trim()
 
-            validateLogin(email, password)
+//            validateLogin(email, password)
+            logUserMocked()
         }
 
         binding.loginCreateAccountButton.setOnClickListener {
@@ -77,9 +79,25 @@ class LoginActivity : AppCompatActivity() {
 
         if(user != null && PasswordHasher.checkPassword(password, user.password)) {
             Toast.makeText(this, "Login SUCESSO", Toast.LENGTH_SHORT).show()
+
+            val intent = Intent(this, AddListActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            overridePendingTransition(R.anim.zoom_in, R.anim.fade_out)
         }
         else {
             Toast.makeText(this, "E-mail ou senha inválidos.", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    // dev environment (user mock)
+    private fun logUserMocked() {
+        val user = User(name = "Admin", email = "admin@gmail.com", password = "admin")
+        UserRepository.signUpUser(user)
+
+        val intent = Intent(this, AddListActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        overridePendingTransition(R.anim.zoom_in, R.anim.fade_out)
     }
 }

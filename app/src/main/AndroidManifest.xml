@@ -25,6 +25,11 @@
             android:name="com.example.kotlist.layoutlogic.SignUpActivity"
             android:exported="false">
         </activity>
+
+        <activity
+            android:name="com.example.kotlist.layoutlogic.AddListActivity"
+            android:exported="false">
+        </activity>
     </application>
 
 </manifest>

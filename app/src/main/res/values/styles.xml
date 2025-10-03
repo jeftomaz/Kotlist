@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Widget.App.Heading1" parent="TextAppearance.Material3.HeadlineLarge">
+    <style name="Widget.App.Heading1" parent="">
         <item name="android:textSize">32sp</item>
         <item name="android:textStyle">bold</item>
         <item name="fontFamily">@font/switzer_bold</item>
+    </style>
+
+    <style name="Widget.App.Paragraph" parent="">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="fontFamily">@font/switzer_regular</item>
     </style>
 
     <style name="Widget.App.InputWrapper" parent="Widget.Material3.TextInputLayout.OutlinedBox">
@@ -52,5 +58,10 @@
         <item name="strokeWidth">1dp</item>
         <item name="android:paddingTop">@dimen/margin_medium</item>
         <item name="android:paddingBottom">@dimen/margin_medium</item>
+    </style>
+
+    <style name="Widget.App.RoundedImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">8dp</item>
     </style>
 </resources>
