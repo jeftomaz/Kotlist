@@ -10,4 +10,6 @@
     <dimen name="body_large">16sp</dimen>
     <dimen name="label_small">11sp</dimen>
     <dimen name="label_large">14sp</dimen>
+
+    <dimen name="floating_button">65dp</dimen>
 </resources>
