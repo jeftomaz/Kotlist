@@ -3,7 +3,7 @@ package com.example.kotlist
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.kotlist.databinding.ListItemGridBinding // 👈 Importante!
+import com.example.kotlist.databinding.ListItemGridBinding
 
 class ListAdapter(
     private val lists: List<ListModel>,

@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- TRCAR AQUI -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/search_bar"
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
@@ -60,6 +61,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         tools:listitem="@layout/list_item_grid"/>
 
+    <!-- TRCAR AQUI -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add_list"
         android:layout_width="wrap_content"
