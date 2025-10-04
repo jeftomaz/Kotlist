@@ -6,6 +6,7 @@
     <color name="white">#FFFFFFFF</color>
 
     <color name="primary">#6B46B4</color>
+    <color name="primaryPastel">#DDD3EB</color>
 
     <color name="inputError">#FF6666</color>
 
