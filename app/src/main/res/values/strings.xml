@@ -1,14 +1,15 @@
 <resources>
     <string name="app_name">Kotlist</string>
     
+    <string name="search_item_hint">Buscar</string>
+
     <string name="shopping_list_tittle_placeholder">Supermercado</string>
     <string name="add_list_content_description">Adicionar nova lista de compras</string>
-    
-    <string name="search_item_hint">Buscar</string>
-    <string name="add_item_content_description">Adicione um novo item</string>
+
     <string name="category_subheader_format">%s</string>
     
     <string name="add_item_screen_title">Adicionar item</string>
+    <string name="add_item_content_description">Adicione um novo item</string>
     <string name="item_name_hint">Nome do Item</string>
     <string name="item_quantity_hint">Quantidade</string>
     <string name="item_unit_hint">un</string>
@@ -32,6 +33,5 @@
         <item>L</item>
         <item>ml</item>
     </string-array>
-    
-    <string name="search_view_behavior"></string>
+
 </resources>
