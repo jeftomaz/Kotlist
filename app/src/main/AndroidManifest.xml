@@ -30,6 +30,12 @@
             android:name="com.example.kotlist.layoutlogic.AddListActivity"
             android:exported="false">
         </activity>
+
+        <activity
+            android:name="com.example.kotlist.layoutlogic.ListsActivity"
+            android:exported="false">
+        </activity>
+
     </application>
 
 </manifest>

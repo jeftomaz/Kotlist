@@ -1,10 +1,10 @@
-package com.example.kotlist
+package com.example.kotlist.layoutlogic
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
+import com.example.kotlist.data.model.ShoppingList
 import com.example.kotlist.databinding.ActivityListsScreenBinding
 
 class ListsActivity : AppCompatActivity() {
@@ -36,7 +36,7 @@ class ListsActivity : AppCompatActivity() {
         // Ação do FAB - adicionar lista
         binding.fabAddList.setOnClickListener {
             // Ação: Iniciar a tela de cadastro de nova lista
-            val intent = Intent(this, AddNewListActivity::class.java)
+            val intent = Intent(this, AddListActivity::class.java)
             startActivity(intent)
         }
 
@@ -45,6 +45,6 @@ class ListsActivity : AppCompatActivity() {
     }
 
     // ... (loadAllLists e navigateToItemDetails continuam as mesmas)
-    private fun loadAllLists(): List<ListModel> { /* ... */ }
-    private fun navigateToItemDetails(list: ListModel) { /* ... */ }
+    private fun loadAllLists(): List<ShoppingList> { /* ... */ }
+    private fun navigateToItemDetails(list: ShoppingList) { /* ... */ }
 }
