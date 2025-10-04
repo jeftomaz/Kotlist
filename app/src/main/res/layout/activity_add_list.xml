@@ -98,11 +98,24 @@
 <!--    </LinearLayout>-->
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/signup_signup_button"
+        android:id="@+id/save_new_list_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/Widget.App.Button.Primary"
         android:text="Adicionar Lista"
+        android:layout_margin="@dimen/margin_medium"
+
+        app:layout_constraintTop_toBottomOf="@id/ID_DO_FAB_AQUI"
+        app:layout_constraintBottom_toTopOf="@id/cancel_add_list_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/cancel_add_list_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/Widget.App.Button.Secondary"
+        android:text="Cancelar"
         android:layout_margin="@dimen/margin_medium"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
