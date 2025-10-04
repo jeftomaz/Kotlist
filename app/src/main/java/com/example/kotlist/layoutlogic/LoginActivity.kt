@@ -95,6 +95,7 @@ class LoginActivity : AppCompatActivity() {
     private fun logUserMocked() {
         val user = User(name = "Admin", email = "admin@gmail.com", password = "admin")
         UserRepository.signUpUser(user)
+        UserRepository.setUserLoggedIn(user)
 
         val intent = Intent(this, AddListActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
