@@ -76,6 +76,7 @@ class LoginActivity : AppCompatActivity() {
         val user = UserRepository.getUserByEmail(email)
 
         if(user != null && PasswordHasher.checkPassword(password, user.password)) {
+            UserRepository.setUserLoggedIn(user)
             Toast.makeText(this, "Login SUCESSO", Toast.LENGTH_SHORT).show()
         }
         else {
