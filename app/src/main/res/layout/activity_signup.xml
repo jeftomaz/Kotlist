@@ -3,87 +3,99 @@
     android:id="@+id/signup_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TextView
-        android:id="@+id/signup_screen_label"
+        android:id="@+id/signup_screen_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Crie sua conta"
-        android:layout_margin="@dimen/margin_medium"
+        android:textColor="@color/softBlack"
+        android:layout_marginTop="@dimen/margin_large"
+        android:layout_marginLeft="@dimen/margin_medium"
+        android:layout_marginRight="@dimen/margin_medium"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         style="@style/Widget.App.Heading1"/>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/signup_name_input"
+        android:id="@+id/signup_name_input_wrapper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_medium"
-        app:layout_constraintTop_toBottomOf="@id/signup_screen_label"
-        app:layout_constraintBottom_toTopOf="@id/signup_email_input"
+        android:hint="Nome"
+        style="@style/Widget.App.InputWrapper"
+        app:layout_constraintTop_toBottomOf="@id/signup_screen_title"
+        app:layout_constraintBottom_toTopOf="@id/signup_email_input_wrapper"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:hint="Nome">
+        app:layout_constraintEnd_toEndOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/signup_name_input"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-        <!--            android:fontFamily="@font/switzer_regular"/>-->
+            android:layout_height="wrap_content"
+            style="@style/Widget.App.Input" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/signup_email_input"
+        android:id="@+id/signup_email_input_wrapper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_medium"
-        app:layout_constraintTop_toBottomOf="@id/signup_screen_label"
-        app:layout_constraintBottom_toTopOf="@id/signup_password_input"
+        android:hint="E-mail"
+        style="@style/Widget.App.InputWrapper"
+        app:layout_constraintTop_toBottomOf="@id/signup_name_input_wrapper"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:hint="E-mail">
+        app:layout_constraintEnd_toEndOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/signup_email_input"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-        <!--            android:fontFamily="@font/switzer_regular"/>-->
+            android:layout_height="wrap_content"
+            android:inputType="textEmailAddress"
+            style="@style/Widget.App.Input" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/signup_password_input"
+        android:id="@+id/signup_password_input_wrapper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/signup_email_input"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="@dimen/margin_medium"
         android:hint="Senha"
-        app:endIconMode="password_toggle">
+        app:endIconMode="password_toggle"
+        style="@style/Widget.App.InputWrapper"
+        app:layout_constraintTop_toBottomOf="@id/signup_email_input_wrapper"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="@dimen/margin_medium">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/signup_password_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPassword"/>
-        <!--            android:fontFamily="@font/switzer_regular" />-->
+            android:inputType="textPassword"
+            style="@style/Widget.App.Input" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/signup_confirm_password_input"
+        android:id="@+id/signup_confirm_password_input_wrapper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/signup_password_input"
+        android:hint="Confirmar senha"
+        app:endIconMode="password_toggle"
+        style="@style/Widget.App.InputWrapper"
+        app:layout_constraintTop_toBottomOf="@id/signup_password_input_wrapper"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="@dimen/margin_medium"
-        android:hint="Confirmar senha"
-        app:endIconMode="password_toggle">
+        android:layout_margin="@dimen/margin_medium">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/signup_confirm_password_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPassword"/>
-        <!--            android:fontFamily="@font/switzer_regular" />-->
+            android:inputType="textPassword"
+            style="@style/Widget.App.Input" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.button.MaterialButton
