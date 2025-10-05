@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -13,6 +14,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.kotlist.data.model.ItemCategory
 import com.example.kotlist.data.model.ItemUnit
+import com.example.kotlist.data.model.ListItem
+import com.example.kotlist.data.repository.ListItemRepository
 import com.example.kotlist.databinding.ActivityAddItemBinding
 import com.example.kotlist.databinding.ActivityAddListBinding
 
@@ -20,7 +23,9 @@ class AddItemActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddItemBinding
     private var shoppingListId: String? = null
     private var selectedCategory: ItemCategory? = null
+    private var isCategroySelected: Boolean = false
     private var selectedUnit: ItemUnit? = null
+    private var isUnitSelected: Boolean = false
 
     companion object {
         const val EXTRA_LIST_ID = "EXTRA_LIST_ID"
@@ -52,12 +57,10 @@ class AddItemActivity : AppCompatActivity() {
 
         binding.addItemCategoryDropdown.setOnItemClickListener { parent, view, position, id ->
             selectedCategory = ItemCategory.entries[position]
-            Log.d("AdicionarItemActivity", "Categoria selecionada: $selectedCategory")
         }
 
         binding.addItemUnitDropdown.setOnItemClickListener { parent, view, position, id ->
             selectedUnit = ItemUnit.entries[position]
-            Log.d("AdicionarItemActivity", "Unidade selecionada: $selectedUnit")
         }
 
         binding.addItemAddItemButton.setOnClickListener {
@@ -94,14 +97,37 @@ class AddItemActivity : AppCompatActivity() {
     }
 
     fun validateAndAddItem(listId: String?, name: String, quantity: Int?, unit: ItemUnit?, category: ItemCategory?) {
-        // validar list id
+        binding.addItemNameInputWrapper.error = ""
+        binding.addItemQuantityInputWrapper.error = ""
+        binding.addItemUnitDropdownWrapper.error = ""
+        binding.addItemCategoryDropdownWrapper.error = ""
 
-        // validar nome
+        if(listId == null) {
+            Toast.makeText(this, "Algo deu errado ao adicionar o item.", Toast.LENGTH_SHORT).show()
+            return
+        }
 
-        // validar quantidade
+        if(name.isEmpty() || quantity == null || unit == null || category == null) {
+            if(name.isEmpty())
+                binding.addItemNameInputWrapper.error = "O nome do item não pode ser vazio."
 
-        // validar unidade
+            if(quantity == null)
+                binding.addItemQuantityInputWrapper.error = "A quantidade do item não pode ser vazia."
 
-        // validar categoria
+            if(unit == null)
+                binding.addItemUnitDropdownWrapper.error = "A unidade do item não pode ser vazia."
+
+            if(category == null)
+                binding.addItemCategoryDropdownWrapper.error = "A categoria do item não pode ser vazia."
+
+            Toast.makeText(this, "Preencha todos os campos para adicionar um item.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val newListItem = ListItem(listId = listId, name = name, quantity = quantity, unit = unit, category = category)
+        ListItemRepository.addItem(newListItem)
+
+        Toast.makeText(this, "Novo item da lista criado com sucesso.", Toast.LENGTH_SHORT).show()
+        finish()
     }
 }
