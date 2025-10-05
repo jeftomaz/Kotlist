@@ -20,9 +20,16 @@
         <item>Bebida</item>
         <item>Eletrônicos</item>
         <item>Higiene</item>
-        <item>Utensilios</item>
+        <item>Utensílios</item>
         <item>Outros</item>
     </string-array>
+
+    <string name="food_category">Comida</string>
+    <string name="drink_category">Bebida</string>
+    <string name="electronics_category">Eletrônicos</string>
+    <string name="hygiene_category">Higiene</string>
+    <string name="utensils_category">Utensílios</string>
+    <string name="others_category">Outros</string>
 
     <string name="add_button_text">Adicionar</string>
 
@@ -33,4 +40,10 @@
         <item>L</item>
         <item>ml</item>
     </string-array>
+
+    <string name="unit">Unidade (un)</string>
+    <string name="kilogram">Quilograma (kg)</string>
+    <string name="gram">Grama (g)</string>
+    <string name="liter">Litro (L)</string>
+    <string name="milliliter">Mililitro (ml)</string>
 </resources>

@@ -97,7 +97,7 @@ class LoginActivity : AppCompatActivity() {
         UserRepository.signUpUser(user)
         UserRepository.setUserLoggedIn(user)
 
-        val intent = Intent(this, AddListActivity::class.java)
+        val intent = Intent(this, MainTempActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
         overridePendingTransition(R.anim.zoom_in, R.anim.fade_out)

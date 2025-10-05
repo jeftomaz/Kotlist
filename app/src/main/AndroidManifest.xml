@@ -30,7 +30,17 @@
         </activity>
 
         <activity
+            android:name="com.example.kotlist.layoutlogic.MainTempActivity"
+            android:exported="false">
+        </activity>
+
+        <activity
             android:name="com.example.kotlist.layoutlogic.AddListActivity"
+            android:exported="false">
+        </activity>
+
+        <activity
+            android:name="com.example.kotlist.layoutlogic.AddItemActivity"
             android:exported="false">
         </activity>
     </application>
