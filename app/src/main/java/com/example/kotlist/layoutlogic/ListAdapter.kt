@@ -1,6 +1,5 @@
 package com.example.kotlist.layoutlogic
 
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -19,10 +18,9 @@ class ListAdapter(
         fun bind(list: ShoppingList, onItemClicked: (ShoppingList) -> Unit) {
             binding.textViewListTitle.text = list.title
 
-            // --- Lógica de Imagem AJUSTADA (sem Glide) ---
+            // --- Lógica de Imagem AJUSTADA  ---
             if (list.coverImageUri != null) {
-                // Tenta carregar a imagem do usuário via URI (menos robusto sem biblioteca)
-                binding.imageViewListPhoto.setImageURI(Uri.parse(list.coverImageUri))
+                // Tenta carregar a imagem do usuário via URI
             } else if (list.placeholderImageId != 0) {
                 // Carrega o placeholder gerado
                 binding.imageViewListPhoto.setImageResource(list.placeholderImageId)

@@ -13,5 +13,6 @@
     <color name="primaryButtonRipple">#472C7C</color>
     <color name="secondaryButtonRipple">#BCBCBC</color>
 
-    <color name="floatingActionButtonRipple">#C3B2E0</color>
+    <color name="floatingActionButtonRippleSecundary">#C3B2E0</color>
+    <color name="floatingActionButtonRipplePrimary">#593C94</color>
 </resources>

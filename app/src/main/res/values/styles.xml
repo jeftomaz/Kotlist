@@ -78,6 +78,18 @@
         <item name="android:paddingBottom">@dimen/margin_medium</item>
     </style>
 
+    <style name="Widget.App.FloatActionButton.Primary" parent="Widget.Material3.FloatingActionButton.Primary">
+        <item name="tint">@color/primaryPastel</item>
+        <item name="backgroundTint">@color/primary</item>
+        <item name="rippleColor">@color/floatingActionButtonRipplePrimary</item>
+    </style>
+
+    <style name="Widget.App.FloatActionButton.Secundary" parent="Widget.Material3.FloatingActionButton.Primary">
+        <item name="tint">@color/primary</item>
+        <item name="backgroundTint">@color/primaryPastel</item>
+        <item name="rippleColor">@color/floatingActionButtonRippleSecundary</item>
+    </style>
+
     <style name="Widget.App.RoundedImageView" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">8dp</item>
