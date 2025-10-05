@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/search_bar_outside"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/logout_button"
+        android:layout_margin="@dimen/margin_small"
+
+        android:fitsSystemWindows="true">
+
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/search_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/search_item_hint"
+            app:iconifiedByDefault="true"
+            app:queryBackground="@color/primaryPastel"/>
+    </com.google.android.material.appbar.AppBarLayout>
+
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/logout_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_marginEnd="@dimen/margin_small"
+        style="@style/Widget.App.Button.IconCompact"
+        android:text=""
+        app:icon="@drawable/log_out_icon"
+        app:iconGravity="textStart"
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/search_bar_outside"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        android:fitsSystemWindows="true"/>
+
+    <TextView
+        android:id="@+id/text_view_section_title"
+        style="@style/Widget.App.Heading1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_medium"
+        android:layout_marginTop="80dp"
+        android:text="Suas Listas"
+        app:layout_constraintTop_toBottomOf="@id/search_bar_outside"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewEmptyState"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Você ainda não tem listas! Toque no '+' para começar a adicionar."
+        android:textAlignment="center"
+        android:textSize="18sp"
+        android:padding="32dp"
+        android:visibility="gone" app:layout_constraintTop_toBottomOf="@id/text_view_section_title"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_bias="0.3" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_lists"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:padding="@dimen/margin_small"
+        app:layout_constraintTop_toBottomOf="@id/text_view_section_title"
+        app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:listitem="@layout/list_item_grid"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_add_list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_medium"
+        android:src="@drawable/add_icon"
+        style="@style/Widget.App.FloatActionButton.Primary"
+        android:contentDescription="Adicionar Nova Lista"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

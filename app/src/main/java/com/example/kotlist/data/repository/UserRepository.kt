@@ -23,4 +23,8 @@ object UserRepository {
     fun setUserLoggedIn(user: User) {
         userLoggedIn = user
     }
+
+    fun logoutUser() {
+        userLoggedIn = null
+    }
 }

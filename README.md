@@ -1,2 +1,2 @@
 # Kotlist
-Functional lists app for the everyday tasks
+Functional lists app for the everyday task    
