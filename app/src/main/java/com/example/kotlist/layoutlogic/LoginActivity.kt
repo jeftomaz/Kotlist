@@ -44,7 +44,7 @@ class LoginActivity : AppCompatActivity() {
             val email = binding.loginEmailInput.text.toString().trim()
             val password = binding.loginPasswordInput.text.toString().trim()
 
-//            validateLogin(email, password)
+            // validateLogin(email, password)
             logUserMocked()
         }
 

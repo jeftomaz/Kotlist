@@ -24,6 +24,7 @@ class AddListActivity : AppCompatActivity() {
     private var listCoverImageSelectedUri: String? = null
     private var placeholderImageId: Int = -1
 
+    // TODO: Verificar a sincronização das imagens de capa vazia - Criação vs Lista de listas
     private val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         if (uri != null) {
             listCoverImageSelectedUri = uri.toString()
@@ -70,6 +71,10 @@ class AddListActivity : AppCompatActivity() {
         }
 
         // adicionar listener do botao de voltar para a tela principal
+        binding.addListCancelButton.setOnClickListener {
+            Toast.makeText(this, "Lista cancelada", Toast.LENGTH_SHORT).show()
+            finish()
+        }
     }
 
     fun randomizeListCoverPlaceholder(): Int {
