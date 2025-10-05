@@ -1,4 +1,4 @@
-package com.example.kotlist
+package com.example.kotlist.layoutlogic
 
 import android.content.Intent
 import android.graphics.Color
@@ -8,11 +8,12 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.example.kotlist.databinding.ActivityLoginBinding
-import com.example.kotlist.databinding.ActivitySignupBinding
+import com.example.kotlist.databinding.ActivityMainTempBinding
 
-class SignUpActivity : AppCompatActivity() {
-    private lateinit var binding: ActivitySignupBinding
+// ACTIVITY MAIN TEMPORARIA PARA TESTES
+
+class MainTempActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityMainTempBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,19 +27,23 @@ class SignUpActivity : AppCompatActivity() {
         )
 
         // ViewBinding configuration
-        binding = ActivitySignupBinding.inflate(layoutInflater)
+        binding = ActivityMainTempBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding.signupMain) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.mainTempMain) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-        binding.signupBackButton.setOnClickListener {
-            val intent = Intent(this, LoginActivity::class.java)
+        binding.mainAddItens.setOnClickListener {
+            val intent = Intent(this, AddItemActivity::class.java)
             startActivity(intent)
-            overridePendingTransition(R.anim.slide_in_left_to_right, R.anim.slide_out_left_to_right)
+        }
+
+        binding.mainAddListas.setOnClickListener {
+            val intent = Intent(this, AddListActivity::class.java)
+            startActivity(intent)
         }
     }
 }
