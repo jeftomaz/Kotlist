@@ -9,5 +9,5 @@ data class ListItem (
     val quantity: Int,
     val unit: ItemUnit,
     val category: ItemCategory,
-    val isChecked: Boolean = false
+    var isChecked: Boolean = false
 )

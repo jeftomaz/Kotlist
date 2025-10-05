@@ -87,6 +87,18 @@
         <item name="android:paddingBottom">@dimen/margin_medium</item>
     </style>
 
+    <style name="Widget.App.FloatActionButton.Primary" parent="Widget.Material3.FloatingActionButton.Primary">
+        <item name="tint">@color/primaryPastel</item>
+        <item name="backgroundTint">@color/primary</item>
+        <item name="rippleColor">@color/floatingActionButtonRipplePrimary</item>
+    </style>
+
+    <style name="Widget.App.FloatActionButton.Secundary" parent="Widget.Material3.FloatingActionButton.Primary">
+        <item name="tint">@color/primary</item>
+        <item name="backgroundTint">@color/primaryPastel</item>
+        <item name="rippleColor">@color/floatingActionButtonRippleSecundary</item>
+    </style>
+
     <style name="Widget.App.RoundedImageView" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">8dp</item>
@@ -95,5 +107,14 @@
     <style name="dropdownInputThemeOverlay" parent="ThemeOverlay.Material3.AutoCompleteTextView.OutlinedBox">
         <item name="colorSurfaceContainer">@color/white</item>
         <item name="colorSurface">@color/white</item>
+    </style>
+
+    <style name="Widget.App.Button.IconCompact" parent="Widget.Material3.Button.TextButton.Icon">
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+
+        <item name="iconSize">30dp</item>
     </style>
 </resources>

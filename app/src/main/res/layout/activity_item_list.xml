@@ -1,60 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ItemListActivity">
+    android:id="@+id/item_list_main"
+    android:background="@color/white">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <com.google.android.material.search.SearchBar
+        android:id="@+id/item_list_search_bar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_medium"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:layout_marginEnd="@dimen/margin_small"
+        android:hint="@string/search_item_hint"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/item_list_edit_button" />
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar_item_list"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:title="@string/shopping_list_title_placeholder"
-            app:navigationIcon="@drawable/m3_split_button_chevron_avd"
-            style="@style/ThemeOverlay.MaterialComponents.Toolbar.Primary"
-            />
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        <com.google.android.material.search.SearchBar
-            android:id="@+id/search_bar_item_list"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin_medium"
-            android:hint="@string/search_item_hint"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_add_item"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/item_list_edit_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
+
+        android:layout_marginEnd="@dimen/margin_medium"
+        android:text=""
+        app:icon="@drawable/edit_icon"
+        app:iconGravity="textStart"
+        style="@style/Widget.App.Button.IconCompact"
+
+        app:layout_constraintTop_toTopOf="@id/item_list_search_bar"
+        app:layout_constraintBottom_toBottomOf="@id/item_list_search_bar"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/item_list_list_name"
+        style="@style/Widget.App.Heading1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_medium"
-        app:srcCompat="@drawable/m3_split_button_chevron_avd"
-        android:contentDescription="@string/add_item_content_description"/>
+        android:layout_marginTop="80dp"
+        android:text="List Name"
+        android:textColor="@color/softBlack"
+        app:layout_constraintTop_toBottomOf="@id/item_list_edit_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-    <com.google.android.material.search.SearchView
-        android:id="@+id/search_view_item_list"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/item_list_recycler_items_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:hint="@string/search_item_hint"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_behavior="@string/search_view_behavior"
-        />
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/margin_medium"
+        app:layout_constraintTop_toBottomOf="@id/item_list_list_name"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_add_list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_medium"
+        android:src="@drawable/add_icon"
+        style="@style/Widget.App.FloatActionButton.Primary"
+        android:contentDescription="Adicionar Nova Lista"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

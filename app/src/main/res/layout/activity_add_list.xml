@@ -77,7 +77,7 @@
         app:maxImageSize="32dp"
         app:tint="@color/primary"
         android:backgroundTint="@color/primaryPastel"
-        app:rippleColor="@color/floatingActionButtonRipple"
+        app:rippleColor="@color/floatingActionButtonRippleSecundary"
         app:layout_constraintEnd_toEndOf="@id/add_list_image_preview"
         app:layout_constraintTop_toBottomOf="@id/add_list_image_preview"
         app:layout_constraintBottom_toBottomOf="@id/add_list_image_preview" />

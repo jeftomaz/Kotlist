@@ -9,8 +9,8 @@ object ListItemRepository {
         items.add(newItem)
     }
 
-    fun getItemsFromList(listId: String): List<ListItem> {
-        return items.filter { it.listId == listId }
+    fun getItemsFromList(listId: String): MutableList<ListItem> {
+        return items.filter { it.listId == listId } as MutableList<ListItem>
     }
 
     fun updateItem(itemUpdated: ListItem) {

@@ -19,6 +19,10 @@ object ShoppingListRepository {
         return shoppingLists.filter { it.userId == userId }
     }
 
+    fun getListById(listId: String): ShoppingList? {
+        return shoppingLists.find { it.id == listId }
+    }
+
     fun deleteList(listId: String) {
         shoppingLists.removeAll { it.id == listId }
     }

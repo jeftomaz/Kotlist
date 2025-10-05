@@ -4,6 +4,7 @@
     <color name="hardBlack">#FF000000</color>
     <color name="softBlack">#181818</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="grey">#FF999999</color>
 
     <color name="primary">#6B46B4</color>
     <color name="primaryPastel">#DDD3EB</color>
@@ -13,5 +14,6 @@
     <color name="primaryButtonRipple">#472C7C</color>
     <color name="secondaryButtonRipple">#BCBCBC</color>
 
-    <color name="floatingActionButtonRipple">#C3B2E0</color>
+    <color name="floatingActionButtonRippleSecundary">#C3B2E0</color>
+    <color name="floatingActionButtonRipplePrimary">#593C94</color>
 </resources>

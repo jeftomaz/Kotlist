@@ -4,7 +4,7 @@ import com.example.kotlist.data.model.User
 
 object UserRepository {
     private val users = mutableListOf<User>()
-    private var userLoggedIn: User? = null
+    private lateinit var userLoggedIn: User
 
     fun signUpUser(newUser: User) {
         users.add(newUser)
@@ -16,7 +16,7 @@ object UserRepository {
         }
     }
 
-    fun getUserLoggedIn(): User? {
+    fun getUserLoggedIn(): User {
         return userLoggedIn
     }
 

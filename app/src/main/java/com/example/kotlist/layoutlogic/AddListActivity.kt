@@ -66,7 +66,8 @@ class AddListActivity : AppCompatActivity() {
             val placeholderImageId: Int = placeholderImageId
             val userId: String? = UserRepository.getUserLoggedIn()?.id
 
-            createNewList(listTitle, coverImageUri, placeholderImageId, userId)
+//            createNewList(listTitle, coverImageUri, placeholderImageId, userId)
+            createMockedList()
         }
 
         // adicionar listener do botao de voltar para a tela principal
@@ -90,6 +91,16 @@ class AddListActivity : AppCompatActivity() {
         }
 
         val newList = ShoppingList(title = listTitle, coverImageUri = coverImageUri, placeholderImageId = placeholderImageId, userId = userId)
+        ShoppingListRepository.addList(newList)
+
+        Toast.makeText(this, "Nova lista criada com sucesso!", Toast.LENGTH_SHORT).show()
+        finish()
+    }
+
+    // dev environment
+    fun createMockedList() {
+        val newList = ShoppingList(title =  "Lista teste", coverImageUri = null, placeholderImageId = randomizeListCoverPlaceholder(), userId = UserRepository.getUserLoggedIn()?.id
+            ?: "")
         ShoppingListRepository.addList(newList)
 
         Toast.makeText(this, "Nova lista criada com sucesso!", Toast.LENGTH_SHORT).show()
