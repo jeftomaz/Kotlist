@@ -5,25 +5,30 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/search_bar_outside"
-        android:layout_width="match_parent"
+    <com.google.android.material.search.SearchBar
+        android:id="@+id/search_bar"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_medium"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:layout_marginEnd="@dimen/margin_small" android:hint="@string/search_item_hint"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/logout_button" />
 
-        <com.google.android.material.search.SearchBar
-            android:id="@+id/search_bar_inside"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin_medium"
-            android:hint="@string/search_item_hint"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/logout_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
 
+        android:layout_marginEnd="@dimen/margin_medium" style="@style/Widget.App.Button.IconCompact"
+        android:text=""
+        app:icon="@drawable/log_out_icon"
+        app:iconGravity="textStart"
+
+        app:layout_constraintTop_toTopOf="@id/search_bar"
+        app:layout_constraintBottom_toBottomOf="@id/search_bar"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
         android:id="@+id/text_view_section_title"
@@ -33,7 +38,7 @@
         android:layout_margin="@dimen/margin_medium"
         android:layout_marginTop="80dp"
         android:text="Suas Listas"
-        app:layout_constraintTop_toBottomOf="@id/search_bar_outside"
+        app:layout_constraintTop_toBottomOf="@id/search_bar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
