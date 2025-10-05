@@ -6,16 +6,14 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.appcompat.widget.SearchView
+
 import com.example.kotlist.data.model.ShoppingList
 import com.example.kotlist.data.repository.ShoppingListRepository
 import com.example.kotlist.data.repository.UserRepository
 import com.example.kotlist.databinding.ActivityListsScreenBinding
 import com.example.kotlist.R
-import android.text.Editable
-import android.text.TextWatcher
 
-import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
 
 class ListsActivity : AppCompatActivity() {
 
@@ -52,18 +50,6 @@ class ListsActivity : AppCompatActivity() {
         // Configura o listener de busca (TextWatcher)
         setupSearchListener()
 
-        // Implementa o listener de clique para forçar a ação de busca
-        binding.searchBar.setOnClickListener {
-            // Acessa o campo de texto interno
-            val searchEditText = binding.searchBar.findViewById<EditText>(com.google.android.material.R.id.text_input_end_icon)
-
-            // Solicita o foco no campo de texto
-            searchEditText?.requestFocus()
-
-            // Exibe o teclado na tela
-            val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.showSoftInput(searchEditText, InputMethodManager.SHOW_IMPLICIT)
-        }
     }
 
     override fun onResume() {
@@ -76,13 +62,7 @@ class ListsActivity : AppCompatActivity() {
         // 1. Carrega todas as listas e armazena
         allLists = loadAllLists()
 
-        // NOVO: Acessa o campo de texto interno de forma segura (necessário para pegar o valor)
-        val searchEditText = binding.searchBar.findViewById<EditText>(com.google.android.material.R.id.text_input_end_icon)
-
-        // Garante que o campo de texto exista antes de tentar ler o valor
-        val currentQuery = searchEditText?.text?.toString() ?: ""
-
-        filterLists(currentQuery)
+        filterLists("")
     }
 
     // Carrega todas as listas de compras usando o repositório.
@@ -118,20 +98,19 @@ class ListsActivity : AppCompatActivity() {
         ).show()
     }
 
-     // 2. IMPLEMENTAÇÃO DA LÓGICA DE LOGOUT
      // Reseta o usuário logado e navega para a tela de Login.
     private fun handleLogout() {
-        // 1. Resetar o usuário no repositório (limpar o estado de sessão)
+        // Resetar o usuário no repositório (limpar o estado de sessão)
         UserRepository.logoutUser()
 
-        // 2. Criar o Intent para a tela de Login
+        // Criar o Intent para a tela de Login
         val intent = Intent(this, LoginActivity::class.java)
 
-        // 3. Flags para limpar a pilha de atividades:
+        // Flags para limpar a pilha de atividades:
         // Isso impede que o usuário volte para a ListsActivity usando o botão "Voltar".
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
 
-        // 4. Iniciar a nova Activity
+        // Iniciar a nova Activity
         startActivity(intent)
 
         // Opcional: Adicionar animação para a transição (assumindo a existência das animações)
@@ -139,40 +118,25 @@ class ListsActivity : AppCompatActivity() {
     }
 
     private fun setupSearchListener() {
-        // 1. Acessa o campo de texto interno (EditText) da SearchBar
-        val searchEditText = binding.searchBar.findViewById<EditText>(com.google.android.material.R.id.text_input_end_icon)
+        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 
-        // Usa 'let' para aplicar ambos os listeners de forma segura
-        searchEditText?.let { editText ->
-
-            // --- A. TextWatcher (Busca em Tempo Real) ---
-            editText.addTextChangedListener(object : TextWatcher {
-
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-
-                override fun afterTextChanged(s: Editable?) {
-                    filterLists(s.toString())
-                }
-            })
-
-            // Quando o foco é obtido (usuário clica), abrimos o teclado.
-            editText.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
-                if (hasFocus) {
-                    val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-                    imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
-                }
+            // Chamado quando o usuário aperta Enter
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                filterLists(query.orEmpty())
+                return true
             }
-        }
 
-        // Se o clique na SearchBar não delegar o foco, este fallback garante que ele force o foco.
-        binding.searchBar.setOnClickListener {
-            searchEditText?.requestFocus()
-        }
+            // Chamado a cada mudança de texto (Busca em Tempo Real)
+            override fun onQueryTextChange(newText: String?): Boolean {
+                filterLists(newText.orEmpty())
+                return true
+            }
+        })
+
+        // binding.searchView.isIconified = false
     }
 
     // Filtra as listas com base na query e atualiza o Adapter e o Empty State.
-
     private fun filterLists(query: String) {
         val filteredLists = if (query.isBlank()) {
             // Se a busca estiver vazia, exibe todas as listas
