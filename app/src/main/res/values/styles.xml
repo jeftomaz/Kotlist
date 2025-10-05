@@ -54,6 +54,33 @@
         <item name="fontFamily">@font/switzer_bold</item>
     </style>
 
+    <style name="Widget.App.DropdownWrapper" parent="Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+        <item name="boxStrokeColor">@color/input_color_set</item>
+
+        <item name="android:textColorHint">@color/input_color_set</item>
+        <item name="hintTextColor">@color/input_color_set</item>
+
+        <item name="endIconTint">@color/input_color_set</item>
+
+        <item name="boxStrokeErrorColor">@color/inputError</item>
+        <item name="errorTextColor">@color/inputError</item>
+        <item name="errorIconTint">@color/inputError</item>
+
+        <item name="android:fontFamily">@font/switzer_regular</item>
+        <item name="boxCornerRadiusTopStart">8dp</item>
+        <item name="boxCornerRadiusTopEnd">8dp</item>
+        <item name="boxCornerRadiusBottomStart">8dp</item>
+        <item name="boxCornerRadiusBottomEnd">8dp</item>
+
+        <item name="colorControlHighlight">@color/primaryPastel</item>
+    </style>
+
+    <style name="Widget.App.Dropdown" parent="Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+        <item name="fontFamily">@font/switzer_regular</item>
+        <item name="android:textSize">16dp</item>
+        <item name="android:textColor">@color/softBlack</item>
+    </style>
+
     <style name="Widget.App.Button.Primary" parent="Widget.MaterialComponents.Button">
         <item name="backgroundTint">@color/primary</item>
         <item name="rippleColor">@color/primaryButtonRipple</item>
@@ -93,6 +120,11 @@
     <style name="Widget.App.RoundedImageView" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">8dp</item>
+    </style>
+
+    <style name="dropdownInputThemeOverlay" parent="ThemeOverlay.Material3.AutoCompleteTextView.OutlinedBox">
+        <item name="colorSurfaceContainer">@color/white</item>
+        <item name="colorSurface">@color/white</item>
     </style>
 
     <style name="Widget.App.Button.IconCompact" parent="Widget.Material3.Button.TextButton.Icon">

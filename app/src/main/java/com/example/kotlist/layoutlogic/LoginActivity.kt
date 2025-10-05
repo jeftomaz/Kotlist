@@ -44,7 +44,7 @@ class LoginActivity : AppCompatActivity() {
             val email = binding.loginEmailInput.text.toString().trim()
             val password = binding.loginPasswordInput.text.toString().trim()
 
-            // validateLogin(email, password)
+//            validateLogin(email, password)
             logUserMocked()
         }
 
@@ -81,7 +81,7 @@ class LoginActivity : AppCompatActivity() {
             UserRepository.setUserLoggedIn(user)
             Toast.makeText(this, "Login SUCESSO", Toast.LENGTH_SHORT).show()
 
-            val intent = Intent(this, ListsActivity::class.java)
+            val intent = Intent(this, AddListActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
             overridePendingTransition(R.anim.zoom_in, R.anim.fade_out)
