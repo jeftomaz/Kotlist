@@ -1,8 +1,10 @@
 package com.example.kotlist.layoutlogic
 
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
 import com.example.kotlist.R
 import com.example.kotlist.data.model.ShoppingList
 import com.example.kotlist.databinding.ListItemGridBinding
@@ -18,14 +20,21 @@ class ListAdapter(
         fun bind(list: ShoppingList, onItemClicked: (ShoppingList) -> Unit) {
             binding.textViewListTitle.text = list.title
 
-            // --- Lógica de Imagem AJUSTADA  ---
             if (list.coverImageUri != null) {
-                // Tenta carregar a imagem do usuário via URI
+                // Converte a String URI salva em um objeto Uri
+                val imageUri = Uri.parse(list.coverImageUri)
+
+                // Usa o Coil para carregar a imagem da URI na ImageView
+                binding.imageViewListPhoto.load(imageUri) {
+                    // Garante que, se o carregamento falhar, o placeholder seja usado como fallback
+                    error(list.placeholderImageId)
+                }
+
             } else if (list.placeholderImageId != 0) {
-                // Carrega o placeholder gerado
+                // Carrega o placeholder gerado (se não houver URI)
                 binding.imageViewListPhoto.setImageResource(list.placeholderImageId)
             } else {
-                // Fallback
+                // Fallback final
                 binding.imageViewListPhoto.setImageResource(R.drawable.placeholder_img_list_0)
             }
 

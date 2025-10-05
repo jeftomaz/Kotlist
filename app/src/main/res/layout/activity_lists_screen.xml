@@ -37,7 +37,7 @@
         app:icon="@drawable/log_out_icon"
         app:iconGravity="textStart"
 
-        app:layout_constraintTop_toTopOf="@id/search_bar_outside"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="@id/search_bar_outside"
         app:layout_constraintEnd_toEndOf="parent"
 

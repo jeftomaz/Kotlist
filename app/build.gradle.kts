@@ -41,6 +41,7 @@ android {
 
 dependencies {
     implementation("org.mindrot:jbcrypt:0.4")
+    implementation("io.coil-kt:coil:2.6.0")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

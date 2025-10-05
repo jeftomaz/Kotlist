@@ -1,5 +1,6 @@
 package com.example.kotlist.layoutlogic
 
+import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
@@ -27,6 +28,12 @@ class AddListActivity : AppCompatActivity() {
     // TODO: Verificar a sincronização das imagens de capa vazia - Criação vs Lista de listas
     private val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         if (uri != null) {
+
+            contentResolver.takePersistableUriPermission(
+                uri,
+                Intent.FLAG_GRANT_READ_URI_PERMISSION
+            )
+
             listCoverImageSelectedUri = uri.toString()
             binding.addListImagePreview.setImageURI(uri)
         } else {
