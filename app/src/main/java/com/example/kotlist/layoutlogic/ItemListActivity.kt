@@ -56,6 +56,13 @@ class ItemListActivity : AppCompatActivity() {
         loadAndDisplayItemList()
         setupSearchView()
 
+        binding.itemListEditListButton.setOnClickListener {
+            val intent = Intent(this, EditListActivity::class.java).apply {
+                putExtra(EXTRA_LIST_ID, intent.getStringExtra(EXTRA_LIST_ID))
+            }
+            startActivity(intent)
+        }
+
         binding.itemListAddItemButton.setOnClickListener {
             val intent = Intent(this, AddItemActivity::class.java).apply {
                 putExtra(EXTRA_LIST_ID, intent.getStringExtra(EXTRA_LIST_ID))
@@ -66,6 +73,8 @@ class ItemListActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+
+        binding.itemListListName.text = ShoppingListRepository.getListById(sourceListId)?.title
         loadAndDisplayItemList()
     }
 

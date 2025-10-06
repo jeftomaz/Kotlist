@@ -2,17 +2,17 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/add_list_main"
+    android:id="@+id/edit_list_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/margin_small"
     android:background="@color/white">
 
     <TextView
-        android:id="@+id/add_list_title"
+        android:id="@+id/edit_list_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Adicionar Nova Lista"
+        android:text="Editar lista"
         android:textStyle="bold"
         android:layout_margin="@dimen/margin_medium"
         android:textColor="@color/softBlack"
@@ -22,25 +22,25 @@
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/add_list_list_name_input_wrapper"
+        android:id="@+id/edit_list_list_name_input_wrapper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_medium"
         android:hint="Nome da lista (Ex: Compras, Viagem)"
         style="@style/Widget.App.InputWrapper"
-        app:layout_constraintTop_toBottomOf="@id/add_list_title"
+        app:layout_constraintTop_toBottomOf="@id/edit_list_title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/add_list_list_name_input"
+            android:id="@+id/edit_list_list_name_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/Widget.App.Input"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
-        android:id="@+id/add_list_image_label"
+        android:id="@+id/edit_list_image_label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Capa da lista"
@@ -48,12 +48,12 @@
         android:layout_marginHorizontal="@dimen/margin_medium"
         android:layout_marginTop="@dimen/margin_large"
         style="@style/Widget.App.Paragraph"
-        app:layout_constraintTop_toBottomOf="@id/add_list_list_name_input_wrapper"
+        app:layout_constraintTop_toBottomOf="@id/edit_list_list_name_input_wrapper"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/add_list_image_preview"
+        android:id="@+id/edit_list_image_preview"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintDimensionRatio="1.2:1"
@@ -63,12 +63,12 @@
         android:background="#DCDCDC"
         android:contentDescription="Foto da lista"
         app:shapeAppearanceOverlay="@style/Widget.App.RoundedImageView"
-        app:layout_constraintTop_toBottomOf="@id/add_list_image_label"
+        app:layout_constraintTop_toBottomOf="@id/edit_list_image_label"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/add_list_add_image"
+        android:id="@+id/edit_list_add_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/camera_icon"
@@ -76,24 +76,36 @@
         app:fabCustomSize="@dimen/floating_button"
         app:maxImageSize="32dp"
         style="@style/Widget.App.FloatActionButton.Secundary"
-        app:layout_constraintEnd_toEndOf="@id/add_list_image_preview"
-        app:layout_constraintTop_toBottomOf="@id/add_list_image_preview"
-        app:layout_constraintBottom_toBottomOf="@id/add_list_image_preview" />
+        app:layout_constraintEnd_toEndOf="@id/edit_list_image_preview"
+        app:layout_constraintTop_toBottomOf="@id/edit_list_image_preview"
+        app:layout_constraintBottom_toBottomOf="@id/edit_list_image_preview" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/add_list_add_list_button"
-        android:layout_width="match_parent"
+        android:id="@+id/edit_list_delete_list_button"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        style="@style/Widget.App.Button.Primary"
-        android:text="Adicionar Lista"
+        style="@style/Widget.App.Button.Delete"
+        android:text="Excluir"
         android:layout_marginHorizontal="@dimen/margin_medium"
         android:layout_marginBottom="@dimen/margin_small"
-        app:layout_constraintBottom_toTopOf="@id/add_list_cancel_button"
+        app:layout_constraintBottom_toTopOf="@id/edit_list_cancel_button"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/edit_list_save_list_button" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/edit_list_save_list_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        style="@style/Widget.App.Button.Primary"
+        android:text="Salvar"
+        android:layout_marginHorizontal="@dimen/margin_medium"
+        android:layout_marginBottom="@dimen/margin_small"
+        app:layout_constraintBottom_toTopOf="@id/edit_list_cancel_button"
+        app:layout_constraintStart_toEndOf="@id/edit_list_delete_list_button"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/add_list_cancel_button"
+        android:id="@+id/edit_list_cancel_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/Widget.App.Button.Secondary"

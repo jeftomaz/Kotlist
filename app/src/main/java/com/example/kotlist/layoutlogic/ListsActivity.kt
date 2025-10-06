@@ -28,6 +28,10 @@ class ListsActivity : AppCompatActivity() {
     private lateinit var listAdapter: ListAdapter
     private var allLists: List<ShoppingList> = emptyList()
 
+    companion object {
+        const val CREATE_EXAMPLE_LIST = "CREATE_EXAMPLE_LIST"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge(
@@ -83,8 +87,9 @@ class ListsActivity : AppCompatActivity() {
         val currentUserId = UserRepository.getUserLoggedIn()!!.id
 
         var lists = ShoppingListRepository.getUserLists(currentUserId)
+        val shouldCreateExample = intent.getBooleanExtra(CREATE_EXAMPLE_LIST, false)
 
-        if (lists.isEmpty()) {
+        if (lists.isEmpty() && shouldCreateExample) {
             val mockList = ShoppingList(
                 title = "Lista de Exemplo",
                 coverImageUri = null,

@@ -14,6 +14,7 @@ import com.example.kotlist.R
 import com.example.kotlist.data.model.User
 import com.example.kotlist.data.repository.UserRepository
 import com.example.kotlist.databinding.ActivityLoginBinding
+import com.example.kotlist.layoutlogic.ListsActivity.Companion.CREATE_EXAMPLE_LIST
 import com.example.kotlist.util.PasswordHasher
 
 class LoginActivity : AppCompatActivity() {
@@ -44,8 +45,8 @@ class LoginActivity : AppCompatActivity() {
             val email = binding.loginEmailInput.text.toString().trim()
             val password = binding.loginPasswordInput.text.toString().trim()
 
-//            validateLogin(email, password)
-            logUserMocked()
+            validateLogin(email, password)
+//            logUserMocked()
         }
 
         binding.loginCreateAccountButton.setOnClickListener {
@@ -79,9 +80,11 @@ class LoginActivity : AppCompatActivity() {
 
         if(user != null && PasswordHasher.checkPassword(password, user.password)) {
             UserRepository.setUserLoggedIn(user)
-            Toast.makeText(this, "Login SUCESSO", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Bem-vindo(a), ${user.name}", Toast.LENGTH_SHORT).show()
 
-            val intent = Intent(this, ListsActivity::class.java)
+            val intent = Intent(this, ListsActivity::class.java).apply {
+                putExtra(CREATE_EXAMPLE_LIST, true)
+            }
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
             overridePendingTransition(R.anim.zoom_in, R.anim.fade_out)

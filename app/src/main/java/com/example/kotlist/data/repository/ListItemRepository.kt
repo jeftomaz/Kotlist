@@ -26,4 +26,8 @@ object ListItemRepository {
     fun deleteItem(itemId: String) {
         items.removeAll { it.id == itemId }
     }
+
+    fun deleteItemsFromList(listId: String) {
+        items.removeAll { it.listId == listId }
+    }
 }

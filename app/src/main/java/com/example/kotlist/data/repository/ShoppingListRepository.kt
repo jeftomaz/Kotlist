@@ -24,7 +24,15 @@ object ShoppingListRepository {
     }
 
     fun deleteList(listId: String) {
+        ListItemRepository.deleteItemsFromList(listId)
         shoppingLists.removeAll { it.id == listId }
+    }
+
+    fun updateList(listUpdated: ShoppingList) {
+        val index = shoppingLists.indexOfFirst { it.id == listUpdated.id }
+        if (index != -1) {
+            shoppingLists[index] = listUpdated
+        }
     }
 
     fun getRandomPlaceholderId(): Int {
