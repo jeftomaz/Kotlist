@@ -19,7 +19,7 @@
             android:id="@+id/list_item_category_icon"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/fruit_icon"
+            android:src="@drawable/meat_icon"
             app:tint="@color/primary"
             android:background="#E5E0F6"
             android:padding="@dimen/margin_small"
