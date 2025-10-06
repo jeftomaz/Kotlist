@@ -25,7 +25,6 @@ class AddListActivity : AppCompatActivity() {
     private var listCoverImageSelectedUri: String? = null
     private var placeholderImageId: Int = -1
 
-    // TODO: Verificar a sincronização das imagens de capa vazia - Criação vs Lista de listas
     private val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         if (uri != null) {
 
@@ -74,13 +73,11 @@ class AddListActivity : AppCompatActivity() {
             val placeholderImageId: Int = placeholderImageId
             val userId: String? = UserRepository.getUserLoggedIn()?.id
 
-//            createNewList(listTitle, coverImageUri, placeholderImageId, userId)
-            createMockedList()
+            createNewList(listTitle, coverImageUri, placeholderImageId, userId)
+//            createMockedList()
         }
 
-        // adicionar listener do botao de voltar para a tela principal
         binding.addListCancelButton.setOnClickListener {
-            Toast.makeText(this, "Lista cancelada", Toast.LENGTH_SHORT).show()
             finish()
         }
     }

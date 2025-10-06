@@ -44,7 +44,7 @@ class MainTempActivity : AppCompatActivity() {
 
         binding.mainAddItens.setOnClickListener {
             val intent = Intent(this, AddItemActivity::class.java).apply {
-                putExtra(EXTRA_LIST_ID, ShoppingListRepository.getUserLists(UserRepository.getUserLoggedIn().id).first().id)
+                putExtra(EXTRA_LIST_ID, ShoppingListRepository.getUserLists(UserRepository.getUserLoggedIn()!!.id).first().id)
             }
             startActivity(intent)
         }
@@ -56,7 +56,7 @@ class MainTempActivity : AppCompatActivity() {
 
         binding.mainListItens.setOnClickListener {
             val intent = Intent(this, ItemListActivity::class.java).apply {
-                putExtra(EXTRA_LIST_ID, ShoppingListRepository.getUserLists(UserRepository.getUserLoggedIn().id).first().id)
+                putExtra(EXTRA_LIST_ID, ShoppingListRepository.getUserLists(UserRepository.getUserLoggedIn()!!.id).first().id)
             }
             startActivity(intent)
         }

@@ -4,6 +4,7 @@
     <color name="hardBlack">#FF000000</color>
     <color name="softBlack">#181818</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="light_grey">#FFCCCCCC</color>
     <color name="grey">#FF999999</color>
 
     <color name="primary">#6B46B4</color>

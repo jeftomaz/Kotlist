@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:id="@+id/lists_main"
+    android:background="@color/white">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/search_bar_outside"
@@ -12,9 +15,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/logout_button"
-        android:layout_margin="@dimen/margin_small"
-
-        android:fitsSystemWindows="true">
+        android:layout_margin="@dimen/margin_small">
 
         <androidx.appcompat.widget.SearchView
             android:id="@+id/search_view"
@@ -49,8 +50,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_medium"
-        android:layout_marginTop="80dp"
+        android:layout_marginBottom="@dimen/margin_large"
         android:text="Suas Listas"
+        android:textColor="@color/softBlack"
         app:layout_constraintTop_toBottomOf="@id/search_bar_outside"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -74,6 +76,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:padding="@dimen/margin_small"
+        android:layout_marginTop="@dimen/margin_medium"
         app:layout_constraintTop_toBottomOf="@id/text_view_section_title"
         app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -83,7 +86,10 @@
         android:id="@+id/fab_add_list"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_medium"
+        android:layout_marginEnd="@dimen/margin_medium"
+        android:layout_marginBottom="@dimen/margin_large"
+        app:fabCustomSize="@dimen/floating_button"
+        app:maxImageSize="40dp"
         android:src="@drawable/add_icon"
         style="@style/Widget.App.FloatActionButton.Primary"
         android:contentDescription="Adicionar Nova Lista"

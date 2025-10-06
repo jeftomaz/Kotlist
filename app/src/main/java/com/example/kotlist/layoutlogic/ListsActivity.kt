@@ -1,18 +1,25 @@
 package com.example.kotlist.layoutlogic
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.activity.SystemBarStyle
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 
 import com.example.kotlist.data.model.ShoppingList
 import com.example.kotlist.data.repository.ShoppingListRepository
 import com.example.kotlist.data.repository.UserRepository
 import com.example.kotlist.databinding.ActivityListsScreenBinding
 import com.example.kotlist.R
+import com.example.kotlist.databinding.ActivityMainTempBinding
+import com.example.kotlist.layoutlogic.MainTempActivity.Companion.EXTRA_LIST_ID
 
 
 class ListsActivity : AppCompatActivity() {
@@ -23,33 +30,43 @@ class ListsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.light(
+                Color.TRANSPARENT, Color.TRANSPARENT
+            ),
+            navigationBarStyle = SystemBarStyle.light(
+                Color.TRANSPARENT, Color.TRANSPARENT
+            )
+        )
 
+        // ViewBinding configuration
         binding = ActivityListsScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Configuração inicial do Adapter
+        ViewCompat.setOnApplyWindowInsetsListener(binding.listsMain) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
+
         listAdapter = ListAdapter(emptyList()) { clickedList ->
             navigateToItemDetails(clickedList)
         }
 
-        // Configuração do LayoutManager - Grid com 2 colunas
         binding.recyclerViewLists.layoutManager = GridLayoutManager(this, 2)
         binding.recyclerViewLists.adapter = listAdapter
 
-        // Ação do FAB - adicionar lista
         binding.fabAddList.setOnClickListener {
             val intent = Intent(this, AddListActivity::class.java)
             startActivity(intent)
         }
 
         binding.logoutButton.setOnClickListener {
-            Toast.makeText(this, "Viu, Bruno? Funcionou", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Sessão encerrada", Toast.LENGTH_SHORT).show()
             handleLogout()
         }
 
-        // Configura o listener de busca (TextWatcher)
         setupSearchListener()
-
     }
 
     override fun onResume() {
@@ -57,64 +74,44 @@ class ListsActivity : AppCompatActivity() {
         loadAndDisplayLists()
     }
 
-    // Carrega as listas e gerencia a exibição do Empty State.
     private fun loadAndDisplayLists() {
-        // 1. Carrega todas as listas e armazena
         allLists = loadAllLists()
-
         filterLists("")
     }
 
-    // Carrega todas as listas de compras usando o repositório.
     private fun loadAllLists(): List<ShoppingList> {
-        val currentUserId = UserRepository.getUserLoggedIn()?.id ?: return emptyList()
+        val currentUserId = UserRepository.getUserLoggedIn()!!.id
 
-        // Tenta buscar as listas existentes para o usuário
         var lists = ShoppingListRepository.getUserLists(currentUserId)
 
         if (lists.isEmpty()) {
             val mockList = ShoppingList(
                 title = "Lista de Exemplo",
                 coverImageUri = null,
-                // Garante que o placeholder seja aleatório
                 placeholderImageId = ShoppingListRepository.getRandomPlaceholderId(),
                 userId = currentUserId
             )
             ShoppingListRepository.addList(mockList)
 
-            // Busca a lista novamente (agora com a lista de exemplo)
             lists = ShoppingListRepository.getUserLists(currentUserId)
         }
 
         return lists
     }
 
-    // Implementação TEMPORÁRIA para navegação em detalhes do item.
     private fun navigateToItemDetails(list: ShoppingList) {
-        Toast.makeText(
-            this,
-            "A tela de itens da lista '${list.title}' ainda está em construção.",
-            Toast.LENGTH_SHORT
-        ).show()
+        val intent = Intent(this, ItemListActivity::class.java).apply {
+            putExtra(EXTRA_LIST_ID, list.id)
+        }
+        startActivity(intent)
     }
 
-     // Reseta o usuário logado e navega para a tela de Login.
     private fun handleLogout() {
-        // Resetar o usuário no repositório (limpar o estado de sessão)
         UserRepository.logoutUser()
 
-        // Criar o Intent para a tela de Login
         val intent = Intent(this, LoginActivity::class.java)
-
-        // Flags para limpar a pilha de atividades:
-        // Isso impede que o usuário volte para a ListsActivity usando o botão "Voltar".
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-
-        // Iniciar a nova Activity
         startActivity(intent)
-
-        // Opcional: Adicionar animação para a transição (assumindo a existência das animações)
-        overridePendingTransition(R.anim.zoom_in, R.anim.fade_out)
     }
 
     private fun setupSearchListener() {

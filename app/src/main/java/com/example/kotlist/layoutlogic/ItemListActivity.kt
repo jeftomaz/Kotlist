@@ -1,5 +1,6 @@
 package com.example.kotlist.layoutlogic
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.SystemBarStyle
@@ -8,11 +9,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.kotlist.data.model.ListItem
 import com.example.kotlist.data.repository.ListItemRepository
 import com.example.kotlist.data.repository.ShoppingListRepository
+import com.example.kotlist.data.repository.UserRepository
 import com.example.kotlist.databinding.ActivityAddItemBinding
 import com.example.kotlist.databinding.ActivityItemListBinding
 import com.example.kotlist.layoutlogic.ItemListAdapter
+import com.example.kotlist.layoutlogic.MainTempActivity.Companion.EXTRA_LIST_ID
 
 class ItemListActivity : AppCompatActivity() {
     private lateinit var binding: ActivityItemListBinding
@@ -43,18 +47,50 @@ class ItemListActivity : AppCompatActivity() {
         sourceListId = intent.getStringExtra(MainTempActivity.EXTRA_LIST_ID)!!
         binding.itemListListName.text = ShoppingListRepository.getListById(sourceListId)?.title
         recyclerViewConfiguration()
+
+        binding.itemListAddItemButton.setOnClickListener {
+            val intent = Intent(this, AddItemActivity::class.java).apply {
+                putExtra(EXTRA_LIST_ID, intent.getStringExtra(EXTRA_LIST_ID))
+            }
+            startActivity(intent)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loadItemListOnResume()
     }
 
     fun recyclerViewConfiguration() {
-        val listItems = ListItemRepository.getItemsFromList(sourceListId)
-
-        itemListAdapter = ItemListAdapter(listItems) {
+        itemListAdapter = ItemListAdapter {
                 item, isChecked ->
             item.isChecked = isChecked
+
+            ListItemRepository.updateItem(item)
+
+            binding.itemListRecyclerItemsView.post {
+                loadItemListOnResume()
+            }
         }
 
         val recyclerView = binding.itemListRecyclerItemsView
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = itemListAdapter
     }
+
+    fun loadItemListOnResume() {
+        val updatedListItems = ListItemRepository.getItemsFromList(sourceListId)
+        val sortedList = getSortedList(updatedListItems)
+        itemListAdapter.submitList(sortedList)
+    }
+
+    fun getSortedList(items: MutableList<ListItem>): MutableList<ListItem> {
+        return items.sortedWith(
+            compareBy<ListItem> { it.isChecked }
+                .thenBy { it.category.name }
+                .thenBy { it.name }
+        ).toMutableList()
+    }
+
+
 }

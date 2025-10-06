@@ -57,10 +57,13 @@
         app:layout_constraintBottom_toBottomOf="parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_add_list"
+        android:id="@+id/item_list_add_item_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_medium"
+        android:layout_marginEnd="@dimen/margin_medium"
+        android:layout_marginBottom="@dimen/margin_large"
+        app:fabCustomSize="@dimen/floating_button"
+        app:maxImageSize="40dp"
         android:src="@drawable/add_icon"
         style="@style/Widget.App.FloatActionButton.Primary"
         android:contentDescription="Adicionar Nova Lista"
