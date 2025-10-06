@@ -49,6 +49,11 @@
             android:exported="false">
         </activity>
 
+        <activity
+            android:name="com.example.kotlist.layoutlogic.EditItemActivity"
+            android:exported="false">
+        </activity>
+
     </application>
 
 </manifest>

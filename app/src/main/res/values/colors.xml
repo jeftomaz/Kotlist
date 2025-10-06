@@ -10,10 +10,13 @@
     <color name="primary">#6B46B4</color>
     <color name="primaryPastel">#DDD3EB</color>
 
+    <color name="deleteButton">#D95050</color>
+
     <color name="inputError">#FF6666</color>
 
     <color name="primaryButtonRipple">#472C7C</color>
     <color name="secondaryButtonRipple">#BCBCBC</color>
+    <color name="deleteButtonRipple">#C74343</color>
 
     <color name="floatingActionButtonRippleSecundary">#C3B2E0</color>
     <color name="floatingActionButtonRipplePrimary">#593C94</color>

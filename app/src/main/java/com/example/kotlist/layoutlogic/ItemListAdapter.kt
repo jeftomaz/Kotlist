@@ -18,7 +18,8 @@ import com.example.kotlist.databinding.ListItemBinding
 import com.google.android.material.checkbox.MaterialCheckBox
 
 class ItemListAdapter (
-    private val onCheckboxClicked: (ListItem, Boolean) -> Unit
+    private val onCheckboxClicked: (ListItem, Boolean) -> Unit,
+    private val onItemClick: (ListItem) -> Unit
 ) : ListAdapter<ListItem, ItemListAdapter.ItemViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
@@ -28,7 +29,7 @@ class ItemListAdapter (
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val item = getItem(position)
-        holder.bind(item, onCheckboxClicked)
+        holder.bind(item, onCheckboxClicked, onItemClick)
     }
 
     class ItemViewHolder(private val binding: ListItemBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -39,7 +40,7 @@ class ItemListAdapter (
         private val itemQuantityUnit: TextView = binding.listItemItemQuantityUnit
         private val itemCheckbox: MaterialCheckBox = binding.listItemCheckbox
 
-        fun bind(item: ListItem, onCheckboxClicked: (ListItem, Boolean) -> Unit) {
+        fun bind(item: ListItem, onCheckboxClicked: (ListItem, Boolean) -> Unit, onItemClick: (ListItem) -> Unit) {
             categoryIcon.setImageResource(item.category.categoryIconId)
             itemName.text = item.name
             itemQuantityUnit.text = "${item.quantity} ${context.getString(item.unit.unitNameId)}"
@@ -50,6 +51,10 @@ class ItemListAdapter (
             itemCheckbox.setOnCheckedChangeListener { _, isChecked ->
                 onCheckboxClicked(item, isChecked)
                 updateUI(isChecked)
+            }
+
+            itemView.setOnClickListener {
+                onItemClick(item)
             }
         }
 

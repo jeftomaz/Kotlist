@@ -13,6 +13,10 @@ object ListItemRepository {
         return items.filter { it.listId == listId } as MutableList<ListItem>
     }
 
+    fun getItemById(itemId: String): ListItem? {
+        return items.find { it.id == itemId }
+    }
+
     fun updateItem(itemUpdated: ListItem) {
         val index = items.indexOfFirst { it.id == itemUpdated.id }
         if(index != -1)

@@ -24,6 +24,11 @@ class ItemListActivity : AppCompatActivity() {
     private lateinit var sourceListId: String
     private var searchMasterItemList = mutableListOf<ListItem>()
 
+    companion object {
+        const val EXTRA_LIST_ID = "EXTRA_LIST_ID"
+        const val EXTRA_LIST_ITEM_ID = "EXTRA_LIST_ITEM_ID"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge(
@@ -65,16 +70,23 @@ class ItemListActivity : AppCompatActivity() {
     }
 
     fun recyclerViewConfiguration() {
-        itemListAdapter = ItemListAdapter {
-                item, isChecked ->
-            item.isChecked = isChecked
+        itemListAdapter = ItemListAdapter (
+            onCheckboxClicked = { item, isChecked ->
+                item.isChecked = isChecked
+                ListItemRepository.updateItem(item)
+                binding.itemListRecyclerItemsView.post {
+                    loadAndDisplayItemList()
+                }
+            },
 
-            ListItemRepository.updateItem(item)
-
-            binding.itemListRecyclerItemsView.post {
-                loadAndDisplayItemList()
+            onItemClick = { item ->
+                val intent = Intent(this, EditItemActivity::class.java).apply {
+                    putExtra(EXTRA_LIST_ID, sourceListId)
+                    putExtra(EXTRA_LIST_ITEM_ID, item.id)
+                }
+                startActivity(intent)
             }
-        }
+        )
 
         val recyclerView = binding.itemListRecyclerItemsView
         recyclerView.layoutManager = LinearLayoutManager(this)
