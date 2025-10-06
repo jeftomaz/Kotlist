@@ -30,4 +30,11 @@ object ShoppingListRepository {
     fun getRandomPlaceholderId(): Int {
         return placeholderImages.random()
     }
+
+    fun updateList(updatedList: ShoppingList) {
+        val index = shoppingLists.indexOfFirst { it.id == updatedList.id }
+        if (index != -1) {
+            shoppingLists[index] = updatedList
+        }
+    }
 }

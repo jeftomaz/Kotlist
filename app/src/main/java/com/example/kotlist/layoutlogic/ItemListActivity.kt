@@ -13,10 +13,10 @@ import com.example.kotlist.data.model.ListItem
 import com.example.kotlist.data.repository.ListItemRepository
 import com.example.kotlist.data.repository.ShoppingListRepository
 import com.example.kotlist.data.repository.UserRepository
-import com.example.kotlist.databinding.ActivityAddItemBinding
 import com.example.kotlist.databinding.ActivityItemListBinding
 import com.example.kotlist.layoutlogic.ItemListAdapter
 import com.example.kotlist.layoutlogic.MainTempActivity.Companion.EXTRA_LIST_ID
+import android.widget.Toast
 
 class ItemListActivity : AppCompatActivity() {
     private lateinit var binding: ActivityItemListBinding
@@ -45,8 +45,16 @@ class ItemListActivity : AppCompatActivity() {
         }
 
         sourceListId = intent.getStringExtra(MainTempActivity.EXTRA_LIST_ID)!!
-        binding.itemListListName.text = ShoppingListRepository.getListById(sourceListId)?.title
+
+        // ALTERAÇÃO 2: Chama a função que carrega o nome da lista
+        updateListName()
+
         recyclerViewConfiguration()
+
+        // Adiciona o listener para o botão de edição de lista
+        binding.itemListEditButton.setOnClickListener {
+            navigateToEditList()
+        }
 
         binding.itemListAddItemButton.setOnClickListener {
             val intent = Intent(this, AddItemActivity::class.java).apply {
@@ -58,7 +66,14 @@ class ItemListActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        // ALTERAÇÃO 3: Chama a função que carrega o nome da lista ao retornar à Activity
+        updateListName()
         loadItemListOnResume()
+    }
+
+    // ALTERAÇÃO 1: Nova função para atualizar o nome da lista (mínima alteração)
+    private fun updateListName() {
+        binding.itemListListName.text = ShoppingListRepository.getListById(sourceListId)?.title
     }
 
     fun recyclerViewConfiguration() {
@@ -92,5 +107,19 @@ class ItemListActivity : AppCompatActivity() {
         ).toMutableList()
     }
 
+    private fun navigateToEditList() {
+        val listId = sourceListId
 
+        val listToEdit = listId.let { ShoppingListRepository.getListById(it) }
+
+        if (listToEdit != null) {
+            val intent = Intent(this, AddListActivity::class.java).apply {
+                putExtra(AddListActivity.EXTRA_LIST_ID, listToEdit.id)
+                putExtra(AddListActivity.EXTRA_IS_EDIT_MODE, true)
+            }
+            startActivity(intent)
+        } else {
+            Toast.makeText(this, "Erro: Não foi possível encontrar a lista para edição.", Toast.LENGTH_SHORT).show()
+        }
+    }
 }
