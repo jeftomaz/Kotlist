@@ -73,7 +73,9 @@ class AddItemActivity : AppCompatActivity() {
             validateAndAddItem(itemListId, itemName, itemQuantity.toIntOrNull(), itemUnit, itemCategory)
         }
 
-        // adicionar listener do botao de voltar para a tela da lista
+        binding.addItemCancelButton.setOnClickListener {
+            finish()
+        }
     }
 
     fun setDropdownAdapters() {

@@ -13,9 +13,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        android:background="@color/primaryPastel"
+        android:background="@color/light_grey"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/item_list_edit_button"
+        android:theme="@style/Widget.App.SearchViewWrapper"
         android:layout_margin="@dimen/margin_small">
 
         <androidx.appcompat.widget.SearchView
@@ -24,7 +25,8 @@
             android:layout_height="wrap_content"
             android:hint="@string/search_item_hint"
             app:iconifiedByDefault="true"
-            app:queryBackground="@color/primaryPastel"/>
+            app:queryBackground="@color/light_grey"
+            style="@style/Widget.App.SearchView"/>
     </com.google.android.material.appbar.AppBarLayout>
 
     <com.google.android.material.button.MaterialButton

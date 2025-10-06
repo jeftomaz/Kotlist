@@ -15,7 +15,9 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/logout_button"
-        android:layout_margin="@dimen/margin_small">
+        android:layout_margin="@dimen/margin_small"
+        android:background="@color/light_grey"
+        android:theme="@style/Widget.App.SearchViewWrapper">
 
         <androidx.appcompat.widget.SearchView
             android:id="@+id/search_view"

@@ -24,6 +24,18 @@
         <item name="fontFamily">@font/switzer_regular</item>
     </style>
 
+    <style name="Widget.App.SearchViewWrapper" parent="">
+        <item name="colorControlNormal">@color/softBlack</item>
+        <item name="android:textColorPrimary">@color/softBlack</item>
+        <item name="android:textColorHint">@color/grey</item>
+        <item name="colorControlActivated">@color/softBlack</item>
+    </style>
+
+    <style name="Widget.App.SearchView" parent="Widget.AppCompat.SearchView">
+        <item name="android:textColorHint">@color/primary</item>
+        <item name="colorControlNormal">@color/softBlack</item>
+    </style>
+
     <style name="Widget.App.InputWrapper" parent="Widget.Material3.TextInputLayout.OutlinedBox">
         <item name="boxStrokeColor">@color/input_color_set</item>
 
