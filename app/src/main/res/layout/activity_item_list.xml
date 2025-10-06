@@ -8,17 +8,24 @@
     android:id="@+id/item_list_main"
     android:background="@color/white">
 
-    <com.google.android.material.search.SearchBar
-        android:id="@+id/item_list_search_bar"
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/item_list_search_bar_wrapper"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_medium"
-        android:layout_marginTop="@dimen/margin_medium"
-        android:layout_marginEnd="@dimen/margin_small"
-        android:hint="@string/search_item_hint"
         app:layout_constraintTop_toTopOf="parent"
+        android:background="@color/primaryPastel"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/item_list_edit_button" />
+        app:layout_constraintEnd_toStartOf="@id/item_list_edit_button"
+        android:layout_margin="@dimen/margin_small">
+
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/item_list_search_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/search_item_hint"
+            app:iconifiedByDefault="true"
+            app:queryBackground="@color/primaryPastel"/>
+    </com.google.android.material.appbar.AppBarLayout>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/item_list_edit_button"
@@ -31,8 +38,8 @@
         app:iconGravity="textStart"
         style="@style/Widget.App.Button.IconCompact"
 
-        app:layout_constraintTop_toTopOf="@id/item_list_search_bar"
-        app:layout_constraintBottom_toBottomOf="@id/item_list_search_bar"
+        app:layout_constraintTop_toTopOf="@id/item_list_search_bar_wrapper"
+        app:layout_constraintBottom_toBottomOf="@id/item_list_search_bar_wrapper"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView

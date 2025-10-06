@@ -22,6 +22,7 @@ class ItemListActivity : AppCompatActivity() {
     private lateinit var binding: ActivityItemListBinding
     private lateinit var itemListAdapter: ItemListAdapter
     private lateinit var sourceListId: String
+    private var searchMasterItemList = mutableListOf<ListItem>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +48,8 @@ class ItemListActivity : AppCompatActivity() {
         sourceListId = intent.getStringExtra(MainTempActivity.EXTRA_LIST_ID)!!
         binding.itemListListName.text = ShoppingListRepository.getListById(sourceListId)?.title
         recyclerViewConfiguration()
+        loadAndDisplayItemList()
+        setupSearchView()
 
         binding.itemListAddItemButton.setOnClickListener {
             val intent = Intent(this, AddItemActivity::class.java).apply {
@@ -58,7 +61,7 @@ class ItemListActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        loadItemListOnResume()
+        loadAndDisplayItemList()
     }
 
     fun recyclerViewConfiguration() {
@@ -69,19 +72,13 @@ class ItemListActivity : AppCompatActivity() {
             ListItemRepository.updateItem(item)
 
             binding.itemListRecyclerItemsView.post {
-                loadItemListOnResume()
+                loadAndDisplayItemList()
             }
         }
 
         val recyclerView = binding.itemListRecyclerItemsView
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = itemListAdapter
-    }
-
-    fun loadItemListOnResume() {
-        val updatedListItems = ListItemRepository.getItemsFromList(sourceListId)
-        val sortedList = getSortedList(updatedListItems)
-        itemListAdapter.submitList(sortedList)
     }
 
     fun getSortedList(items: MutableList<ListItem>): MutableList<ListItem> {
@@ -92,5 +89,40 @@ class ItemListActivity : AppCompatActivity() {
         ).toMutableList()
     }
 
+    fun setupSearchView() {
+        binding.itemListSearchBar.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
 
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText != null) {
+                    filterAndSortItemList(newText)
+                }
+                return true
+            }
+        })
+    }
+
+    fun loadAndDisplayItemList() {
+        searchMasterItemList = ListItemRepository.getItemsFromList(sourceListId)
+        val currentQuery = binding.itemListSearchBar.query.toString()
+        filterAndSortItemList(currentQuery)
+    }
+
+    fun filterAndSortItemList(query: String) {
+        var filteredList: List<ListItem>
+
+        if (query.isEmpty()) {
+            filteredList = searchMasterItemList
+        } else {
+            filteredList = searchMasterItemList.filter { item ->
+                item.name.contains(query, ignoreCase = true)
+            }
+        }
+
+        val sortedList = getSortedList(filteredList.toMutableList())
+        itemListAdapter.submitList(sortedList)
+    }
 }
