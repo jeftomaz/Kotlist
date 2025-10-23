@@ -66,7 +66,9 @@
         <item name="android:fontFamily">@font/switzer_regular</item>
         <item name="android:textColor">@color/softBlack</item>
         <item name="startIconTint">@color/primary</item>
+        <item name="endIconTint">@color/primary</item>
         <item name="boxStrokeWidth">0dp</item>
+        <item name="boxStrokeWidthFocused">0dp</item>
         <item name="shapeAppearanceOverlay">@style/ShapeAppearance.App.InputWrapperCorners.Filled</item>
     </style>
 
