@@ -60,6 +60,21 @@
         <item name="android:textColor">@color/softBlack</item>
     </style>
 
+    <style name="Widget.App.InputWrapper.Filled" parent="Widget.Material3.TextInputLayout.FilledBox">
+        <item name="boxBackgroundColor">@color/backgroundInputFilled</item>
+        <item name="fontFamily">@font/switzer_regular</item>
+        <item name="android:fontFamily">@font/switzer_regular</item>
+        <item name="android:textColor">@color/softBlack</item>
+        <item name="startIconTint">@color/primary</item>
+        <item name="boxStrokeWidth">0dp</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.App.InputWrapperCorners.Filled</item>
+    </style>
+
+    <style name="ShapeAppearance.App.InputWrapperCorners.Filled" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">8dp</item>
+    </style>
+
     <style name="Widget.App.body" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="android:textSize">8sp</item>
         <item name="android:textStyle">normal</item>
@@ -129,8 +144,8 @@
     </style>
 
     <style name="Widget.App.FloatActionButton.Primary" parent="Widget.Material3.FloatingActionButton.Primary">
-        <item name="tint">@color/primaryPastel</item>
-        <item name="backgroundTint">@color/primary</item>
+        <item name="tint">@color/secondaryPastel</item>
+        <item name="backgroundTint">@color/secondary</item>
         <item name="rippleColor">@color/floatingActionButtonRipplePrimary</item>
     </style>
 

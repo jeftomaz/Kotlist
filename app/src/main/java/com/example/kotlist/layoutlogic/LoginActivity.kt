@@ -45,8 +45,8 @@ class LoginActivity : AppCompatActivity() {
             val email = binding.loginEmailInput.text.toString().trim()
             val password = binding.loginPasswordInput.text.toString().trim()
 
-            validateLogin(email, password)
-//            logUserMocked()
+//            validateLogin(email, password)
+            logUserMocked()
         }
 
         binding.loginCreateAccountButton.setOnClickListener {
@@ -100,7 +100,9 @@ class LoginActivity : AppCompatActivity() {
         UserRepository.signUpUser(user)
         UserRepository.setUserLoggedIn(user)
 
-        val intent = Intent(this, ListsActivity::class.java)
+        val intent = Intent(this, ListsActivity::class.java).apply {
+            putExtra(CREATE_EXAMPLE_LIST, true)
+        }
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
         overridePendingTransition(R.anim.zoom_in, R.anim.fade_out)

@@ -9,10 +9,10 @@ import com.example.kotlist.R
 import com.example.kotlist.data.model.ShoppingList
 import com.example.kotlist.databinding.ListItemGridBinding
 
-class ListAdapter(
+class ListsAdapter(
     private var lists: List<ShoppingList>,
     private val onItemClicked: (ShoppingList) -> Unit
-) : RecyclerView.Adapter<ListAdapter.ListViewHolder>() {
+) : RecyclerView.Adapter<ListsAdapter.ListViewHolder>() {
 
     class ListViewHolder(private val binding: ListItemGridBinding) :
         RecyclerView.ViewHolder(binding.root) {

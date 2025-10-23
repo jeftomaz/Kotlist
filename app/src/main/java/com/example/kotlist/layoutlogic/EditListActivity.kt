@@ -14,7 +14,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.kotlist.data.model.ShoppingList
 import com.example.kotlist.data.repository.ShoppingListRepository
-import com.example.kotlist.databinding.ActivityEditItemBinding
 import com.example.kotlist.databinding.ActivityEditListBinding
 
 class EditListActivity : AppCompatActivity() {
