@@ -8,6 +8,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.kotlist.data.model.ListItem
 import com.example.kotlist.data.repository.ListItemRepository
@@ -71,8 +72,8 @@ class ItemListActivity : AppCompatActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onStart() {
+        super.onStart()
 
         binding.itemListListName.text = ShoppingListRepository.getListById(sourceListId)?.title
         loadAndDisplayItemList()
@@ -111,34 +112,23 @@ class ItemListActivity : AppCompatActivity() {
     }
 
     fun setupSearchView() {
-        binding.itemListSearchBar.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
-
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                if (newText != null) {
-                    filterAndSortItemList(newText)
-                }
-                return true
-            }
-        })
+        binding.itemListSearchInput.addTextChangedListener { editable ->
+            val query = editable?.toString().orEmpty()
+            filterItemList(query)
+        }
     }
 
     fun loadAndDisplayItemList() {
         searchMasterItemList = ListItemRepository.getItemsFromList(sourceListId)
-        val currentQuery = binding.itemListSearchBar.query.toString()
-        filterAndSortItemList(currentQuery)
+        val currentQuery = binding.itemListSearchInput.text.toString()
+        filterItemList(currentQuery)
     }
 
-    fun filterAndSortItemList(query: String) {
-        var filteredList: List<ListItem>
-
-        if (query.isEmpty()) {
-            filteredList = searchMasterItemList
+    fun filterItemList(query: String) {
+        val filteredList: List<ListItem> = if(query.isEmpty()) {
+            searchMasterItemList
         } else {
-            filteredList = searchMasterItemList.filter { item ->
+            searchMasterItemList.filter { item ->
                 item.name.contains(query, ignoreCase = true)
             }
         }

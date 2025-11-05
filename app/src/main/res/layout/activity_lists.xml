@@ -8,26 +8,6 @@
     android:id="@+id/lists_main"
     android:background="@color/white">
 
-<!--    <com.google.android.material.appbar.AppBarLayout-->
-<!--        android:id="@+id/search_bar_outside"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintEnd_toStartOf="@id/logout_button"-->
-<!--        android:layout_margin="@dimen/margin_small"-->
-<!--        android:background="@color/light_grey"-->
-<!--        android:theme="@style/Widget.App.SearchViewWrapper">-->
-
-<!--        <androidx.appcompat.widget.SearchView-->
-<!--            android:id="@+id/search_view"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:hint="@string/search_item_hint"-->
-<!--            app:iconifiedByDefault="true"-->
-<!--            app:queryBackground="@color/primaryPastel"/>-->
-<!--    </com.google.android.material.appbar.AppBarLayout>-->
-
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/lists_search_input_wrapper"
         android:layout_width="0dp"

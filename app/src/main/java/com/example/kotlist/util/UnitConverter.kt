@@ -1,6 +1,5 @@
 package com.example.kotlist.util
 
-
 fun String.getDisplayUnitName(): String {
     return when (this.uppercase()) {
         "UNIT" -> "un"

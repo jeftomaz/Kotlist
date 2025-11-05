@@ -9,16 +9,15 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.appcompat.widget.SearchView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.widget.addTextChangedListener
 
 import com.example.kotlist.data.model.ShoppingList
 import com.example.kotlist.data.repository.ShoppingListRepository
 import com.example.kotlist.data.repository.UserRepository
 import com.example.kotlist.databinding.ActivityListsBinding
 import com.example.kotlist.layoutlogic.MainTempActivity.Companion.EXTRA_LIST_ID
-
 
 class ListsActivity : AppCompatActivity() {
 
@@ -68,11 +67,11 @@ class ListsActivity : AppCompatActivity() {
             handleLogout()
         }
 
-//        setupSearchListener()
+        setupSearchListener()
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onStart() {
+        super.onStart()
         loadAndDisplayLists()
     }
 
@@ -117,23 +116,15 @@ class ListsActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-//    private fun setupSearchListener() {
-//        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-//            override fun onQueryTextSubmit(query: String?): Boolean {
-//                filterLists(query.orEmpty())
-//                return true
-//            }
-//
-//            override fun onQueryTextChange(newText: String?): Boolean {
-//                filterLists(newText.orEmpty())
-//                return true
-//            }
-//        })
-//    }
+    private fun setupSearchListener() {
+        binding.listsSearchInput.addTextChangedListener { editable ->
+            val query = editable?.toString().orEmpty()
+            filterLists(query)
+        }
+    }
 
-    // Filtra as listas com base na query e atualiza o Adapter e o Empty State
     private fun filterLists(query: String) {
-        val filteredLists = if (query.isBlank()) {
+        val filteredLists = if(query.isBlank()) {
             allLists
         } else {
             allLists.filter {
