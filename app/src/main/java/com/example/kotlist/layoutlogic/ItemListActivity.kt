@@ -3,6 +3,7 @@ package com.example.kotlist.layoutlogic
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.view.View
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -17,7 +18,6 @@ import com.example.kotlist.data.repository.UserRepository
 import com.example.kotlist.databinding.ActivityAddItemBinding
 import com.example.kotlist.databinding.ActivityItemListBinding
 import com.example.kotlist.layoutlogic.ItemListAdapter
-import com.example.kotlist.layoutlogic.MainTempActivity.Companion.EXTRA_LIST_ID
 
 class ItemListActivity : AppCompatActivity() {
     private lateinit var binding: ActivityItemListBinding
@@ -51,7 +51,7 @@ class ItemListActivity : AppCompatActivity() {
             insets
         }
 
-        sourceListId = intent.getStringExtra(MainTempActivity.EXTRA_LIST_ID)!!
+        sourceListId = intent.getStringExtra(EXTRA_LIST_ID)!!
         binding.itemListListName.text = ShoppingListRepository.getListById(sourceListId)?.title
         recyclerViewConfiguration()
         loadAndDisplayItemList()
@@ -135,5 +135,19 @@ class ItemListActivity : AppCompatActivity() {
 
         val sortedList = getSortedList(filteredList.toMutableList())
         itemListAdapter.submitList(sortedList)
+
+        if(sortedList.isEmpty()) {
+            binding.itemListRecyclerItemsView.visibility = View.GONE
+            binding.listsFeedbackMessage.visibility = View.VISIBLE
+
+            if(query.isNotBlank()) {
+                binding.listsFeedbackMessage.text = "Nenhum item encontrado para \"$query\"."
+            } else {
+                binding.listsFeedbackMessage.text = "Esta lista está vazia! Toque no '+' para adicionar itens."
+            }
+        } else {
+            binding.itemListRecyclerItemsView.visibility = View.VISIBLE
+            binding.listsFeedbackMessage.visibility = View.GONE
+        }
     }
 }

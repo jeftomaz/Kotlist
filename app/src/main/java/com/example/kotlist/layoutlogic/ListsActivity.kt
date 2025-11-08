@@ -17,7 +17,6 @@ import com.example.kotlist.data.model.ShoppingList
 import com.example.kotlist.data.repository.ShoppingListRepository
 import com.example.kotlist.data.repository.UserRepository
 import com.example.kotlist.databinding.ActivityListsBinding
-import com.example.kotlist.layoutlogic.MainTempActivity.Companion.EXTRA_LIST_ID
 
 class ListsActivity : AppCompatActivity() {
 
@@ -103,7 +102,7 @@ class ListsActivity : AppCompatActivity() {
 
     private fun navigateToItemDetails(list: ShoppingList) {
         val intent = Intent(this, ItemListActivity::class.java).apply {
-            putExtra(EXTRA_LIST_ID, list.id)
+            putExtra(ItemListActivity.EXTRA_LIST_ID, list.id)
         }
         startActivity(intent)
     }
@@ -132,18 +131,18 @@ class ListsActivity : AppCompatActivity() {
             }
         }
 
-        if (filteredLists.isEmpty()) {
+        if(filteredLists.isEmpty()) {
             binding.recyclerViewLists.visibility = View.GONE
-            binding.textViewEmptyState.visibility = View.VISIBLE
+            binding.listsFeedbackMessage.visibility = View.VISIBLE
 
             if (query.isNotBlank())
-                binding.textViewEmptyState.text = "Nenhuma lista encontrada para \"$query\"."
+                binding.listsFeedbackMessage.text = "Nenhuma lista encontrada para \"$query\"."
             else
-                binding.textViewEmptyState.text = "Você ainda não tem listas! Toque no '+' para começar a adicionar."
+                binding.listsFeedbackMessage.text = "Você ainda não tem listas! Toque no '+' para começar a adicionar."
 
         } else {
             binding.recyclerViewLists.visibility = View.VISIBLE
-            binding.textViewEmptyState.visibility = View.GONE
+            binding.listsFeedbackMessage.visibility = View.GONE
             listsAdapter.updateData(filteredLists)
         }
     }
