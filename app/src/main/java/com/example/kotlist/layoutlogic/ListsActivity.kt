@@ -62,7 +62,7 @@ class ListsActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        binding.logoutButton.setOnClickListener {
+        binding.listsLogoutButton.setOnClickListener {
             Toast.makeText(this, "Sessão encerrada", Toast.LENGTH_SHORT).show()
             handleLogout()
         }

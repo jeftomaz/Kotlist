@@ -71,7 +71,7 @@
         android:id="@+id/edit_list_add_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/camera_icon"
+        app:srcCompat="@drawable/icon_camera"
         android:layout_marginRight="@dimen/margin_medium"
         app:fabCustomSize="@dimen/floating_button"
         app:maxImageSize="32dp"
