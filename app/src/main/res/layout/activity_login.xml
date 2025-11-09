@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_medium"
         android:text="Acesse sua conta"
-        style="@style/Widget.App.Heading1"
+        style="@style/TextAppearance.App.Heading1"
         android:textColor="@color/softBlack"
         app:layout_constraintTop_toBottomOf="@id/app_logo"
         app:layout_constraintStart_toStartOf="parent" />
@@ -42,7 +42,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:hint="E-mail"
-        style="@style/Widget.App.InputWrapper">
+        style="@style/Widget.App.InputWrapper.Outlined">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/login_email_input"
@@ -63,7 +63,7 @@
         android:layout_margin="@dimen/margin_medium"
         android:hint="Senha"
         app:endIconMode="password_toggle"
-        style="@style/Widget.App.InputWrapper">
+        style="@style/Widget.App.InputWrapper.Outlined">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/login_password_input"

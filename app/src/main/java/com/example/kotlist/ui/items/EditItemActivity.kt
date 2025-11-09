@@ -88,13 +88,13 @@ class EditItemActivity : AppCompatActivity() {
 
         val itemUnitsAdapter = ArrayAdapter(
             this,
-            R.layout.dropdown_input_item,
+            R.layout.component_dropdown_input_item,
             itemUnitsStringArray
         )
 
         val itemCategoriesAdapter = ArrayAdapter(
             this,
-            R.layout.dropdown_input_item,
+            R.layout.component_dropdown_input_item,
             itemCategoriesStringArray
         )
 

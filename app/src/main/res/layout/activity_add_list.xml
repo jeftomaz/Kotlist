@@ -16,7 +16,7 @@
         android:textStyle="bold"
         android:layout_margin="@dimen/margin_medium"
         android:textColor="@color/softBlack"
-        style="@style/Widget.App.Heading1"
+        style="@style/TextAppearance.App.Heading1"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_medium"
         android:hint="Nome da lista (Ex: Compras, Viagem)"
-        style="@style/Widget.App.InputWrapper"
+        style="@style/Widget.App.InputWrapper.Outlined"
         app:layout_constraintTop_toBottomOf="@id/add_list_title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -47,7 +47,7 @@
         android:textColor="@color/softBlack"
         android:layout_marginHorizontal="@dimen/margin_medium"
         android:layout_marginTop="@dimen/margin_large"
-        style="@style/Widget.App.Paragraph"
+        style="@style/TextAppearance.App.Paragraph"
         app:layout_constraintTop_toBottomOf="@id/add_list_list_name_input_wrapper"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
@@ -62,7 +62,7 @@
         android:layout_marginHorizontal="@dimen/margin_medium"
         android:background="#DCDCDC"
         android:contentDescription="Foto da lista"
-        app:shapeAppearanceOverlay="@style/Widget.App.RoundedImageView"
+        app:shapeAppearanceOverlay="@style/ShapeAppearance.App.RoundedCorners"
         app:layout_constraintTop_toBottomOf="@id/add_list_image_label"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -71,11 +71,11 @@
         android:id="@+id/add_list_add_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/camera_icon"
+        app:srcCompat="@drawable/icon_camera"
         android:layout_marginRight="@dimen/margin_medium"
         app:fabCustomSize="@dimen/floating_button"
         app:maxImageSize="32dp"
-        style="@style/Widget.App.FloatActionButton.Secundary"
+        style="@style/Widget.App.FloatingActionButton.Secondary"
         app:layout_constraintEnd_toEndOf="@id/add_list_image_preview"
         app:layout_constraintTop_toBottomOf="@id/add_list_image_preview"
         app:layout_constraintBottom_toBottomOf="@id/add_list_image_preview" />

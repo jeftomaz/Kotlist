@@ -23,7 +23,7 @@ class AddListActivity : AppCompatActivity() {
     private var placeholderImageId: Int = -1
 
     private val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-        if (uri != null) {
+        if(uri != null) {
 
             contentResolver.takePersistableUriPermission(
                 uri,
@@ -82,7 +82,7 @@ class AddListActivity : AppCompatActivity() {
     fun randomizeListCoverPlaceholder(): Int {
         val randomizedPlaceholder = ShoppingListRepository.getRandomPlaceholderId()
         binding.addListImagePreview.setImageURI("android.resource://$packageName/$randomizedPlaceholder".toUri())
-        return ShoppingListRepository.getRandomPlaceholderId()
+        return randomizedPlaceholder
     }
 
     fun createNewList(listTitle: String, coverImageUri: String?, placeholderImageId: Int, userId: String?) {

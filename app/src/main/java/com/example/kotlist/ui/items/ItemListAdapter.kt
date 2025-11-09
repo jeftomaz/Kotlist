@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.kotlist.R
 import com.example.kotlist.data.model.ListItem
-import com.example.kotlist.databinding.ListItemBinding
+import com.example.kotlist.databinding.ComponentListItemBinding
 import com.google.android.material.checkbox.MaterialCheckBox
 
 class ItemListAdapter (
@@ -21,7 +21,7 @@ class ItemListAdapter (
 ) : ListAdapter<ListItem, ItemListAdapter.ItemViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
-        val binding = ListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ComponentListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ItemViewHolder(binding)
     }
 
@@ -30,7 +30,7 @@ class ItemListAdapter (
         holder.bind(item, onCheckboxClicked, onItemClick)
     }
 
-    class ItemViewHolder(private val binding: ListItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    class ItemViewHolder(private val binding: ComponentListItemBinding) : RecyclerView.ViewHolder(binding.root) {
         private val context: Context = binding.root.context
 
         private val categoryIcon: ImageView = binding.listItemCategoryIcon
