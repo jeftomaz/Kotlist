@@ -1,4 +1,4 @@
-package com.example.kotlist.layoutlogic
+package com.example.kotlist.ui
 
 import android.net.Uri
 import android.view.LayoutInflater

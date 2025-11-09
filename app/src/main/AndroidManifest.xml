@@ -16,7 +16,7 @@
         android:theme="@style/Theme.Kotlist">
 
         <activity
-            android:name="com.example.kotlist.layoutlogic.LoginActivity"
+            android:name="com.example.kotlist.ui.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,37 +25,37 @@
         </activity>
 
         <activity
-            android:name="com.example.kotlist.layoutlogic.SignUpActivity"
+            android:name="com.example.kotlist.ui.SignUpActivity"
             android:exported="false">
         </activity>
 
         <activity
-            android:name="com.example.kotlist.layoutlogic.AddListActivity"
+            android:name="com.example.kotlist.ui.AddListActivity"
             android:exported="false">
         </activity>
 
         <activity
-            android:name="com.example.kotlist.layoutlogic.AddItemActivity"
+            android:name="com.example.kotlist.ui.AddItemActivity"
             android:exported="false">
         </activity>
 
         <activity
-            android:name="com.example.kotlist.layoutlogic.ItemListActivity"
+            android:name="com.example.kotlist.ui.ItemListActivity"
             android:exported="false">
         </activity>
 
         <activity
-            android:name="com.example.kotlist.layoutlogic.ListsActivity"
+            android:name="com.example.kotlist.ui.ListsActivity"
             android:exported="false">
         </activity>
 
         <activity
-            android:name="com.example.kotlist.layoutlogic.EditItemActivity"
+            android:name="com.example.kotlist.ui.EditItemActivity"
             android:exported="false">
         </activity>
 
         <activity
-            android:name="com.example.kotlist.layoutlogic.EditListActivity"
+            android:name="com.example.kotlist.ui.EditListActivity"
             android:exported="false">
         </activity>
 

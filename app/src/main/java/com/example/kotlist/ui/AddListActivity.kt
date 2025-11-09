@@ -1,8 +1,7 @@
-package com.example.kotlist.layoutlogic
+package com.example.kotlist.ui
 
 import android.content.Intent
 import android.graphics.Color
-import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.SystemBarStyle
@@ -12,12 +11,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.example.kotlist.R
 import com.example.kotlist.data.model.ShoppingList
 import com.example.kotlist.data.repository.ShoppingListRepository
 import com.example.kotlist.data.repository.UserRepository
 import com.example.kotlist.databinding.ActivityAddListBinding
-import com.example.kotlist.databinding.ActivityLoginBinding
 import androidx.core.net.toUri
 
 class AddListActivity : AppCompatActivity() {

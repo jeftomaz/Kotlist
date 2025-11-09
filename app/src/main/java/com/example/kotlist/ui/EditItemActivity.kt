@@ -1,4 +1,4 @@
-package com.example.kotlist.layoutlogic
+package com.example.kotlist.ui
 
 import android.graphics.Color
 import android.os.Bundle
@@ -14,7 +14,6 @@ import com.example.kotlist.data.model.ItemCategory
 import com.example.kotlist.data.model.ItemUnit
 import com.example.kotlist.data.model.ListItem
 import com.example.kotlist.data.repository.ListItemRepository
-import com.example.kotlist.databinding.ActivityAddItemBinding
 import com.example.kotlist.databinding.ActivityEditItemBinding
 
 class EditItemActivity : AppCompatActivity() {

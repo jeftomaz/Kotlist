@@ -1,4 +1,4 @@
-package com.example.kotlist.layoutlogic
+package com.example.kotlist.ui
 
 import android.content.Intent
 import android.graphics.Color
@@ -12,11 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.kotlist.data.model.ListItem
 import com.example.kotlist.data.repository.ListItemRepository
 import com.example.kotlist.data.repository.ShoppingListRepository
-import com.example.kotlist.data.repository.UserRepository
-import com.example.kotlist.databinding.ActivityAddItemBinding
 import com.example.kotlist.databinding.ActivityItemListBinding
-import com.example.kotlist.layoutlogic.ItemListAdapter
-import com.example.kotlist.layoutlogic.MainTempActivity.Companion.EXTRA_LIST_ID
 
 class ItemListActivity : AppCompatActivity() {
     private lateinit var binding: ActivityItemListBinding

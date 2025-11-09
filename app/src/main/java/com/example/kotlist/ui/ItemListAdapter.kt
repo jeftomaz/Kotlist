@@ -1,10 +1,8 @@
-package com.example.kotlist.layoutlogic
+package com.example.kotlist.ui
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Paint
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView

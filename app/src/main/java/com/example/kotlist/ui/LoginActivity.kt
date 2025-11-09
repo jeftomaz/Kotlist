@@ -1,4 +1,4 @@
-package com.example.kotlist.layoutlogic
+package com.example.kotlist.ui
 
 import android.content.Intent
 import android.graphics.Color
@@ -14,7 +14,7 @@ import com.example.kotlist.R
 import com.example.kotlist.data.model.User
 import com.example.kotlist.data.repository.UserRepository
 import com.example.kotlist.databinding.ActivityLoginBinding
-import com.example.kotlist.layoutlogic.ListsActivity.Companion.CREATE_EXAMPLE_LIST
+import com.example.kotlist.ui.ListsActivity.Companion.CREATE_EXAMPLE_LIST
 import com.example.kotlist.util.PasswordHasher
 
 class LoginActivity : AppCompatActivity() {

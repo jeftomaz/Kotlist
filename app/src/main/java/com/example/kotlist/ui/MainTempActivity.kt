@@ -1,4 +1,4 @@
-package com.example.kotlist.layoutlogic
+package com.example.kotlist.ui
 
 import android.content.Intent
 import android.graphics.Color

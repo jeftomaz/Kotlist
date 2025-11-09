@@ -1,4 +1,4 @@
-package com.example.kotlist.layoutlogic
+package com.example.kotlist.ui
 
 import android.content.Intent
 import android.graphics.Color
@@ -17,9 +17,7 @@ import com.example.kotlist.data.model.ShoppingList
 import com.example.kotlist.data.repository.ShoppingListRepository
 import com.example.kotlist.data.repository.UserRepository
 import com.example.kotlist.databinding.ActivityListsScreenBinding
-import com.example.kotlist.R
-import com.example.kotlist.databinding.ActivityMainTempBinding
-import com.example.kotlist.layoutlogic.MainTempActivity.Companion.EXTRA_LIST_ID
+import com.example.kotlist.ui.MainTempActivity.Companion.EXTRA_LIST_ID
 
 
 class ListsActivity : AppCompatActivity() {
