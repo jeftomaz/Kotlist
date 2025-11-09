@@ -7,38 +7,32 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.kotlist.R
 import com.example.kotlist.data.model.ShoppingList
-import com.example.kotlist.databinding.ListButtonBinding
+import com.example.kotlist.databinding.ComponentListButtonBinding
+import androidx.core.net.toUri
 
 class ListsAdapter(
     private var lists: List<ShoppingList>,
     private val onItemClicked: (ShoppingList) -> Unit
 ) : RecyclerView.Adapter<ListsAdapter.ListViewHolder>() {
 
-    class ListViewHolder(private val binding: ListButtonBinding) :
+    class ListViewHolder(private val binding: ComponentListButtonBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(list: ShoppingList, onItemClicked: (ShoppingList) -> Unit) {
             binding.textViewListTitle.text = list.title
 
-            if (list.coverImageUri != null) {
-                // Converte a String URI salva em um objeto Uri
-                val imageUri = Uri.parse(list.coverImageUri)
+            if(list.coverImageUri != null) {
+                val imageUri = list.coverImageUri.toUri()
 
-                // Usa o Coil para carregar a imagem da URI na ImageView
                 binding.imageViewListPhoto.load(imageUri) {
-                    // Garante que, se o carregamento falhar, o placeholder seja usado como fallback
                     error(list.placeholderImageId)
                 }
-
-            } else if (list.placeholderImageId != 0) {
-                // Carrega o placeholder gerado (se não houver URI)
+            } else if(list.placeholderImageId != -1) {
                 binding.imageViewListPhoto.setImageResource(list.placeholderImageId)
             } else {
-                // Fallback final
                 binding.imageViewListPhoto.setImageResource(R.drawable.placeholder_img_list_0)
             }
 
-            // Configura o clique no item
             binding.root.setOnClickListener {
                 onItemClicked(list)
             }
@@ -51,7 +45,7 @@ class ListsAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder {
-        val binding = ListButtonBinding.inflate(
+        val binding = ComponentListButtonBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false
