@@ -11,6 +11,9 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.kotlist.data.repository.ShoppingListRepository
 import com.example.kotlist.data.repository.UserRepository
 import com.example.kotlist.databinding.ActivityMainTempBinding
+import com.example.kotlist.ui.items.AddItemActivity
+import com.example.kotlist.ui.items.ItemListActivity
+import com.example.kotlist.ui.lists.AddListActivity
 
 // ACTIVITY MAIN TEMPORARIA PARA TESTES
 

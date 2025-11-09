@@ -1,4 +1,4 @@
-package com.example.kotlist.ui
+package com.example.kotlist.ui.lists
 
 import android.content.Intent
 import android.graphics.Color
@@ -9,13 +9,13 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.kotlist.data.model.ShoppingList
 import com.example.kotlist.data.repository.ShoppingListRepository
 import com.example.kotlist.data.repository.UserRepository
 import com.example.kotlist.databinding.ActivityAddListBinding
-import androidx.core.net.toUri
 
 class AddListActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddListBinding
@@ -40,10 +40,10 @@ class AddListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.light(
+            statusBarStyle = SystemBarStyle.Companion.light(
                 Color.TRANSPARENT, Color.TRANSPARENT
             ),
-            navigationBarStyle = SystemBarStyle.light(
+            navigationBarStyle = SystemBarStyle.Companion.light(
                 Color.TRANSPARENT, Color.TRANSPARENT
             )
         )
@@ -96,7 +96,12 @@ class AddListActivity : AppCompatActivity() {
             return
         }
 
-        val newList = ShoppingList(title = listTitle, coverImageUri = coverImageUri, placeholderImageId = placeholderImageId, userId = userId)
+        val newList = ShoppingList(
+            title = listTitle,
+            coverImageUri = coverImageUri,
+            placeholderImageId = placeholderImageId,
+            userId = userId
+        )
         ShoppingListRepository.addList(newList)
 
         Toast.makeText(this, "Nova lista criada com sucesso!", Toast.LENGTH_SHORT).show()
@@ -105,8 +110,13 @@ class AddListActivity : AppCompatActivity() {
 
     // dev environment
     fun createMockedList() {
-        val newList = ShoppingList(title =  "Lista teste", coverImageUri = null, placeholderImageId = randomizeListCoverPlaceholder(), userId = UserRepository.getUserLoggedIn()?.id
-            ?: "")
+        val newList = ShoppingList(
+            title = "Lista teste",
+            coverImageUri = null,
+            placeholderImageId = randomizeListCoverPlaceholder(),
+            userId = UserRepository.getUserLoggedIn()?.id
+                ?: ""
+        )
         ShoppingListRepository.addList(newList)
 
         Toast.makeText(this, "Nova lista criada com sucesso!", Toast.LENGTH_SHORT).show()

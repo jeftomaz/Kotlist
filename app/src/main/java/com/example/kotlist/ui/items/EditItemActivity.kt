@@ -1,4 +1,4 @@
-package com.example.kotlist.ui
+package com.example.kotlist.ui.items
 
 import android.graphics.Color
 import android.os.Bundle
@@ -32,10 +32,10 @@ class EditItemActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.light(
+            statusBarStyle = SystemBarStyle.Companion.light(
                 Color.TRANSPARENT, Color.TRANSPARENT
             ),
-            navigationBarStyle = SystemBarStyle.light(
+            navigationBarStyle = SystemBarStyle.Companion.light(
                 Color.TRANSPARENT, Color.TRANSPARENT
             )
         )

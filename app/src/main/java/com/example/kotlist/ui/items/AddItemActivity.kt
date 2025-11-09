@@ -1,6 +1,5 @@
-package com.example.kotlist.ui
+package com.example.kotlist.ui.items
 
-import com.example.kotlist.R
 import android.graphics.Color
 import android.os.Bundle
 import android.widget.ArrayAdapter
@@ -10,6 +9,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.kotlist.R
 import com.example.kotlist.data.model.ItemCategory
 import com.example.kotlist.data.model.ItemUnit
 import com.example.kotlist.data.model.ListItem
@@ -31,10 +31,10 @@ class AddItemActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.light(
+            statusBarStyle = SystemBarStyle.Companion.light(
                 Color.TRANSPARENT, Color.TRANSPARENT
             ),
-            navigationBarStyle = SystemBarStyle.light(
+            navigationBarStyle = SystemBarStyle.Companion.light(
                 Color.TRANSPARENT, Color.TRANSPARENT
             )
         )
@@ -123,7 +123,13 @@ class AddItemActivity : AppCompatActivity() {
             return
         }
 
-        val newListItem = ListItem(listId = listId, name = name, quantity = quantity, unit = unit, category = category)
+        val newListItem = ListItem(
+            listId = listId,
+            name = name,
+            quantity = quantity,
+            unit = unit,
+            category = category
+        )
         ListItemRepository.addItem(newListItem)
 
         Toast.makeText(this, "Novo item da lista criado com sucesso.", Toast.LENGTH_SHORT).show()

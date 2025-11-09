@@ -1,4 +1,4 @@
-package com.example.kotlist.ui
+package com.example.kotlist.ui.lists
 
 import android.content.Intent
 import android.graphics.Color
@@ -15,6 +15,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.kotlist.data.model.ShoppingList
 import com.example.kotlist.data.repository.ShoppingListRepository
 import com.example.kotlist.databinding.ActivityEditListBinding
+import com.example.kotlist.ui.lists.ListsActivity
 
 class EditListActivity : AppCompatActivity() {
     private lateinit var binding: ActivityEditListBinding
@@ -44,10 +45,10 @@ class EditListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.light(
+            statusBarStyle = SystemBarStyle.Companion.light(
                 Color.TRANSPARENT, Color.TRANSPARENT
             ),
-            navigationBarStyle = SystemBarStyle.light(
+            navigationBarStyle = SystemBarStyle.Companion.light(
                 Color.TRANSPARENT, Color.TRANSPARENT
             )
         )

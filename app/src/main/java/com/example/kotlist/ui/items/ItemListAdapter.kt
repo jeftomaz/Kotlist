@@ -1,4 +1,4 @@
-package com.example.kotlist.ui
+package com.example.kotlist.ui.items
 
 import android.content.Context
 import android.graphics.Paint
@@ -8,8 +8,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.example.kotlist.R
 import com.example.kotlist.data.model.ListItem
 import com.example.kotlist.databinding.ListItemBinding

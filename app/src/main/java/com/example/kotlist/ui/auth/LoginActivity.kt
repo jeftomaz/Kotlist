@@ -1,4 +1,4 @@
-package com.example.kotlist.ui
+package com.example.kotlist.ui.auth
 
 import android.content.Intent
 import android.graphics.Color
@@ -14,7 +14,8 @@ import com.example.kotlist.R
 import com.example.kotlist.data.model.User
 import com.example.kotlist.data.repository.UserRepository
 import com.example.kotlist.databinding.ActivityLoginBinding
-import com.example.kotlist.ui.ListsActivity.Companion.CREATE_EXAMPLE_LIST
+import com.example.kotlist.ui.lists.ListsActivity
+import com.example.kotlist.ui.auth.SignUpActivity
 import com.example.kotlist.util.PasswordHasher
 
 class LoginActivity : AppCompatActivity() {
@@ -23,10 +24,10 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.light(
+            statusBarStyle = SystemBarStyle.Companion.light(
                 Color.TRANSPARENT, Color.TRANSPARENT
             ),
-            navigationBarStyle = SystemBarStyle.light(
+            navigationBarStyle = SystemBarStyle.Companion.light(
                 Color.TRANSPARENT, Color.TRANSPARENT
             )
         )
@@ -83,7 +84,7 @@ class LoginActivity : AppCompatActivity() {
             Toast.makeText(this, "Bem-vindo(a), ${user.name}", Toast.LENGTH_SHORT).show()
 
             val intent = Intent(this, ListsActivity::class.java).apply {
-                putExtra(CREATE_EXAMPLE_LIST, true)
+                putExtra(ListsActivity.Companion.CREATE_EXAMPLE_LIST, true)
             }
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)

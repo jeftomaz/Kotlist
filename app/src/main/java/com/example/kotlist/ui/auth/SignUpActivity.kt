@@ -1,4 +1,4 @@
-package com.example.kotlist.ui
+package com.example.kotlist.ui.auth
 
 import android.content.Intent
 import android.graphics.Color
@@ -22,10 +22,10 @@ class SignUpActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.light(
+            statusBarStyle = SystemBarStyle.Companion.light(
                 Color.TRANSPARENT, Color.TRANSPARENT
             ),
-            navigationBarStyle = SystemBarStyle.light(
+            navigationBarStyle = SystemBarStyle.Companion.light(
                 Color.TRANSPARENT, Color.TRANSPARENT
             )
         )
@@ -99,7 +99,8 @@ class SignUpActivity : AppCompatActivity() {
             return
         }
 
-        val newUser = User(name = name, email = email, password = PasswordHasher.hashPassword(password))
+        val newUser =
+            User(name = name, email = email, password = PasswordHasher.hashPassword(password))
 
         UserRepository.signUpUser(newUser)
 

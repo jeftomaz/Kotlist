@@ -1,4 +1,4 @@
-package com.example.kotlist.ui
+package com.example.kotlist.ui.items
 
 import android.content.Intent
 import android.graphics.Color
@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,6 +14,9 @@ import com.example.kotlist.data.model.ListItem
 import com.example.kotlist.data.repository.ListItemRepository
 import com.example.kotlist.data.repository.ShoppingListRepository
 import com.example.kotlist.databinding.ActivityItemListBinding
+import com.example.kotlist.ui.items.ItemListAdapter
+import com.example.kotlist.ui.MainTempActivity
+import com.example.kotlist.ui.lists.EditListActivity
 
 class ItemListActivity : AppCompatActivity() {
     private lateinit var binding: ActivityItemListBinding
@@ -28,10 +32,10 @@ class ItemListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.light(
+            statusBarStyle = SystemBarStyle.Companion.light(
                 Color.TRANSPARENT, Color.TRANSPARENT
             ),
-            navigationBarStyle = SystemBarStyle.light(
+            navigationBarStyle = SystemBarStyle.Companion.light(
                 Color.TRANSPARENT, Color.TRANSPARENT
             )
         )
@@ -46,7 +50,7 @@ class ItemListActivity : AppCompatActivity() {
             insets
         }
 
-        sourceListId = intent.getStringExtra(MainTempActivity.EXTRA_LIST_ID)!!
+        sourceListId = intent.getStringExtra(MainTempActivity.Companion.EXTRA_LIST_ID)!!
         binding.itemListListName.text = ShoppingListRepository.getListById(sourceListId)?.title
         recyclerViewConfiguration()
         loadAndDisplayItemList()
@@ -75,7 +79,7 @@ class ItemListActivity : AppCompatActivity() {
     }
 
     fun recyclerViewConfiguration() {
-        itemListAdapter = ItemListAdapter (
+        itemListAdapter = ItemListAdapter(
             onCheckboxClicked = { item, isChecked ->
                 item.isChecked = isChecked
                 ListItemRepository.updateItem(item)
@@ -107,7 +111,7 @@ class ItemListActivity : AppCompatActivity() {
     }
 
     fun setupSearchView() {
-        binding.itemListSearchBar.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
+        binding.itemListSearchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false

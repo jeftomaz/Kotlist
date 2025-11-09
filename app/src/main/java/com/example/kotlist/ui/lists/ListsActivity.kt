@@ -1,4 +1,4 @@
-package com.example.kotlist.ui
+package com.example.kotlist.ui.lists
 
 import android.content.Intent
 import android.graphics.Color
@@ -8,17 +8,18 @@ import android.widget.Toast
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-
+import androidx.recyclerview.widget.GridLayoutManager
 import com.example.kotlist.data.model.ShoppingList
 import com.example.kotlist.data.repository.ShoppingListRepository
 import com.example.kotlist.data.repository.UserRepository
 import com.example.kotlist.databinding.ActivityListsScreenBinding
-import com.example.kotlist.ui.MainTempActivity.Companion.EXTRA_LIST_ID
-
+import com.example.kotlist.ui.lists.ListAdapter
+import com.example.kotlist.ui.MainTempActivity
+import com.example.kotlist.ui.auth.LoginActivity
+import com.example.kotlist.ui.items.ItemListActivity
 
 class ListsActivity : AppCompatActivity() {
 
@@ -33,10 +34,10 @@ class ListsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.light(
+            statusBarStyle = SystemBarStyle.Companion.light(
                 Color.TRANSPARENT, Color.TRANSPARENT
             ),
-            navigationBarStyle = SystemBarStyle.light(
+            navigationBarStyle = SystemBarStyle.Companion.light(
                 Color.TRANSPARENT, Color.TRANSPARENT
             )
         )
@@ -104,7 +105,7 @@ class ListsActivity : AppCompatActivity() {
 
     private fun navigateToItemDetails(list: ShoppingList) {
         val intent = Intent(this, ItemListActivity::class.java).apply {
-            putExtra(EXTRA_LIST_ID, list.id)
+            putExtra(MainTempActivity.Companion.EXTRA_LIST_ID, list.id)
         }
         startActivity(intent)
     }
