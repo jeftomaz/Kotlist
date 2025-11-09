@@ -43,11 +43,11 @@
         app:layout_constraintTop_toTopOf="@id/item_list_search_input_wrapper"
         app:layout_constraintBottom_toBottomOf="@id/item_list_search_input_wrapper"
         app:layout_constraintEnd_toEndOf="parent"
-        style="@style/Widget.App.IconButton.Primary" />
+        style="@style/Widget.App.Button.Icon.Primary" />
 
     <TextView
         android:id="@+id/item_list_list_name"
-        style="@style/Widget.App.Heading1"
+        style="@style/TextAppearance.App.Heading1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_medium"
@@ -91,7 +91,7 @@
         app:fabCustomSize="@dimen/floating_button"
         app:maxImageSize="40dp"
         android:src="@drawable/icon_add"
-        style="@style/Widget.App.FloatActionButton.Primary"
+        style="@style/Widget.App.FloatingActionButton.Primary"
         android:contentDescription="Adicionar Nova Lista"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />

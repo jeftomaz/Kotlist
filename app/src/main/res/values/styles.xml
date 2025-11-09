@@ -1,27 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Widget.App.Heading1" parent="">
+    <style name="TextAppearance.App.Heading1" parent="">
         <item name="android:textSize">32sp</item>
         <item name="android:textStyle">bold</item>
         <item name="fontFamily">@font/switzer_bold</item>
     </style>
 
-    <style name="Widget.App.Heading2" parent="">
+    <style name="TextAppearance.App.Heading2" parent="">
         <item name="android:textSize">24sp</item>
         <item name="android:textStyle">bold</item>
         <item name="fontFamily">@font/switzer_bold</item>
     </style>
 
-    <style name="Widget.App.Heading3" parent="">
+    <style name="TextAppearance.App.Heading3" parent="">
         <item name="android:textSize">16sp</item>
         <item name="android:textStyle">normal</item>
         <item name="fontFamily">@font/switzer_bold</item>
     </style>
 
-    <style name="Widget.App.Paragraph" parent="">
+    <style name="TextAppearance.App.Paragraph" parent="">
         <item name="android:textSize">16sp</item>
         <item name="android:textStyle">normal</item>
         <item name="fontFamily">@font/switzer_regular</item>
+    </style>
+
+    <style name="TextAppearance.App.Body" parent="">
+        <item name="android:textSize">8sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="fontFamily">@font/switzer_bold</item>
     </style>
 
     <style name="Widget.App.SearchViewWrapper" parent="">
@@ -36,18 +42,14 @@
         <item name="colorControlNormal">@color/softBlack</item>
     </style>
 
-    <style name="Widget.App.InputWrapper" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+    <style name="Widget.App.InputWrapper.Outlined" parent="Widget.Material3.TextInputLayout.OutlinedBox">
         <item name="boxStrokeColor">@color/input_color_set</item>
-
         <item name="android:textColorHint">@color/input_color_set</item>
         <item name="hintTextColor">@color/input_color_set</item>
-
         <item name="endIconTint">@color/input_color_set</item>
-
         <item name="boxStrokeErrorColor">@color/inputError</item>
         <item name="errorTextColor">@color/inputError</item>
         <item name="errorIconTint">@color/inputError</item>
-
         <item name="android:fontFamily">@font/switzer_regular</item>
         <item name="boxCornerRadiusTopStart">8dp</item>
         <item name="boxCornerRadiusTopEnd">8dp</item>
@@ -77,62 +79,31 @@
         <item name="cornerSize">8dp</item>
     </style>
 
-    <style name="Widget.App.body" parent="Widget.Material3.TextInputLayout.OutlinedBox">
-        <item name="android:textSize">8sp</item>
-        <item name="android:textStyle">normal</item>
-        <item name="fontFamily">@font/switzer_bold</item>
-    </style>
-
     <style name="Widget.App.DropdownWrapper" parent="Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
         <item name="boxStrokeColor">@color/input_color_set</item>
-
         <item name="android:textColorHint">@color/input_color_set</item>
         <item name="hintTextColor">@color/input_color_set</item>
-
         <item name="endIconTint">@color/input_color_set</item>
-
         <item name="boxStrokeErrorColor">@color/inputError</item>
         <item name="errorTextColor">@color/inputError</item>
         <item name="errorIconTint">@color/inputError</item>
-
         <item name="android:fontFamily">@font/switzer_regular</item>
         <item name="boxCornerRadiusTopStart">8dp</item>
         <item name="boxCornerRadiusTopEnd">8dp</item>
         <item name="boxCornerRadiusBottomStart">8dp</item>
         <item name="boxCornerRadiusBottomEnd">8dp</item>
-
         <item name="colorControlHighlight">@color/primaryPastel</item>
     </style>
 
     <style name="Widget.App.Dropdown" parent="Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
         <item name="fontFamily">@font/switzer_regular</item>
-        <item name="android:textSize">16dp</item>
+        <item name="android:textSize">16sp</item>
         <item name="android:textColor">@color/softBlack</item>
     </style>
 
     <style name="Widget.App.Button.Primary" parent="Widget.Material3.Button">
         <item name="backgroundTint">@color/primary</item>
         <item name="rippleColor">@color/primaryButtonRipple</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textSize">16sp</item>
-        <item name="fontFamily">@font/switzer_regular</item>
-        <item name="cornerRadius">8dp</item>
-        <item name="android:paddingTop">@dimen/margin_medium</item>
-        <item name="android:paddingBottom">@dimen/margin_medium</item>
-    </style>
-
-    <style name="Widget.App.IconButton.Primary" parent="Widget.Material3.Button.Icon">
-        <item name="backgroundTint">@color/primary</item>
-        <item name="rippleColor">@color/primaryButtonRipple</item>
-        <item name="iconTint">@color/white</item>
-        <item name="cornerRadius">8dp</item>
-        <item name="android:paddingTop">@dimen/margin_medium</item>
-        <item name="android:paddingBottom">@dimen/margin_medium</item>
-    </style>
-
-    <style name="Widget.App.Button.Delete" parent="Widget.Material3.Button">
-        <item name="backgroundTint">@color/deleteButton</item>
-        <item name="rippleColor">@color/deleteButtonRipple</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">16sp</item>
         <item name="fontFamily">@font/switzer_regular</item>
@@ -154,24 +125,44 @@
         <item name="android:paddingBottom">@dimen/margin_medium</item>
     </style>
 
-    <style name="Widget.App.FloatActionButton.Primary" parent="Widget.Material3.FloatingActionButton.Primary">
+    <style name="Widget.App.Button.Icon.Primary" parent="Widget.Material3.Button.Icon">
+        <item name="backgroundTint">@color/primary</item>
+        <item name="rippleColor">@color/primaryButtonRipple</item>
+        <item name="iconTint">@color/white</item>
+        <item name="cornerRadius">8dp</item>
+        <item name="android:paddingTop">@dimen/margin_medium</item>
+        <item name="android:paddingBottom">@dimen/margin_medium</item>
+    </style>
+
+    <style name="Widget.App.Button.Delete" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/deleteButton</item>
+        <item name="rippleColor">@color/deleteButtonRipple</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">16sp</item>
+        <item name="fontFamily">@font/switzer_regular</item>
+        <item name="cornerRadius">8dp</item>
+        <item name="android:paddingTop">@dimen/margin_medium</item>
+        <item name="android:paddingBottom">@dimen/margin_medium</item>
+    </style>
+
+    <style name="Widget.App.FloatingActionButton.Primary" parent="Widget.Material3.FloatingActionButton.Primary">
         <item name="tint">@color/secondaryPastel</item>
         <item name="backgroundTint">@color/secondary</item>
         <item name="rippleColor">@color/floatingActionButtonRipplePrimary</item>
     </style>
 
-    <style name="Widget.App.FloatActionButton.Secundary" parent="Widget.Material3.FloatingActionButton.Primary">
+    <style name="Widget.App.FloatingActionButton.Secondary" parent="Widget.Material3.FloatingActionButton.Primary">
         <item name="tint">@color/primary</item>
         <item name="backgroundTint">@color/primaryPastel</item>
         <item name="rippleColor">@color/floatingActionButtonRippleSecundary</item>
     </style>
 
-    <style name="Widget.App.RoundedImageView" parent="">
+    <style name="ShapeAppearance.App.RoundedCorners" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">8dp</item>
     </style>
 
-    <style name="dropdownInputThemeOverlay" parent="ThemeOverlay.Material3.AutoCompleteTextView.OutlinedBox">
+    <style name="ThemeOverlay.App.Dropdown" parent="ThemeOverlay.Material3.AutoCompleteTextView.OutlinedBox">
         <item name="colorSurfaceContainer">@color/white</item>
         <item name="colorSurface">@color/white</item>
     </style>

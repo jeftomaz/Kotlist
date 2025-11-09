@@ -18,7 +18,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        style="@style/Widget.App.Heading1"/>
+        style="@style/TextAppearance.App.Heading1"/>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/signup_name_input_wrapper"
@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_medium"
         android:hint="Nome"
-        style="@style/Widget.App.InputWrapper"
+        style="@style/Widget.App.InputWrapper.Outlined"
         app:layout_constraintTop_toBottomOf="@id/signup_screen_title"
         app:layout_constraintBottom_toTopOf="@id/signup_email_input_wrapper"
         app:layout_constraintStart_toStartOf="parent"
@@ -45,7 +45,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_medium"
         android:hint="E-mail"
-        style="@style/Widget.App.InputWrapper"
+        style="@style/Widget.App.InputWrapper.Outlined"
         app:layout_constraintTop_toBottomOf="@id/signup_name_input_wrapper"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -64,7 +64,7 @@
         android:layout_height="wrap_content"
         android:hint="Senha"
         app:endIconMode="password_toggle"
-        style="@style/Widget.App.InputWrapper"
+        style="@style/Widget.App.InputWrapper.Outlined"
         app:layout_constraintTop_toBottomOf="@id/signup_email_input_wrapper"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -84,7 +84,7 @@
         android:layout_height="wrap_content"
         android:hint="Confirmar senha"
         app:endIconMode="password_toggle"
-        style="@style/Widget.App.InputWrapper"
+        style="@style/Widget.App.InputWrapper.Outlined"
         app:layout_constraintTop_toBottomOf="@id/signup_password_input_wrapper"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

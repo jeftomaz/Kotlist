@@ -7,14 +7,14 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.kotlist.R
 import com.example.kotlist.data.model.ShoppingList
-import com.example.kotlist.databinding.ListItemGridBinding
+import com.example.kotlist.databinding.ListButtonBinding
 
 class ListsAdapter(
     private var lists: List<ShoppingList>,
     private val onItemClicked: (ShoppingList) -> Unit
 ) : RecyclerView.Adapter<ListsAdapter.ListViewHolder>() {
 
-    class ListViewHolder(private val binding: ListItemGridBinding) :
+    class ListViewHolder(private val binding: ListButtonBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(list: ShoppingList, onItemClicked: (ShoppingList) -> Unit) {
@@ -51,7 +51,7 @@ class ListsAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder {
-        val binding = ListItemGridBinding.inflate(
+        val binding = ListButtonBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false

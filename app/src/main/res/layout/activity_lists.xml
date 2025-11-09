@@ -43,11 +43,11 @@
         app:layout_constraintTop_toTopOf="@id/lists_search_input_wrapper"
         app:layout_constraintBottom_toBottomOf="@id/lists_search_input_wrapper"
         app:layout_constraintEnd_toEndOf="parent"
-        style="@style/Widget.App.IconButton.Primary" />
+        style="@style/Widget.App.Button.Icon.Primary" />
 
     <TextView
         android:id="@+id/text_view_section_title"
-        style="@style/Widget.App.Heading1"
+        style="@style/TextAppearance.App.Heading1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_medium"
@@ -82,7 +82,7 @@
         app:layout_constraintTop_toBottomOf="@id/text_view_section_title"
         app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:listitem="@layout/list_item_grid"/>
+        tools:listitem="@layout/list_button"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add_list"
@@ -93,7 +93,7 @@
         app:fabCustomSize="@dimen/floating_button"
         app:maxImageSize="45dp"
         android:src="@drawable/icon_add"
-        style="@style/Widget.App.FloatActionButton.Primary"
+        style="@style/Widget.App.FloatingActionButton.Primary"
         android:contentDescription="Adicionar Nova Lista"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
