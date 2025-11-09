@@ -7,7 +7,6 @@ import android.view.View
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.SearchView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
@@ -16,7 +15,6 @@ import com.example.kotlist.data.model.ListItem
 import com.example.kotlist.data.repository.ListItemRepository
 import com.example.kotlist.data.repository.ShoppingListRepository
 import com.example.kotlist.databinding.ActivityItemListBinding
-import com.example.kotlist.ui.items.ItemListAdapter
 import com.example.kotlist.ui.lists.EditListActivity
 
 class ItemListActivity : AppCompatActivity() {

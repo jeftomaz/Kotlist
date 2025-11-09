@@ -15,7 +15,7 @@ import com.example.kotlist.data.model.User
 import com.example.kotlist.data.repository.UserRepository
 import com.example.kotlist.databinding.ActivityLoginBinding
 import com.example.kotlist.ui.lists.ListsActivity
-import com.example.kotlist.ui.auth.SignUpActivity
+import com.example.kotlist.ui.lists.ListsActivity.Companion.CREATE_EXAMPLE_LIST
 import com.example.kotlist.util.PasswordHasher
 
 class LoginActivity : AppCompatActivity() {

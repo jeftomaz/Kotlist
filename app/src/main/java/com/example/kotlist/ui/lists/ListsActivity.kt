@@ -16,7 +16,6 @@ import com.example.kotlist.data.model.ShoppingList
 import com.example.kotlist.data.repository.ShoppingListRepository
 import com.example.kotlist.data.repository.UserRepository
 import com.example.kotlist.databinding.ActivityListsBinding
-import com.example.kotlist.ui.lists.ListsAdapter
 import com.example.kotlist.ui.auth.LoginActivity
 import com.example.kotlist.ui.items.ItemListActivity
 
