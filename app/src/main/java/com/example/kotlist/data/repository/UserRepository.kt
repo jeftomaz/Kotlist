@@ -2,7 +2,7 @@ package com.example.kotlist.data.repository
 
 import com.example.kotlist.data.model.User
 
-object UserRepository {
+class UserRepository {
     private val users = mutableListOf<User>()
     private var userLoggedIn: User? = null
 
