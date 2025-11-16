@@ -6,12 +6,12 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.kotlist.data.model.ListItem
 import com.example.kotlist.data.repository.ListItemRepository
 import com.example.kotlist.data.repository.ShoppingListRepository
 import com.example.kotlist.databinding.ActivityItemListBinding
@@ -21,7 +21,11 @@ class ItemListActivity : AppCompatActivity() {
     private lateinit var binding: ActivityItemListBinding
     private lateinit var itemListAdapter: ItemListAdapter
     private lateinit var sourceListId: String
-    private var searchMasterItemList = mutableListOf<ListItem>()
+
+    // Inicializa o ViewModel usando a Factory
+    private val viewModel: ItemListViewModel by viewModels {
+        ItemListViewModelFactory(ListItemRepository, ShoppingListRepository)
+    }
 
     companion object {
         const val EXTRA_LIST_ID = "EXTRA_LIST_ID"
@@ -31,15 +35,10 @@ class ItemListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.Companion.light(
-                Color.TRANSPARENT, Color.TRANSPARENT
-            ),
-            navigationBarStyle = SystemBarStyle.Companion.light(
-                Color.TRANSPARENT, Color.TRANSPARENT
-            )
+            statusBarStyle = SystemBarStyle.Companion.light(Color.TRANSPARENT, Color.TRANSPARENT),
+            navigationBarStyle = SystemBarStyle.Companion.light(Color.TRANSPARENT, Color.TRANSPARENT)
         )
 
-        // ViewBinding configuration
         binding = ActivityItemListBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -50,102 +49,103 @@ class ItemListActivity : AppCompatActivity() {
         }
 
         sourceListId = intent.getStringExtra(EXTRA_LIST_ID)!!
-        binding.itemListListName.text = ShoppingListRepository.getListById(sourceListId)?.title
-        recyclerViewConfiguration()
-        loadAndDisplayItemList()
-        setupSearchView()
 
-        binding.itemListEditListButton.setOnClickListener {
-            val intent = Intent(this, EditListActivity::class.java).apply {
-                putExtra(EXTRA_LIST_ID, intent.getStringExtra(EXTRA_LIST_ID))
-            }
-            startActivity(intent)
-        }
-
-        binding.itemListAddItemButton.setOnClickListener {
-            val intent = Intent(this, AddItemActivity::class.java).apply {
-                putExtra(EXTRA_LIST_ID, intent.getStringExtra(EXTRA_LIST_ID))
-            }
-            startActivity(intent)
-        }
+        setupRecyclerView()
+        setupListeners()
+        setupObservers()
     }
 
     override fun onStart() {
         super.onStart()
-
-        binding.itemListListName.text = ShoppingListRepository.getListById(sourceListId)?.title
-        loadAndDisplayItemList()
+        // A Activity apenas avisa o ViewModel para carregar os dados
+        viewModel.loadData(sourceListId)
     }
 
-    fun recyclerViewConfiguration() {
+    private fun setupRecyclerView() {
         itemListAdapter = ItemListAdapter(
             onCheckboxClicked = { item, isChecked ->
-                item.isChecked = isChecked
-                ListItemRepository.updateItem(item)
-                binding.itemListRecyclerItemsView.post {
-                    loadAndDisplayItemList()
-                }
+                // A Activity avisa o ViewModel sobre a mudança
+                viewModel.onItemCheckedChanged(item, isChecked)
             },
-
             onItemClick = { item ->
-                val intent = Intent(this, EditItemActivity::class.java).apply {
-                    putExtra(EXTRA_LIST_ID, sourceListId)
-                    putExtra(EXTRA_LIST_ITEM_ID, item.id)
-                }
-                startActivity(intent)
+                navigateToEditItem(item.id)
             }
         )
 
-        val recyclerView = binding.itemListRecyclerItemsView
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = itemListAdapter
+        binding.itemListRecyclerItemsView.layoutManager = LinearLayoutManager(this)
+        binding.itemListRecyclerItemsView.adapter = itemListAdapter
     }
 
-    fun getSortedList(items: MutableList<ListItem>): MutableList<ListItem> {
-        return items.sortedWith(
-            compareBy<ListItem> { it.isChecked }
-                .thenBy { it.category.name }
-                .thenBy { it.name }
-        ).toMutableList()
-    }
-
-    fun setupSearchView() {
+    private fun setupListeners() {
+        // A Activity avisa o ViewModel sobre mudanças no texto de busca
         binding.itemListSearchInput.addTextChangedListener { editable ->
             val query = editable?.toString().orEmpty()
-            filterItemList(query)
+            viewModel.onSearchQueryChanged(query)
+        }
+
+        binding.itemListEditListButton.setOnClickListener {
+            navigateToEditList()
+        }
+
+        binding.itemListAddItemButton.setOnClickListener {
+            navigateToAddItem()
         }
     }
 
-    fun loadAndDisplayItemList() {
-        searchMasterItemList = ListItemRepository.getItemsFromList(sourceListId)
-        val currentQuery = binding.itemListSearchInput.text.toString()
-        filterItemList(currentQuery)
-    }
-
-    fun filterItemList(query: String) {
-        val filteredList: List<ListItem> = if(query.isEmpty()) {
-            searchMasterItemList
-        } else {
-            searchMasterItemList.filter { item ->
-                item.name.contains(query, ignoreCase = true)
-            }
+    // A Activity observa as mudanças do ViewModel e reage
+    private fun setupObservers() {
+        // Observa a lista de itens
+        viewModel.items.observe(this) { items ->
+            itemListAdapter.submitList(items)
         }
 
-        val sortedList = getSortedList(filteredList.toMutableList())
-        itemListAdapter.submitList(sortedList)
+        // Observa o título da lista
+        viewModel.listTitle.observe(this) { title ->
+            binding.itemListListName.text = title
+        }
 
-        if(sortedList.isEmpty()) {
-            binding.itemListRecyclerItemsView.visibility = View.GONE
-            binding.listsFeedbackMessage.visibility = View.VISIBLE
-
-            if(query.isNotBlank()) {
-                binding.listsFeedbackMessage.text = "Nenhum item encontrado para \"$query\"."
+        // Observa a mensagem de feedback
+        viewModel.feedbackMessage.observe(this) { message ->
+            if (message == null) {
+                binding.itemListRecyclerItemsView.visibility = View.VISIBLE
+                binding.listsFeedbackMessage.visibility = View.GONE
             } else {
-                binding.listsFeedbackMessage.text = "Esta lista está vazia! Toque no '+' para adicionar itens."
+                binding.itemListRecyclerItemsView.visibility = View.GONE
+                binding.listsFeedbackMessage.visibility = View.VISIBLE
+                binding.listsFeedbackMessage.text = message
             }
-        } else {
-            binding.itemListRecyclerItemsView.visibility = View.VISIBLE
-            binding.listsFeedbackMessage.visibility = View.GONE
         }
     }
+
+    // Funções de navegação permanecem na Activity
+    private fun navigateToEditList() {
+        val intent = Intent(this, EditListActivity::class.java).apply {
+            putExtra(EXTRA_LIST_ID, sourceListId)
+        }
+        startActivity(intent)
+    }
+
+    private fun navigateToAddItem() {
+        val intent = Intent(this, AddItemActivity::class.java).apply {
+            putExtra(EXTRA_LIST_ID, sourceListId)
+        }
+        startActivity(intent)
+    }
+
+    private fun navigateToEditItem(itemId: String) {
+        val intent = Intent(this, EditItemActivity::class.java).apply {
+            putExtra(EXTRA_LIST_ID, sourceListId)
+            putExtra(EXTRA_LIST_ITEM_ID, itemId)
+        }
+        startActivity(intent)
+    }
+
+    // Funções REMOVIDAS:
+    // - loadAndDisplayItemList() → movida para ViewModel.loadData()
+    // - filterItemList() → movida para ViewModel.filterItems()
+    // - getSortedList() → integrada no ViewModel.filterItems()
+    // - setupSearchView() → substituída por setupListeners()
+    // - recyclerViewConfiguration() → renomeada para setupRecyclerView()
+    // Variável REMOVIDA:
+    // - searchMasterItemList → movida para ViewModel.allItems
 }
