@@ -87,7 +87,7 @@ class ListsViewModel(
             else
                 _feedbackMessage.value = "Você ainda não tem listas! Toque no '+' para começar a adicionar."
         } else {
-            _feedbackMessage.value = null // Limpa a mensagem
+            _feedbackMessage.value = "" // Limpa a mensagem
         }
     }
 }
