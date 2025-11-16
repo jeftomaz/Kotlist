@@ -7,12 +7,14 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels // Import necessário
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.kotlist.data.model.ShoppingList
+// Repositórios importados APENAS para a Factory
 import com.example.kotlist.data.repository.ShoppingListRepository
 import com.example.kotlist.data.repository.UserRepository
 import com.example.kotlist.databinding.ActivityListsBinding
@@ -23,7 +25,11 @@ class ListsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityListsBinding
     private lateinit var listsAdapter: ListsAdapter
-    private var allLists: List<ShoppingList> = emptyList()
+
+    // Inicializa o ViewModel usando a Factory
+    private val viewModel: ListsViewModel by viewModels {
+        ListsViewModelFactory(UserRepository, ShoppingListRepository)
+    }
 
     companion object {
         const val CREATE_EXAMPLE_LIST = "CREATE_EXAMPLE_LIST"
@@ -32,15 +38,10 @@ class ListsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.Companion.light(
-                Color.TRANSPARENT, Color.TRANSPARENT
-            ),
-            navigationBarStyle = SystemBarStyle.Companion.light(
-                Color.TRANSPARENT, Color.TRANSPARENT
-            )
+            statusBarStyle = SystemBarStyle.Companion.light(Color.TRANSPARENT, Color.TRANSPARENT),
+            navigationBarStyle = SystemBarStyle.Companion.light(Color.TRANSPARENT, Color.TRANSPARENT)
         )
 
-        // ViewBinding configuration
         binding = ActivityListsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -50,57 +51,71 @@ class ListsActivity : AppCompatActivity() {
             insets
         }
 
+        setupRecyclerView()
+        setupListeners()
+        setupObservers() // Nova função para observar o ViewModel
+    }
+
+    override fun onStart() {
+        super.onStart()
+        // A Activity apenas "avisa" o ViewModel para carregar os dados
+        val shouldCreateExample = intent.getBooleanExtra(CREATE_EXAMPLE_LIST, false)
+        viewModel.loadData(shouldCreateExample)
+    }
+
+    private fun setupRecyclerView() {
         listsAdapter = ListsAdapter(emptyList()) { clickedList ->
             navigateToItemDetails(clickedList)
         }
-
         binding.recyclerViewLists.layoutManager = GridLayoutManager(this, 2)
         binding.recyclerViewLists.adapter = listsAdapter
+    }
 
+    private fun setupListeners() {
+        // A Activity "avisa" o ViewModel sobre o clique
         binding.fabAddList.setOnClickListener {
             val intent = Intent(this, AddListActivity::class.java)
             startActivity(intent)
         }
 
+        // A Activity "avisa" o ViewModel e cuida da navegação
         binding.listsLogoutButton.setOnClickListener {
             Toast.makeText(this, "Sessão encerrada", Toast.LENGTH_SHORT).show()
-            handleLogout()
+            viewModel.onLogoutClicked() // 1. Avisa o VM
+            navigateToLoginScreen() // 2. Cuida da navegação
         }
 
-        setupSearchListener()
+        // A Activity "avisa" o ViewModel sobre a mudança no texto
+        binding.listsSearchInput.addTextChangedListener { editable ->
+            val query = editable?.toString().orEmpty()
+            viewModel.onSearchQueryChanged(query)
+        }
     }
 
-    override fun onStart() {
-        super.onStart()
-        loadAndDisplayLists()
-    }
-
-    private fun loadAndDisplayLists() {
-        allLists = loadAllLists()
-        filterLists("")
-    }
-
-    private fun loadAllLists(): List<ShoppingList> {
-        val currentUserId = UserRepository.getUserLoggedIn()!!.id
-
-        var lists = ShoppingListRepository.getUserLists(currentUserId)
-        val shouldCreateExample = intent.getBooleanExtra(CREATE_EXAMPLE_LIST, false)
-
-        if (lists.isEmpty() && shouldCreateExample) {
-            val mockList = ShoppingList(
-                title = "Lista de Exemplo",
-                coverImageUri = null,
-                placeholderImageId = ShoppingListRepository.getRandomPlaceholderId(),
-                userId = currentUserId
-            )
-            ShoppingListRepository.addList(mockList)
-
-            lists = ShoppingListRepository.getUserLists(currentUserId)
+    // A Activity "observa" as mudanças do ViewModel e reage
+    private fun setupObservers() {
+        // Observa a lista de compras
+        viewModel.lists.observe(this) { lists ->
+            // Apenas atualiza o adapter com a lista recebida
+            listsAdapter.updateData(lists)
         }
 
-        return lists
+        // Observa a mensagem de feedback
+        viewModel.feedbackMessage.observe(this) { message ->
+            if (message == null) {
+                // Sem mensagem, mostra a lista
+                binding.recyclerViewLists.visibility = View.VISIBLE
+                binding.listsFeedbackMessage.visibility = View.GONE
+            } else {
+                // Com mensagem, esconde a lista e mostra a mensagem
+                binding.recyclerViewLists.visibility = View.GONE
+                binding.listsFeedbackMessage.visibility = View.VISIBLE
+                binding.listsFeedbackMessage.text = message
+            }
+        }
     }
 
+    // Funções de navegação permanecem na Activity
     private fun navigateToItemDetails(list: ShoppingList) {
         val intent = Intent(this, ItemListActivity::class.java).apply {
             putExtra(ItemListActivity.EXTRA_LIST_ID, list.id)
@@ -108,43 +123,12 @@ class ListsActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun handleLogout() {
-        UserRepository.logoutUser()
-
+    private fun navigateToLoginScreen() {
         val intent = Intent(this, LoginActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
     }
 
-    private fun setupSearchListener() {
-        binding.listsSearchInput.addTextChangedListener { editable ->
-            val query = editable?.toString().orEmpty()
-            filterLists(query)
-        }
-    }
-
-    private fun filterLists(query: String) {
-        val filteredLists = if(query.isBlank()) {
-            allLists
-        } else {
-            allLists.filter {
-                it.title.contains(query, ignoreCase = true)
-            }
-        }
-
-        if(filteredLists.isEmpty()) {
-            binding.recyclerViewLists.visibility = View.GONE
-            binding.listsFeedbackMessage.visibility = View.VISIBLE
-
-            if (query.isNotBlank())
-                binding.listsFeedbackMessage.text = "Nenhuma lista encontrada para \"$query\"."
-            else
-                binding.listsFeedbackMessage.text = "Você ainda não tem listas! Toque no '+' para começar a adicionar."
-
-        } else {
-            binding.recyclerViewLists.visibility = View.VISIBLE
-            binding.listsFeedbackMessage.visibility = View.GONE
-            listsAdapter.updateData(filteredLists)
-        }
-    }
+    // As funções loadAndDisplayLists, filterLists e handleLogout foram REMOVIDAS
+    // A variável allLists foi REMOVIDA
 }
