@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import com.example.kotlist.data.model.ShoppingList
 import com.example.kotlist.data.repository.ShoppingListRepository
 import com.example.kotlist.data.repository.UserRepository
-import com.example.kotlist.databinding.ActivityListsBinding
 
 class ListsViewModel(
     private val userRepository: UserRepository,
