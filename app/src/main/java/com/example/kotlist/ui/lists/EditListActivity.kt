@@ -8,32 +8,39 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels // Import necessário
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.kotlist.data.model.ShoppingList
+// Import do repositório apenas para a Factory
 import com.example.kotlist.data.repository.ShoppingListRepository
 import com.example.kotlist.databinding.ActivityEditListBinding
 
 class EditListActivity : AppCompatActivity() {
     private lateinit var binding: ActivityEditListBinding
-    private lateinit var listOnEditing: ShoppingList
+
+    // O ViewModel
+    private val viewModel: EditListViewModel by viewModels {
+        EditListViewModelFactory(ShoppingListRepository)
+    }
+
+    // Estado da imagem selecionada (ligado à View)
     private var listCoverImageSelectedUri: String? = null
 
     companion object {
         const val EXTRA_LIST_ID = "EXTRA_LIST_ID"
-        const val CREATE_EXAMPLE_LIST = "CREATE_EXAMPLE_LIST"
+        // CREATE_EXAMPLE_LIST não é usado aqui, pode ser removido
     }
 
+    // Seletor de imagem (ligado à View)
     private val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         if (uri != null) {
-
             contentResolver.takePersistableUriPermission(
                 uri,
                 Intent.FLAG_GRANT_READ_URI_PERMISSION
             )
-
             listCoverImageSelectedUri = uri.toString()
             binding.editListImagePreview.setImageURI(uri)
         } else {
@@ -44,15 +51,10 @@ class EditListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.Companion.light(
-                Color.TRANSPARENT, Color.TRANSPARENT
-            ),
-            navigationBarStyle = SystemBarStyle.Companion.light(
-                Color.TRANSPARENT, Color.TRANSPARENT
-            )
+            statusBarStyle = SystemBarStyle.Companion.light(Color.TRANSPARENT, Color.TRANSPARENT),
+            navigationBarStyle = SystemBarStyle.Companion.light(Color.TRANSPARENT, Color.TRANSPARENT)
         )
 
-        // ViewBinding configuration
         binding = ActivityEditListBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -62,26 +64,35 @@ class EditListActivity : AppCompatActivity() {
             insets
         }
 
-        listOnEditing = ShoppingListRepository.getListById(intent.getStringExtra(EXTRA_LIST_ID)!!)!!
-        populateInputFields(listOnEditing)
+        // Pega o ID e manda o ViewModel carregar
+        val listId = intent.getStringExtra(EXTRA_LIST_ID)
+        if (listId == null) {
+            Toast.makeText(this, "Erro: ID da lista não encontrado.", Toast.LENGTH_LONG).show()
+            finish()
+            return
+        }
 
+        viewModel.loadList(listId)
+
+        setupListeners()
+        setupObservers()
+    }
+
+    private fun setupListeners() {
         binding.editListAddImage.setOnClickListener {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
 
         binding.editListDeleteListButton.setOnClickListener {
-            ShoppingListRepository.deleteList(intent.getStringExtra(EXTRA_LIST_ID)!!)
-            Toast.makeText(this, "Lista excluída.", Toast.LENGTH_SHORT).show()
-
-            val intent = Intent(this, ListsActivity::class.java)
-            startActivity(intent)
+            // Apenas avisa o ViewModel
+            viewModel.deleteList()
         }
 
         binding.editListSaveListButton.setOnClickListener {
-            val listTitle: String = binding.editListListNameInput.text.toString().trim()
-            val coverImageUri: String? = listCoverImageSelectedUri
+            val listTitle = binding.editListListNameInput.text.toString().trim()
 
-            validateAndUpdateList(listTitle, coverImageUri)
+            // Apenas avisa o ViewModel
+            viewModel.saveList(listTitle, listCoverImageSelectedUri)
         }
 
         binding.editListCancelButton.setOnClickListener {
@@ -89,31 +100,46 @@ class EditListActivity : AppCompatActivity() {
         }
     }
 
-    fun populateInputFields(list: ShoppingList) {
-        binding.editListListNameInput.setText(list.title)
-
-        if(list.coverImageUri != null)
-            binding.editListImagePreview.setImageURI(list.coverImageUri.toUri())
-        else
-            binding.editListImagePreview.setImageURI("android.resource://$packageName/${list.placeholderImageId}".toUri())
-    }
-
-    fun validateAndUpdateList(listTitle: String, coverImageUri: String?) {
-        if(listTitle.isEmpty()) {
-            binding.editListListNameInputWrapper.error = "A lista deve ter um nome."
-            return
+    private fun setupObservers() {
+        // Observa a lista para preencher os campos
+        viewModel.listToEdit.observe(this) { list ->
+            populateInputFields(list)
         }
 
-        val updatedList = listOnEditing.copy(
-            title = listTitle,
-            coverImageUri = coverImageUri ?: listOnEditing.coverImageUri,
-            placeholderImageId = listOnEditing.placeholderImageId,
-            userId = listOnEditing.userId
-        )
+        // Observa erros de validação
+        viewModel.listNameError.observe(this) { errorMessage ->
+            binding.editListListNameInputWrapper.error = errorMessage
+        }
 
-        ShoppingListRepository.updateList(updatedList)
+        // Observa sucesso na atualização
+        viewModel.updateSuccessEvent.observe(this) { successMessage ->
+            Toast.makeText(this, successMessage, Toast.LENGTH_SHORT).show()
+            finish()
+        }
 
-        Toast.makeText(this, "Lista atualizada com sucesso!", Toast.LENGTH_SHORT).show()
-        finish()
+        // Observa sucesso na exclusão
+        viewModel.deleteSuccessEvent.observe(this) { successMessage ->
+            Toast.makeText(this, successMessage, Toast.LENGTH_SHORT).show()
+
+            // Navega de volta para a ListsActivity, limpando a pilha
+            val intent = Intent(this, ListsActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+        }
     }
+
+    // Função de UI: Apenas preenche os campos com os dados recebidos
+    private fun populateInputFields(list: ShoppingList) {
+        binding.editListListNameInput.setText(list.title)
+
+        // Se o usuário já selecionou uma nova imagem, não sobrescreva
+        if (listCoverImageSelectedUri == null) {
+            if (list.coverImageUri != null)
+                binding.editListImagePreview.setImageURI(list.coverImageUri.toUri())
+            else
+                binding.editListImagePreview.setImageURI("android.resource://$packageName/${list.placeholderImageId}".toUri())
+        }
+    }
+
+    // A função validateAndUpdateList foi removida e a lógica foi movida para o ViewModel
 }
