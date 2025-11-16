@@ -1,5 +1,8 @@
 package com.example.kotlist.ui.lists
 
+// Novo import
+import androidx.recyclerview.widget.DiffUtil
+
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.net.toUri
@@ -39,8 +42,27 @@ class ListsAdapter(
     }
 
     fun updateData(newLists: List<ShoppingList>) {
-        this.lists = newLists
-        notifyDataSetChanged()
+        val diffCallback = ListsDiffCallback(lists, newLists)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+
+        lists = newLists
+        diffResult.dispatchUpdatesTo(this)
+    }
+
+    // Classe interna para comparar listas
+    private class ListsDiffCallback(
+        private val oldList: List<ShoppingList>,
+        private val newList: List<ShoppingList>
+    ) : DiffUtil.Callback() {
+
+        override fun getOldListSize() = oldList.size
+        override fun getNewListSize() = newList.size
+
+        override fun areItemsTheSame(oldPos: Int, newPos: Int) =
+            oldList[oldPos].id == newList[newPos].id
+
+        override fun areContentsTheSame(oldPos: Int, newPos: Int) =
+            oldList[oldPos] == newList[newPos]
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder {
