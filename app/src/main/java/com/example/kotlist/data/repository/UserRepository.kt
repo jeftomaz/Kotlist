@@ -3,7 +3,7 @@ package com.example.kotlist.data.repository
 import com.example.kotlist.data.model.User
 import com.example.kotlist.util.PasswordHasher
 
-class UserRepository {
+object UserRepository {
     private val users = mutableListOf<User>()
     private var userLoggedIn: User? = null
 

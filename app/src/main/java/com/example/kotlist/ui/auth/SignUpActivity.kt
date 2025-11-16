@@ -23,12 +23,9 @@ import com.example.kotlist.databinding.ActivitySignupBinding
 class SignUpActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySignupBinding
 
-    // Instância do repositório de usuários
-    private val userRepository = UserRepository()
-
     // Inicialização do ViewModel utilizando o Factory
     private val viewModel: SignUpViewModel by viewModels {
-        SignUpViewModelFactory(userRepository)
+        SignUpViewModelFactory(UserRepository)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
