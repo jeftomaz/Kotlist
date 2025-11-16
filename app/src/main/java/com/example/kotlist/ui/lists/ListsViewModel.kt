@@ -17,8 +17,8 @@ class ListsViewModel(
     private val _lists = MutableLiveData<List<ShoppingList>>()
     val lists: LiveData<List<ShoppingList>> = _lists
 
-    private val _feedbackMessage = MutableLiveData<String>()
-    val feedbackMessage: LiveData<String> = _feedbackMessage
+    private val _feedbackMessage = MutableLiveData<String?>()
+    val feedbackMessage: LiveData<String?> = _feedbackMessage
 
     // A activity mantem a lista completa original
     private var allLists: List<ShoppingList> = emptyList()
@@ -86,7 +86,7 @@ class ListsViewModel(
             else
                 _feedbackMessage.value = "Você ainda não tem listas! Toque no '+' para começar a adicionar."
         } else {
-            _feedbackMessage.value = "" // Limpa a mensagem
+            _feedbackMessage.value = null // Limpa a mensagem
         }
     }
 }
