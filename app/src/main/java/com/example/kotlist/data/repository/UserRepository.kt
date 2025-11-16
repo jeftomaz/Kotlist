@@ -7,18 +7,14 @@ object UserRepository {
     private val users = mutableListOf<User>()
     private var userLoggedIn: User? = null
 
-    // Função para verificação de login - ajuste de arquitetura
-
     fun loginUser(email: String, password: String): User? {
         val user = getUserByEmail(email)
 
-        if (user != null && PasswordHasher.checkPassword(password, user.password)) {
-            // Sucesso no login
+        if(user != null && PasswordHasher.checkPassword(password, user.password)) {
             setUserLoggedIn(user)
             return user
         }
 
-        // Falha no login
         return null
     }
 

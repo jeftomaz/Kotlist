@@ -7,36 +7,28 @@ import androidx.lifecycle.ViewModel
 import com.example.kotlist.data.model.User
 import com.example.kotlist.data.repository.UserRepository
 
-// Classe para representar os estaos da UI
 sealed class LoginUiState {
     data class Success(val user: User) : LoginUiState()
     data class Error(val message: String) : LoginUiState()
     object Loading : LoginUiState()
-    object Idle : LoginUiState() // Estado inicial
+    object Idle : LoginUiState()
 }
 
 
 class LoginViewModel(private val userRepository: UserRepository) : ViewModel() {
 
-    // Lógica de verificação do e-mail
     private val _emailError = MutableLiveData<String?>()
     val emailError: LiveData<String?> = _emailError
 
-    // Lógica de verificação da senha
     private val _passwordError = MutableLiveData<String?>()
     val passwordError: LiveData<String?> = _passwordError
 
-    // Lógica de verificação do estado atual
     private val _loginState = MutableLiveData<LoginUiState>(LoginUiState.Idle)
     val loginState: LiveData<LoginUiState> = _loginState
 
-    // Função para realizar login ao clique do botão
     fun onLoginClicked(email: String, password: String) {
-
-        // Verifica se o pedido é válido chamando as funções abaixo
-        if (!isEmailValid(email) or !isPasswordValid(password)) {
+        if(!isEmailValid(email) or !isPasswordValid(password))
             return
-        }
 
         // Define o estado para carregando/loading
         _loginState.value = LoginUiState.Loading

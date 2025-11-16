@@ -32,6 +32,7 @@ class LoginActivity : AppCompatActivity() {
             statusBarStyle = SystemBarStyle.Companion.light(Color.TRANSPARENT, Color.TRANSPARENT),
             navigationBarStyle = SystemBarStyle.Companion.light(Color.TRANSPARENT, Color.TRANSPARENT)
         )
+
         // ViewBinding configuration
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -42,12 +43,10 @@ class LoginActivity : AppCompatActivity() {
             insets
         }
 
-        // Configurar os cloques para >> delegar << ao viewModel
         binding.loginAccessButton.setOnClickListener {
             val email = binding.loginEmailInput.text.toString().trim()
             val password = binding.loginPasswordInput.text.toString().trim()
 
-            // Activity só manda o comando
             viewModel.onLoginClicked(email, password)
         }
 
@@ -69,7 +68,6 @@ class LoginActivity : AppCompatActivity() {
         setupObservers()
     }
 
-    // Define os observers
     private fun setupObservers() {
         viewModel.emailError.observe(this){ errorMessage ->
             binding.loginEmailInputWrapper.error = errorMessage
@@ -79,7 +77,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         viewModel.loginState.observe(this) { state ->
-            when (state) {
+            when(state) {
                 is LoginUiState.Success -> {
                     Toast.makeText(this, "Bem-vindo(a), ${state.user.name}", Toast.LENGTH_SHORT).show()
                     navigateToMainScreen()
@@ -90,21 +88,17 @@ class LoginActivity : AppCompatActivity() {
                 is LoginUiState.Loading -> {
                     // binding.loginProgressBar.visibility = View.VISIBLE
                 }
-                is LoginUiState.Idle -> {
-                    // Estado inicial, não faz nada
-                }
+                is LoginUiState.Idle -> { }
             }
         }
     }
 
-    // Direciona o usuário para a tela principal
     private fun navigateToMainScreen() {
         val intent = Intent(this, ListsActivity::class.java).apply {
             putExtra(ListsActivity.Companion.CREATE_EXAMPLE_LIST, true)
         }
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
 
-        // Atualização de recurso obsoleto
         //startActivity(intent)
         //overridePendingTransition(R.anim.zoom_in, R.anim.fade_out)
 
