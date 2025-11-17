@@ -1,11 +1,13 @@
 package com.example.kotlist.ui.auth
 
 import android.util.Patterns
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.kotlist.data.model.User
 import com.example.kotlist.data.repository.UserRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 sealed class LoginUiState {
     data class Success(val user: User) : LoginUiState()
@@ -14,56 +16,57 @@ sealed class LoginUiState {
     object Idle : LoginUiState()
 }
 
-
 class LoginViewModel(private val userRepository: UserRepository) : ViewModel() {
 
-    private val _emailError = MutableLiveData<String?>()
-    val emailError: LiveData<String?> = _emailError
+    private val _emailError = MutableStateFlow<String?>(null)
+    val emailError: StateFlow<String?> = _emailError
 
-    private val _passwordError = MutableLiveData<String?>()
-    val passwordError: LiveData<String?> = _passwordError
+    private val _passwordError = MutableStateFlow<String?>(null)
+    val passwordError: StateFlow<String?> = _passwordError
 
-    private val _loginState = MutableLiveData<LoginUiState>(LoginUiState.Idle)
-    val loginState: LiveData<LoginUiState> = _loginState
+    private val _loginState = MutableStateFlow<LoginUiState>(LoginUiState.Idle)
+    val loginState: StateFlow<LoginUiState> = _loginState
 
     fun onLoginClicked(email: String, password: String) {
         if(!isEmailValid(email) or !isPasswordValid(password))
             return
 
-        // Define o estado para carregando/loading
-        _loginState.value = LoginUiState.Loading
+        viewModelScope.launch {
+            _loginState.value = LoginUiState.Loading
 
-        val user = userRepository.loginUser(email, password)
+            val user = userRepository.loginUser(email, password)
 
-        // Verifica se o usuário não está vazio
-        if (user != null) {
-            _loginState.value = LoginUiState.Success(user)
-        } else {
-            _loginState.value = LoginUiState.Error("E-mail ou senha inválidos.")
+            if(user != null)
+                _loginState.value = LoginUiState.Success(user)
+            else
+                _loginState.value = LoginUiState.Error("E-mail ou senha inválidos.")
         }
     }
 
-    // Verificação se o e-mail é do tipo válido e não está vazio
     private fun isEmailValid(email: String): Boolean {
         _emailError.value = null
-        if (email.isEmpty()) {
+
+        if(email.isEmpty()) {
             _emailError.value = "Insira o e-mail para fazer login."
             return false
         }
-        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+
+        if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             _emailError.value = "Insira um e-mail válido."
             return false
         }
+
         return true
     }
 
-    // Verificação se a senha é do tipo válido e não está vazia
     private fun isPasswordValid(password: String): Boolean {
         _passwordError.value = null
-        if (password.isEmpty()) {
+
+        if(password.isEmpty()) {
             _passwordError.value = "Insira a senha para fazer login."
             return false
         }
+
         return true
     }
 }
