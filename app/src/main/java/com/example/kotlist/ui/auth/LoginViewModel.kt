@@ -27,7 +27,7 @@ class LoginViewModel(private val userRepository: UserRepository) : ViewModel() {
     private val _loginState = MutableStateFlow<LoginUiState>(LoginUiState.Idle)
     val loginState: StateFlow<LoginUiState> = _loginState
 
-    fun onLoginClicked(email: String, password: String) {
+    fun login(email: String, password: String) {
         if(!isEmailValid(email) or !isPasswordValid(password))
             return
 

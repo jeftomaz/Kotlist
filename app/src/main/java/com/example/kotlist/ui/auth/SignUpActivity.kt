@@ -7,23 +7,21 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels // novo import
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-
-// local
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.kotlist.R
 import com.example.kotlist.data.repository.UserRepository
 import com.example.kotlist.databinding.ActivitySignupBinding
-
-// Removidos imports de Patterns, User e PasswordHasher
-
+import kotlinx.coroutines.launch
 
 class SignUpActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySignupBinding
 
-    // Inicialização do ViewModel utilizando o Factory
     private val viewModel: SignUpViewModel by viewModels {
         SignUpViewModelFactory(UserRepository)
     }
@@ -49,13 +47,11 @@ class SignUpActivity : AppCompatActivity() {
             insets
         }
 
-        setupClickListeners()
-        observerViewModel()
-
+        setupListeners()
+        setupObservers()
     }
 
-    // View sinaliza ao ViewModel sobre o clique
-    private fun setupClickListeners() {
+    private fun setupListeners() {
         binding.signupSignupButton.setOnClickListener {
             val name = binding.signupNameInput.text.toString().trim()
             val email = binding.signupEmailInput.text.toString().trim()
@@ -77,47 +73,55 @@ class SignUpActivity : AppCompatActivity() {
         }
     }
 
-    private fun observerViewModel(){
-        viewModel.signUpState.observe(this) { state ->
-            // Os estados anteriores são limpos
-            resetErrors()
-            // Esconde o loading por padrão
-            setLoading(false)
+    private fun setupObservers(){
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.signUpState.collect { state ->
+                        resetErrors()
+//                        setLoading(false)
 
-            when (state) {
-                is SignUpState.Idle -> {
-                    // Nada a fazer
-                }
-                is SignUpState.Loading -> {
-                    setLoading(true)
-                }
-                is SignUpState.Success -> {
-                    setLoading(false)
-                    Toast.makeText(this, "Conta criada com sucesso", Toast.LENGTH_LONG).show()
-                    finish()
-                }
-                is SignUpState.Error -> {
-                    setLoading(false)
-                    Toast.makeText(this, state.message, Toast.LENGTH_LONG).show()
-                }
-                is SignUpState.ValidationFailure -> {
-                    setLoading(false)
-                    binding.signupNameInputWrapper.error = state.nameError
-                    binding.signupEmailInputWrapper.error = state.emailError
-                    binding.signupPasswordInputWrapper.error = state.passwordError
-                    binding.signupConfirmPasswordInputWrapper.error = state.confirmPasswordError
+                        when(state) {
+                            is SignUpState.Idle -> { }
+                            is SignUpState.Loading -> {
+//                                setLoading(true)
+                            }
+                            is SignUpState.Success -> {
+//                                setLoading(false)
+                                Toast.makeText(
+                                    this@SignUpActivity,
+                                    "Conta criada com sucesso",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                                finish()
+                            }
+                            is SignUpState.Error -> {
+//                                setLoading(false)
+                                Toast.makeText(
+                                    this@SignUpActivity,
+                                    state.message,
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                            is SignUpState.ValidationFailure -> {
+//                                setLoading(false)
+                                binding.signupNameInputWrapper.error = state.nameError
+                                binding.signupEmailInputWrapper.error = state.emailError
+                                binding.signupPasswordInputWrapper.error = state.passwordError
+                                binding.signupConfirmPasswordInputWrapper.error = state.confirmPasswordError
+                            }
+                        }
+                    }
                 }
             }
         }
     }
 
-    // Função auxiliar para carregamento
     private fun setLoading(isLoading: Boolean) {
         binding.signupSignupButton.isEnabled = !isLoading
         binding.signupBackButton.isEnabled = !isLoading
     }
 
-    // Função auxiliar para limpar erros
     private fun resetErrors() {
         binding.signupNameInputWrapper.error = null
         binding.signupEmailInputWrapper.error = null

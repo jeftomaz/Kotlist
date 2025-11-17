@@ -33,8 +33,12 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.Companion.light(Color.TRANSPARENT, Color.TRANSPARENT),
-            navigationBarStyle = SystemBarStyle.Companion.light(Color.TRANSPARENT, Color.TRANSPARENT)
+            statusBarStyle = SystemBarStyle.Companion.light(
+                Color.TRANSPARENT, Color.TRANSPARENT
+            ),
+            navigationBarStyle = SystemBarStyle.Companion.light(
+                Color.TRANSPARENT, Color.TRANSPARENT
+            )
         )
 
         // ViewBinding configuration
@@ -47,10 +51,15 @@ class LoginActivity : AppCompatActivity() {
             insets
         }
 
+        setupListeners()
+        setupObservers()
+    }
+
+    private fun setupListeners() {
         binding.loginAccessButton.setOnClickListener {
             val email = binding.loginEmailInput.text.toString().trim()
             val password = binding.loginPasswordInput.text.toString().trim()
-            viewModel.onLoginClicked(email, password)
+            viewModel.login(email, password)
         }
 
         binding.loginCreateAccountButton.setOnClickListener {
@@ -61,8 +70,6 @@ class LoginActivity : AppCompatActivity() {
             )
             startActivity(intent, options.toBundle())
         }
-
-        setupObservers()
     }
 
     private fun setupObservers() {
@@ -86,6 +93,7 @@ class LoginActivity : AppCompatActivity() {
                 launch {
                     viewModel.loginState.collect { state ->
                         when(state) {
+                            is LoginUiState.Idle -> { }
                             is LoginUiState.Success -> {
                                 Toast.makeText(
                                     this@LoginActivity,
@@ -104,7 +112,6 @@ class LoginActivity : AppCompatActivity() {
                             is LoginUiState.Loading -> {
                                 // binding.loginProgressBar.isVisible = true
                             }
-                            is LoginUiState.Idle -> { }
                         }
                     }
                 }
