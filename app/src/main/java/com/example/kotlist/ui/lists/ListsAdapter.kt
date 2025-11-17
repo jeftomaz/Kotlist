@@ -49,7 +49,6 @@ class ListsAdapter(
         diffResult.dispatchUpdatesTo(this)
     }
 
-    // Classe interna para comparar listas
     private class ListsDiffCallback(
         private val oldList: List<ShoppingList>,
         private val newList: List<ShoppingList>
