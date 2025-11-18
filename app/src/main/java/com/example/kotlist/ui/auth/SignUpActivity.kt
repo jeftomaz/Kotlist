@@ -15,6 +15,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.kotlist.R
+import com.example.kotlist.data.repository.ServiceLocator
 import com.example.kotlist.data.repository.UserRepository
 import com.example.kotlist.databinding.ActivitySignupBinding
 import kotlinx.coroutines.launch
@@ -22,8 +23,12 @@ import kotlinx.coroutines.launch
 class SignUpActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySignupBinding
 
+    private val userRepository by lazy {
+        ServiceLocator.provideUserRepository(this)
+    }
+
     private val viewModel: SignUpViewModel by viewModels {
-        SignUpViewModelFactory(UserRepository)
+        SignUpViewModelFactory(userRepository)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

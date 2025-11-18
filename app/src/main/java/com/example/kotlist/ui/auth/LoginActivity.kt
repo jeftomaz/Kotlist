@@ -17,6 +17,7 @@ import androidx.lifecycle.repeatOnLifecycle
 
 // imports locais
 import com.example.kotlist.R
+import com.example.kotlist.data.repository.ServiceLocator
 import com.example.kotlist.data.repository.UserRepository
 import com.example.kotlist.databinding.ActivityLoginBinding
 import com.example.kotlist.ui.lists.ListsActivity
@@ -25,8 +26,12 @@ import kotlinx.coroutines.launch
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
 
+    private val userRepository by lazy {
+        ServiceLocator.provideUserRepository(this)
+    }
+
     private val viewModel: LoginViewModel by viewModels {
-        LoginViewModelFactory(UserRepository)
+        LoginViewModelFactory(userRepository)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -121,9 +126,8 @@ class LoginActivity : AppCompatActivity() {
 
     private fun navigateToMainScreen() {
         val intent = Intent(this, ListsActivity::class.java).apply {
-            putExtra(ListsActivity.Companion.CREATE_EXAMPLE_LIST, true)
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
 
         val options = ActivityOptions.makeCustomAnimation(
             this,

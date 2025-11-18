@@ -17,6 +17,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.kotlist.data.model.ShoppingList
+import com.example.kotlist.data.repository.ServiceLocator
 import com.example.kotlist.data.repository.ShoppingListRepository
 import com.example.kotlist.data.repository.UserRepository
 import com.example.kotlist.databinding.ActivityListsBinding
@@ -29,12 +30,12 @@ class ListsActivity : AppCompatActivity() {
     private lateinit var binding: ActivityListsBinding
     private lateinit var listsAdapter: ListsAdapter
 
-    private val viewModel: ListsViewModel by viewModels {
-        ListsViewModelFactory(UserRepository, ShoppingListRepository)
+    private val userRepository by lazy {
+        ServiceLocator.provideUserRepository(this)
     }
 
-    companion object {
-        const val CREATE_EXAMPLE_LIST = "CREATE_EXAMPLE_LIST"
+    private val viewModel: ListsViewModel by viewModels {
+        ListsViewModelFactory(userRepository, ShoppingListRepository)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,8 +65,7 @@ class ListsActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        val shouldCreateExample = intent.getBooleanExtra(CREATE_EXAMPLE_LIST, false)
-        viewModel.loadData(shouldCreateExample)
+        viewModel.loadData()
     }
 
     private fun setupRecyclerView() {

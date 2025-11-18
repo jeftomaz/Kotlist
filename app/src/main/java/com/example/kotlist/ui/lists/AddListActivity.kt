@@ -16,6 +16,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.example.kotlist.data.repository.ServiceLocator
 import com.example.kotlist.data.repository.ShoppingListRepository
 import com.example.kotlist.data.repository.UserRepository
 import com.example.kotlist.databinding.ActivityAddListBinding
@@ -25,8 +26,12 @@ import kotlinx.coroutines.launch
 class AddListActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddListBinding
 
+    private val userRepository by lazy {
+        ServiceLocator.provideUserRepository(this)
+    }
+
     private val viewModel: AddListViewModel by viewModels {
-        AddListViewModelFactory(UserRepository, ShoppingListRepository)
+        AddListViewModelFactory(userRepository, ShoppingListRepository)
     }
 
     private var listCoverImageSelectedUri: String? = null

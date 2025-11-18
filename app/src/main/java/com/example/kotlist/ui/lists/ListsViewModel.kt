@@ -18,29 +18,32 @@ class ListsViewModel(
     val feedbackMessage: StateFlow<String?> = _feedbackMessage
 
     private var allLists: List<ShoppingList> = emptyList()
-    private var currentUserId: String? = null
+    private var currentUserId: String = ""
 
-    fun loadData(shouldCreateExample: Boolean) {
-        if (currentUserId == null) {
-            currentUserId = userRepository.getUserLoggedIn()?.id
+    fun loadData() {
+        if(currentUserId == "") {
+            currentUserId = userRepository.getUserLoggedIn()?.id ?: ""
         }
 
-        if (currentUserId == null) {
+        if(currentUserId == "") {
             _feedbackMessage.value = "Erro: Usuário não encontrado."
             return
         }
 
-        var lists = shoppingListRepository.getUserLists(currentUserId!!)
+        var lists = shoppingListRepository.getUserLists(currentUserId)
+        val isFirstTimeLoggingIn = !userRepository.hasCreatedExampleList(currentUserId)
 
-        if (lists.isEmpty() && shouldCreateExample) {
+        if(lists.isEmpty() && isFirstTimeLoggingIn) {
             val mockList = ShoppingList(
                 title = "Lista Exemplo",
                 coverImageUri = null,
                 placeholderImageId = shoppingListRepository.getRandomPlaceholderId(),
-                userId = currentUserId!!
+                userId = currentUserId
             )
             shoppingListRepository.addList(mockList)
-            lists = shoppingListRepository.getUserLists(currentUserId!!)
+            userRepository.setCreatedExampleList(currentUserId)
+
+            lists = shoppingListRepository.getUserLists(currentUserId)
         }
 
         allLists = lists

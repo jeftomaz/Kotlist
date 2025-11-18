@@ -1,9 +1,11 @@
 package com.example.kotlist.data.repository
 
+import android.content.SharedPreferences
 import com.example.kotlist.data.model.User
 import com.example.kotlist.util.PasswordHasher
+import androidx.core.content.edit
 
-object UserRepository {
+class UserRepository(private val prefs: SharedPreferences) {
     private val users = mutableListOf<User>()
     private var userLoggedIn: User? = null
 
@@ -38,5 +40,13 @@ object UserRepository {
 
     fun logoutUser() {
         userLoggedIn = null
+    }
+
+    fun hasCreatedExampleList(userId: String): Boolean {
+        return prefs.getBoolean("example_list_created_$userId", false)
+    }
+
+    fun setCreatedExampleList(userId: String) {
+        prefs.edit { putBoolean("example_list_created_$userId", true) }
     }
 }
