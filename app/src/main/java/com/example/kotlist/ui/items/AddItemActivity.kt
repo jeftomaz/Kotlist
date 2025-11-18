@@ -6,40 +6,45 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.kotlist.R
 import com.example.kotlist.data.model.ItemCategory
 import com.example.kotlist.data.model.ItemUnit
-import com.example.kotlist.data.model.ListItem
 import com.example.kotlist.data.repository.ListItemRepository
 import com.example.kotlist.databinding.ActivityAddItemBinding
+import kotlinx.coroutines.launch
 
 class AddItemActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddItemBinding
     private var shoppingListId: String? = null
     private var selectedCategory: ItemCategory? = null
-    private var isCategroySelected: Boolean = false
     private var selectedUnit: ItemUnit? = null
-    private var isUnitSelected: Boolean = false
 
     companion object {
         const val EXTRA_LIST_ID = "EXTRA_LIST_ID"
     }
 
+    private val viewModel: AddItemViewModel by viewModels {
+        AddItemViewModelFactory(ListItemRepository)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.Companion.light(
+            statusBarStyle = SystemBarStyle.light(
                 Color.TRANSPARENT, Color.TRANSPARENT
             ),
-            navigationBarStyle = SystemBarStyle.Companion.light(
+            navigationBarStyle = SystemBarStyle.light(
                 Color.TRANSPARENT, Color.TRANSPARENT
             )
         )
 
-        // ViewBinding configuration
         binding = ActivityAddItemBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -50,34 +55,17 @@ class AddItemActivity : AppCompatActivity() {
         }
 
         shoppingListId = intent.getStringExtra(EXTRA_LIST_ID)
+
         setDropdownAdapters()
-
-        binding.addItemCategoryDropdown.setOnItemClickListener { parent, view, position, id ->
-            selectedCategory = ItemCategory.entries[position]
-        }
-
-        binding.addItemUnitDropdown.setOnItemClickListener { parent, view, position, id ->
-            selectedUnit = ItemUnit.entries[position]
-        }
-
-        binding.addItemAddItemButton.setOnClickListener {
-            val itemListId = shoppingListId
-            val itemName = binding.addItemNameInput.text.toString().trim()
-            val itemQuantity = binding.addItemQuantityInput.text.toString()
-            val itemCategory = selectedCategory
-            val itemUnit = selectedUnit
-
-            validateAndAddItem(itemListId, itemName, itemQuantity.toIntOrNull(), itemUnit, itemCategory)
-        }
-
-        binding.addItemCancelButton.setOnClickListener {
-            finish()
-        }
+        setupListeners()
+        setupObservers()
     }
 
-    fun setDropdownAdapters() {
-        val itemUnitsStringArray: List<String> = ItemUnit.entries.map { getString(it.unitNameId) }
-        val itemCategoriesStringArray: List<String> = ItemCategory.entries.map { getString(it.categoryNameId) }
+    private fun setDropdownAdapters() {
+        val itemUnitsStringArray: List<String> =
+            ItemUnit.entries.map { getString(it.unitNameId) }
+        val itemCategoriesStringArray: List<String> =
+            ItemCategory.entries.map { getString(it.categoryNameId) }
 
         val itemUnitsAdapter = ArrayAdapter(
             this,
@@ -93,46 +81,70 @@ class AddItemActivity : AppCompatActivity() {
 
         binding.addItemUnitDropdown.setAdapter(itemUnitsAdapter)
         binding.addItemCategoryDropdown.setAdapter(itemCategoriesAdapter)
+
+        binding.addItemCategoryDropdown.setOnItemClickListener { _, _, position, _ ->
+            selectedCategory = ItemCategory.entries[position]
+        }
+
+        binding.addItemUnitDropdown.setOnItemClickListener { _, _, position, _ ->
+            selectedUnit = ItemUnit.entries[position]
+        }
     }
 
-    fun validateAndAddItem(listId: String?, name: String, quantity: Int?, unit: ItemUnit?, category: ItemCategory?) {
-        binding.addItemNameInputWrapper.error = ""
-        binding.addItemQuantityInputWrapper.error = ""
-        binding.addItemUnitDropdownWrapper.error = ""
-        binding.addItemCategoryDropdownWrapper.error = ""
+    private fun setupListeners() {
+        binding.addItemAddItemButton.setOnClickListener {
+            val itemListId = shoppingListId
+            val itemName = binding.addItemNameInput.text.toString()
+            val itemQuantityText = binding.addItemQuantityInput.text.toString()
+            val itemCategory = selectedCategory
+            val itemUnit = selectedUnit
 
-        if(listId == null) {
-            Toast.makeText(this, "Algo deu errado ao adicionar o item.", Toast.LENGTH_SHORT).show()
-            return
+            viewModel.addItem(
+                listId = itemListId,
+                name = itemName,
+                quantityText = itemQuantityText,
+                unit = itemUnit,
+                category = itemCategory
+            )
         }
 
-        if(name.isEmpty() || quantity == null || unit == null || category == null) {
-            if(name.isEmpty())
-                binding.addItemNameInputWrapper.error = "O nome do item não pode ser vazio."
-
-            if(quantity == null)
-                binding.addItemQuantityInputWrapper.error = "A quantidade do item não pode ser vazia."
-
-            if(unit == null)
-                binding.addItemUnitDropdownWrapper.error = "A unidade do item não pode ser vazia."
-
-            if(category == null)
-                binding.addItemCategoryDropdownWrapper.error = "A categoria do item não pode ser vazia."
-
-            Toast.makeText(this, "Preencha todos os campos para adicionar um item.", Toast.LENGTH_SHORT).show()
-            return
+        binding.addItemCancelButton.setOnClickListener {
+            finish()
         }
+    }
 
-        val newListItem = ListItem(
-            listId = listId,
-            name = name,
-            quantity = quantity,
-            unit = unit,
-            category = category
-        )
-        ListItemRepository.addItem(newListItem)
+    private fun setupObservers() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                // observes input errors
+                launch {
+                    viewModel.uiState.collect { state ->
+                        binding.addItemNameInputWrapper.error = state.nameError
+                        binding.addItemQuantityInputWrapper.error = state.quantityError
+                        binding.addItemUnitDropdownWrapper.error = state.unitError
+                        binding.addItemCategoryDropdownWrapper.error = state.categoryError
+                    }
+                }
 
-        Toast.makeText(this, "Novo item da lista criado com sucesso.", Toast.LENGTH_SHORT).show()
-        finish()
+                // observes events (toasts and finishes)
+                launch {
+                    viewModel.events.collect { event ->
+                        when (event) {
+                            is AddItemEvent.ShowMessage -> {
+                                Toast.makeText(
+                                    this@AddItemActivity,
+                                    event.message,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+
+                            is AddItemEvent.Success -> {
+                                finish()
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
