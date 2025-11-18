@@ -9,9 +9,8 @@ class AddListViewModelFactory(
     private val userRepository: UserRepository,
     private val shoppingListRepository: ShoppingListRepository
 ) : ViewModelProvider.Factory {
-
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(AddListViewModel::class.java)) {
+        if(modelClass.isAssignableFrom(AddListViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
             return AddListViewModel(userRepository, shoppingListRepository) as T
         }

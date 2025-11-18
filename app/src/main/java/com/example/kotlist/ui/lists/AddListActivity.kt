@@ -8,29 +8,30 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels // Import necessário
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-// Import dos repositórios apenas para a Factory
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.kotlist.data.repository.ShoppingListRepository
 import com.example.kotlist.data.repository.UserRepository
 import com.example.kotlist.databinding.ActivityAddListBinding
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.launch
 
 class AddListActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddListBinding
 
-    // O ViewModel
     private val viewModel: AddListViewModel by viewModels {
         AddListViewModelFactory(UserRepository, ShoppingListRepository)
     }
 
-    // O estado da imagem selecionada e do placeholder permanecem aqui, estão ligados à View (Activity)
     private var listCoverImageSelectedUri: String? = null
     private var placeholderImageId: Int = -1
 
-    // O Image Picker (Launcher) permanece na Activity
     private val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         if (uri != null) {
             contentResolver.takePersistableUriPermission(
@@ -63,8 +64,7 @@ class AddListActivity : AppCompatActivity() {
         setupListeners()
         setupObservers()
 
-        // Pede ao ViewModel para carregar o placeholder inicial
-        if (savedInstanceState == null) {
+        if(savedInstanceState == null) {
             viewModel.loadInitialPlaceholder()
         }
     }
@@ -77,7 +77,6 @@ class AddListActivity : AppCompatActivity() {
         binding.addListAddListButton.setOnClickListener {
             val listTitle = binding.addListListNameInput.text.toString().trim()
 
-            // A Activity apenas delega a ação ao ViewModel
             viewModel.createNewList(
                 listTitle = listTitle,
                 coverImageUri = listCoverImageSelectedUri,
@@ -91,31 +90,42 @@ class AddListActivity : AppCompatActivity() {
     }
 
     private fun setupObservers() {
-        // Observa o placeholder inicial
-        viewModel.placeholderImageId.observe(this) { id ->
-            placeholderImageId = id // Salva o ID
-            // Exibe a imagem placeholder (apenas se o usuário não escolheu outra)
-            if (listCoverImageSelectedUri == null) {
-                binding.addListImagePreview.setImageURI("android.resource://$packageName/$id".toUri())
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                // show placeholder on screen
+                launch {
+                    viewModel.placeholderImageId.filterNotNull().collect { id ->
+                        placeholderImageId = id
+                        if(listCoverImageSelectedUri == null) {
+                            binding.addListImagePreview.setImageURI(
+                                "android.resource://$packageName/$id".toUri()
+                            )
+                        }
+                    }
+                }
+
+                // name input error
+                launch {
+                    viewModel.listNameError.collect { errorMessage ->
+                        binding.addListListNameInputWrapper.error = errorMessage
+                    }
+                }
+
+                // success state
+                launch {
+                    viewModel.finishEvent.collect { successMessage ->
+                        Toast.makeText(this@AddListActivity, successMessage, Toast.LENGTH_SHORT).show()
+                        finish()
+                    }
+                }
+
+                // errors
+                launch {
+                    viewModel.toastError.collect { errorMessage ->
+                        Toast.makeText(this@AddListActivity, errorMessage, Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
-
-        // Observa erros de validação do nome
-        viewModel.listNameError.observe(this) { errorMessage ->
-            binding.addListListNameInputWrapper.error = errorMessage
-        }
-
-        // Observa a ordem de fechar a tela com sucesso
-        viewModel.finishEvent.observe(this) { successMessage ->
-            Toast.makeText(this, successMessage, Toast.LENGTH_SHORT).show()
-            finish()
-        }
-
-        // Observa erros gerais
-        viewModel.toastError.observe(this) { errorMessage ->
-            Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
-        }
     }
-
-    // As funções createNewList, randomizeListCoverPlaceholder e createMockedList foram REMOVIDAS daqui e sua lógica movida para o ViewModel.
 }
