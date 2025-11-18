@@ -8,33 +8,33 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels // Import necessário
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.kotlist.data.model.ShoppingList
-// Import do repositório apenas para a Factory
 import com.example.kotlist.data.repository.ShoppingListRepository
 import com.example.kotlist.databinding.ActivityEditListBinding
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.launch
 
 class EditListActivity : AppCompatActivity() {
     private lateinit var binding: ActivityEditListBinding
 
-    // O ViewModel
     private val viewModel: EditListViewModel by viewModels {
         EditListViewModelFactory(ShoppingListRepository)
     }
 
-    // Estado da imagem selecionada (ligado à View)
     private var listCoverImageSelectedUri: String? = null
 
     companion object {
         const val EXTRA_LIST_ID = "EXTRA_LIST_ID"
-        // CREATE_EXAMPLE_LIST não é usado aqui, pode ser removido
     }
 
-    // Seletor de imagem (ligado à View)
     private val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         if (uri != null) {
             contentResolver.takePersistableUriPermission(
@@ -51,8 +51,12 @@ class EditListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.Companion.light(Color.TRANSPARENT, Color.TRANSPARENT),
-            navigationBarStyle = SystemBarStyle.Companion.light(Color.TRANSPARENT, Color.TRANSPARENT)
+            statusBarStyle = SystemBarStyle.Companion.light(
+                Color.TRANSPARENT, Color.TRANSPARENT
+            ),
+            navigationBarStyle = SystemBarStyle.Companion.light(
+                Color.TRANSPARENT, Color.TRANSPARENT
+            )
         )
 
         binding = ActivityEditListBinding.inflate(layoutInflater)
@@ -64,9 +68,8 @@ class EditListActivity : AppCompatActivity() {
             insets
         }
 
-        // Pega o ID e manda o ViewModel carregar
         val listId = intent.getStringExtra(EXTRA_LIST_ID)
-        if (listId == null) {
+        if(listId == null) {
             Toast.makeText(this, "Erro: ID da lista não encontrado.", Toast.LENGTH_LONG).show()
             finish()
             return
@@ -84,14 +87,11 @@ class EditListActivity : AppCompatActivity() {
         }
 
         binding.editListDeleteListButton.setOnClickListener {
-            // Apenas avisa o ViewModel
             viewModel.deleteList()
         }
 
         binding.editListSaveListButton.setOnClickListener {
             val listTitle = binding.editListListNameInput.text.toString().trim()
-
-            // Apenas avisa o ViewModel
             viewModel.saveList(listTitle, listCoverImageSelectedUri)
         }
 
@@ -101,45 +101,56 @@ class EditListActivity : AppCompatActivity() {
     }
 
     private fun setupObservers() {
-        // Observa a lista para preencher os campos
-        viewModel.listToEdit.observe(this) { list ->
-            populateInputFields(list)
-        }
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
 
-        // Observa erros de validação
-        viewModel.listNameError.observe(this) { errorMessage ->
-            binding.editListListNameInputWrapper.error = errorMessage
-        }
+                // load list data
+                launch {
+                    viewModel.listToEdit.filterNotNull().collect { list ->
+                        populateInputFields(list)
+                    }
+                }
 
-        // Observa sucesso na atualização
-        viewModel.updateSuccessEvent.observe(this) { successMessage ->
-            Toast.makeText(this, successMessage, Toast.LENGTH_SHORT).show()
-            finish()
-        }
+                // name error message
+                launch {
+                    viewModel.listNameError.collect { errorMessage ->
+                        binding.editListListNameInputWrapper.error = errorMessage
+                    }
+                }
 
-        // Observa sucesso na exclusão
-        viewModel.deleteSuccessEvent.observe(this) { successMessage ->
-            Toast.makeText(this, successMessage, Toast.LENGTH_SHORT).show()
+                // update list event
+                launch {
+                    viewModel.updateEventMessage.collect { message ->
+                        Toast.makeText(this@EditListActivity, message, Toast.LENGTH_SHORT).show()
+                        finish()
+                    }
+                }
 
-            // Navega de volta para a ListsActivity, limpando a pilha
-            val intent = Intent(this, ListsActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
+                // delete list event
+                launch {
+                    viewModel.deleteEventMessage.collect { message ->
+                        Toast.makeText(this@EditListActivity, message, Toast.LENGTH_SHORT).show()
+
+                        val intent = Intent(this@EditListActivity, ListsActivity::class.java).apply {
+                            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                        }
+
+                        startActivity(intent)
+                        finish()
+                    }
+                }
+            }
         }
     }
 
-    // Função de UI: Apenas preenche os campos com os dados recebidos
     private fun populateInputFields(list: ShoppingList) {
         binding.editListListNameInput.setText(list.title)
 
-        // Se o usuário já selecionou uma nova imagem, não sobrescreva
-        if (listCoverImageSelectedUri == null) {
-            if (list.coverImageUri != null)
+        if(listCoverImageSelectedUri == null) {
+            if(list.coverImageUri != null)
                 binding.editListImagePreview.setImageURI(list.coverImageUri.toUri())
             else
                 binding.editListImagePreview.setImageURI("android.resource://$packageName/${list.placeholderImageId}".toUri())
         }
     }
-
-    // A função validateAndUpdateList foi removida e a lógica foi movida para o ViewModel
 }
