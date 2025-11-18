@@ -9,23 +9,19 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.appcompat.widget.SearchView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.widget.addTextChangedListener
 
 import com.example.kotlist.data.model.ShoppingList
 import com.example.kotlist.data.repository.ShoppingListRepository
 import com.example.kotlist.data.repository.UserRepository
-import com.example.kotlist.databinding.ActivityListsScreenBinding
-import com.example.kotlist.R
-import com.example.kotlist.databinding.ActivityMainTempBinding
-import com.example.kotlist.layoutlogic.MainTempActivity.Companion.EXTRA_LIST_ID
-
+import com.example.kotlist.databinding.ActivityListsBinding
 
 class ListsActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityListsScreenBinding
-    private lateinit var listAdapter: ListAdapter
+    private lateinit var binding: ActivityListsBinding
+    private lateinit var listsAdapter: ListsAdapter
     private var allLists: List<ShoppingList> = emptyList()
 
     companion object {
@@ -44,7 +40,7 @@ class ListsActivity : AppCompatActivity() {
         )
 
         // ViewBinding configuration
-        binding = ActivityListsScreenBinding.inflate(layoutInflater)
+        binding = ActivityListsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.listsMain) { v, insets ->
@@ -53,19 +49,19 @@ class ListsActivity : AppCompatActivity() {
             insets
         }
 
-        listAdapter = ListAdapter(emptyList()) { clickedList ->
+        listsAdapter = ListsAdapter(emptyList()) { clickedList ->
             navigateToItemDetails(clickedList)
         }
 
         binding.recyclerViewLists.layoutManager = GridLayoutManager(this, 2)
-        binding.recyclerViewLists.adapter = listAdapter
+        binding.recyclerViewLists.adapter = listsAdapter
 
         binding.fabAddList.setOnClickListener {
             val intent = Intent(this, AddListActivity::class.java)
             startActivity(intent)
         }
 
-        binding.logoutButton.setOnClickListener {
+        binding.listsLogoutButton.setOnClickListener {
             Toast.makeText(this, "Sessão encerrada", Toast.LENGTH_SHORT).show()
             handleLogout()
         }
@@ -73,8 +69,8 @@ class ListsActivity : AppCompatActivity() {
         setupSearchListener()
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onStart() {
+        super.onStart()
         loadAndDisplayLists()
     }
 
@@ -106,7 +102,7 @@ class ListsActivity : AppCompatActivity() {
 
     private fun navigateToItemDetails(list: ShoppingList) {
         val intent = Intent(this, ItemListActivity::class.java).apply {
-            putExtra(EXTRA_LIST_ID, list.id)
+            putExtra(ItemListActivity.EXTRA_LIST_ID, list.id)
         }
         startActivity(intent)
     }
@@ -120,53 +116,34 @@ class ListsActivity : AppCompatActivity() {
     }
 
     private fun setupSearchListener() {
-        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-
-            // Chamado quando o usuário aperta Enter
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                filterLists(query.orEmpty())
-                return true
-            }
-
-            // Chamado a cada mudança de texto (Busca em Tempo Real)
-            override fun onQueryTextChange(newText: String?): Boolean {
-                filterLists(newText.orEmpty())
-                return true
-            }
-        })
-
-        // binding.searchView.isIconified = false
+        binding.listsSearchInput.addTextChangedListener { editable ->
+            val query = editable?.toString().orEmpty()
+            filterLists(query)
+        }
     }
 
-    // Filtra as listas com base na query e atualiza o Adapter e o Empty State.
     private fun filterLists(query: String) {
-        val filteredLists = if (query.isBlank()) {
-            // Se a busca estiver vazia, exibe todas as listas
+        val filteredLists = if(query.isBlank()) {
             allLists
         } else {
-            // Filtra as listas cujo título contenha a query (ignorando maiúsculas/minúsculas)
             allLists.filter {
                 it.title.contains(query, ignoreCase = true)
             }
         }
 
-        if (filteredLists.isEmpty()) {
+        if(filteredLists.isEmpty()) {
             binding.recyclerViewLists.visibility = View.GONE
-            binding.textViewEmptyState.visibility = View.VISIBLE
+            binding.listsFeedbackMessage.visibility = View.VISIBLE
 
-            // Ajusta a mensagem de Empty State dependendo se é um erro de busca ou lista vazia
-            if (query.isNotBlank()) {
-                binding.textViewEmptyState.text = "Nenhuma lista encontrada para \"$query\"."
-            } else {
-                // Mensagem original (sem listas cadastradas no total)
-                binding.textViewEmptyState.text =
-                    "Você ainda não tem listas! Toque no '+' para começar a adicionar."
-            }
+            if (query.isNotBlank())
+                binding.listsFeedbackMessage.text = "Nenhuma lista encontrada para \"$query\"."
+            else
+                binding.listsFeedbackMessage.text = "Você ainda não tem listas! Toque no '+' para começar a adicionar."
 
         } else {
             binding.recyclerViewLists.visibility = View.VISIBLE
-            binding.textViewEmptyState.visibility = View.GONE
-            listAdapter.updateData(filteredLists)
+            binding.listsFeedbackMessage.visibility = View.GONE
+            listsAdapter.updateData(filteredLists)
         }
     }
 }

@@ -3,13 +3,11 @@ package com.example.kotlist.layoutlogic
 import com.example.kotlist.R
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.kotlist.data.model.ItemCategory
@@ -17,7 +15,6 @@ import com.example.kotlist.data.model.ItemUnit
 import com.example.kotlist.data.model.ListItem
 import com.example.kotlist.data.repository.ListItemRepository
 import com.example.kotlist.databinding.ActivityAddItemBinding
-import com.example.kotlist.databinding.ActivityAddListBinding
 
 class AddItemActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddItemBinding
@@ -84,13 +81,13 @@ class AddItemActivity : AppCompatActivity() {
 
         val itemUnitsAdapter = ArrayAdapter(
             this,
-            R.layout.dropdown_input_item,
+            R.layout.component_dropdown_input_item,
             itemUnitsStringArray
         )
 
         val itemCategoriesAdapter = ArrayAdapter(
             this,
-            R.layout.dropdown_input_item,
+            R.layout.component_dropdown_input_item,
             itemCategoriesStringArray
         )
 

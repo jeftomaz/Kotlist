@@ -3,11 +3,13 @@ package com.example.kotlist.layoutlogic
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.view.View
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.kotlist.data.model.ListItem
 import com.example.kotlist.data.repository.ListItemRepository
@@ -16,7 +18,6 @@ import com.example.kotlist.data.repository.UserRepository
 import com.example.kotlist.databinding.ActivityAddItemBinding
 import com.example.kotlist.databinding.ActivityItemListBinding
 import com.example.kotlist.layoutlogic.ItemListAdapter
-import com.example.kotlist.layoutlogic.MainTempActivity.Companion.EXTRA_LIST_ID
 
 class ItemListActivity : AppCompatActivity() {
     private lateinit var binding: ActivityItemListBinding
@@ -50,7 +51,7 @@ class ItemListActivity : AppCompatActivity() {
             insets
         }
 
-        sourceListId = intent.getStringExtra(MainTempActivity.EXTRA_LIST_ID)!!
+        sourceListId = intent.getStringExtra(EXTRA_LIST_ID)!!
         binding.itemListListName.text = ShoppingListRepository.getListById(sourceListId)?.title
         recyclerViewConfiguration()
         loadAndDisplayItemList()
@@ -71,8 +72,8 @@ class ItemListActivity : AppCompatActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onStart() {
+        super.onStart()
 
         binding.itemListListName.text = ShoppingListRepository.getListById(sourceListId)?.title
         loadAndDisplayItemList()
@@ -111,39 +112,42 @@ class ItemListActivity : AppCompatActivity() {
     }
 
     fun setupSearchView() {
-        binding.itemListSearchBar.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
-
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                if (newText != null) {
-                    filterAndSortItemList(newText)
-                }
-                return true
-            }
-        })
+        binding.itemListSearchInput.addTextChangedListener { editable ->
+            val query = editable?.toString().orEmpty()
+            filterItemList(query)
+        }
     }
 
     fun loadAndDisplayItemList() {
         searchMasterItemList = ListItemRepository.getItemsFromList(sourceListId)
-        val currentQuery = binding.itemListSearchBar.query.toString()
-        filterAndSortItemList(currentQuery)
+        val currentQuery = binding.itemListSearchInput.text.toString()
+        filterItemList(currentQuery)
     }
 
-    fun filterAndSortItemList(query: String) {
-        var filteredList: List<ListItem>
-
-        if (query.isEmpty()) {
-            filteredList = searchMasterItemList
+    fun filterItemList(query: String) {
+        val filteredList: List<ListItem> = if(query.isEmpty()) {
+            searchMasterItemList
         } else {
-            filteredList = searchMasterItemList.filter { item ->
+            searchMasterItemList.filter { item ->
                 item.name.contains(query, ignoreCase = true)
             }
         }
 
         val sortedList = getSortedList(filteredList.toMutableList())
         itemListAdapter.submitList(sortedList)
+
+        if(sortedList.isEmpty()) {
+            binding.itemListRecyclerItemsView.visibility = View.GONE
+            binding.listsFeedbackMessage.visibility = View.VISIBLE
+
+            if(query.isNotBlank()) {
+                binding.listsFeedbackMessage.text = "Nenhum item encontrado para \"$query\"."
+            } else {
+                binding.listsFeedbackMessage.text = "Esta lista está vazia! Toque no '+' para adicionar itens."
+            }
+        } else {
+            binding.itemListRecyclerItemsView.visibility = View.VISIBLE
+            binding.listsFeedbackMessage.visibility = View.GONE
+        }
     }
 }

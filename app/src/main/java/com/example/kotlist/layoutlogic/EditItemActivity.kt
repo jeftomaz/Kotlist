@@ -14,7 +14,6 @@ import com.example.kotlist.data.model.ItemCategory
 import com.example.kotlist.data.model.ItemUnit
 import com.example.kotlist.data.model.ListItem
 import com.example.kotlist.data.repository.ListItemRepository
-import com.example.kotlist.databinding.ActivityAddItemBinding
 import com.example.kotlist.databinding.ActivityEditItemBinding
 
 class EditItemActivity : AppCompatActivity() {
@@ -89,13 +88,13 @@ class EditItemActivity : AppCompatActivity() {
 
         val itemUnitsAdapter = ArrayAdapter(
             this,
-            R.layout.dropdown_input_item,
+            R.layout.component_dropdown_input_item,
             itemUnitsStringArray
         )
 
         val itemCategoriesAdapter = ArrayAdapter(
             this,
-            R.layout.dropdown_input_item,
+            R.layout.component_dropdown_input_item,
             itemCategoriesStringArray
         )
 

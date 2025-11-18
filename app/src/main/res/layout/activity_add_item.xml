@@ -18,7 +18,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        style="@style/Widget.App.Heading1" />
+        style="@style/TextAppearance.App.Heading1" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/add_item_name_input_wrapper"
@@ -29,7 +29,7 @@
         app:layout_constraintTop_toBottomOf="@id/add_item_screen_title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        style="@style/Widget.App.InputWrapper">
+        style="@style/Widget.App.InputWrapper.Outlined">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/add_item_name_input"
@@ -47,7 +47,7 @@
         app:layout_constraintTop_toBottomOf="@id/add_item_name_input_wrapper"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/add_item_unit_dropdown_wrapper"
-        style="@style/Widget.App.InputWrapper">
+        style="@style/Widget.App.InputWrapper.Outlined">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/add_item_quantity_input"
@@ -68,7 +68,7 @@
         app:layout_constraintTop_toBottomOf="@id/add_item_name_input_wrapper"
         app:layout_constraintStart_toEndOf="@id/add_item_quantity_input_wrapper"
         app:layout_constraintEnd_toEndOf="parent"
-        app:materialThemeOverlay="@style/dropdownInputThemeOverlay"
+        app:materialThemeOverlay="@style/ThemeOverlay.App.Dropdown"
         style="@style/Widget.App.DropdownWrapper">
 
         <AutoCompleteTextView
@@ -91,7 +91,7 @@
         app:layout_constraintTop_toBottomOf="@id/add_item_unit_dropdown_wrapper"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:materialThemeOverlay="@style/dropdownInputThemeOverlay"
+        app:materialThemeOverlay="@style/ThemeOverlay.App.Dropdown"
         style="@style/Widget.App.DropdownWrapper">
 
         <AutoCompleteTextView

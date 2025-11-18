@@ -9,15 +9,20 @@
 
     <color name="primary">#6B46B4</color>
     <color name="primaryPastel">#DDD3EB</color>
+    <color name="secondary">#E6784C</color>
+    <color name="secondaryPastel">#F2D5C5</color>
 
     <color name="deleteButton">#D95050</color>
 
     <color name="inputError">#FF6666</color>
+
+    <color name="backgroundInputFilled">#E1D9ED</color>
+    <color name="hintTextInputFilled">#8377A2</color>
 
     <color name="primaryButtonRipple">#472C7C</color>
     <color name="secondaryButtonRipple">#BCBCBC</color>
     <color name="deleteButtonRipple">#C74343</color>
 
     <color name="floatingActionButtonRippleSecundary">#C3B2E0</color>
-    <color name="floatingActionButtonRipplePrimary">#593C94</color>
+    <color name="floatingActionButtonRipplePrimary">#D75F2F</color>
 </resources>
