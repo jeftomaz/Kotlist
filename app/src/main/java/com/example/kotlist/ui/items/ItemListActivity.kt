@@ -11,25 +11,27 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.kotlist.data.repository.ListItemRepository
 import com.example.kotlist.data.repository.ShoppingListRepository
 import com.example.kotlist.databinding.ActivityItemListBinding
 import com.example.kotlist.ui.lists.EditListActivity
+import kotlinx.coroutines.launch
 
 class ItemListActivity : AppCompatActivity() {
     private lateinit var binding: ActivityItemListBinding
     private lateinit var itemListAdapter: ItemListAdapter
     private lateinit var sourceListId: String
 
-    // Inicializa o ViewModel usando a Factory
     private val viewModel: ItemListViewModel by viewModels {
         ItemListViewModelFactory(ListItemRepository, ShoppingListRepository)
     }
 
     companion object {
         const val EXTRA_LIST_ID = "EXTRA_LIST_ID"
-        const val EXTRA_LIST_ITEM_ID = "EXTRA_LIST_ITEM_ID"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,14 +59,12 @@ class ItemListActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        // A Activity apenas avisa o ViewModel para carregar os dados
         viewModel.loadData(sourceListId)
     }
 
     private fun setupRecyclerView() {
         itemListAdapter = ItemListAdapter(
             onCheckboxClicked = { item, isChecked ->
-                // A Activity avisa o ViewModel sobre a mudança
                 viewModel.onItemCheckedChanged(item, isChecked)
             },
             onItemClick = { item ->
@@ -77,7 +77,6 @@ class ItemListActivity : AppCompatActivity() {
     }
 
     private fun setupListeners() {
-        // A Activity avisa o ViewModel sobre mudanças no texto de busca
         binding.itemListSearchInput.addTextChangedListener { editable ->
             val query = editable?.toString().orEmpty()
             viewModel.onSearchQueryChanged(query)
@@ -92,60 +91,59 @@ class ItemListActivity : AppCompatActivity() {
         }
     }
 
-    // A Activity observa as mudanças do ViewModel e reage
     private fun setupObservers() {
-        // Observa a lista de itens
-        viewModel.items.observe(this) { items ->
-            itemListAdapter.submitList(items)
-        }
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                // load list items data
+                launch {
+                    viewModel.items.collect { items ->
+                        itemListAdapter.submitList(items)
+                    }
+                }
 
-        // Observa o título da lista
-        viewModel.listTitle.observe(this) { title ->
-            binding.itemListListName.text = title
-        }
+                // load list title
+                launch {
+                    viewModel.listTitle.collect { title ->
+                        binding.itemListListName.text = title
+                    }
+                }
 
-        // Observa a mensagem de feedback
-        viewModel.feedbackMessage.observe(this) { message ->
-            if (message == null) {
-                binding.itemListRecyclerItemsView.visibility = View.VISIBLE
-                binding.listsFeedbackMessage.visibility = View.GONE
-            } else {
-                binding.itemListRecyclerItemsView.visibility = View.GONE
-                binding.listsFeedbackMessage.visibility = View.VISIBLE
-                binding.listsFeedbackMessage.text = message
+                // show search/empty list feedback message
+                launch {
+                    viewModel.feedbackMessage.collect { message ->
+                        if (message == null) {
+                            binding.itemListRecyclerItemsView.visibility = View.VISIBLE
+                            binding.listsFeedbackMessage.visibility = View.GONE
+                        } else {
+                            binding.itemListRecyclerItemsView.visibility = View.GONE
+                            binding.listsFeedbackMessage.visibility = View.VISIBLE
+                            binding.listsFeedbackMessage.text = message
+                        }
+                    }
+                }
             }
         }
     }
 
-    // Funções de navegação permanecem na Activity
     private fun navigateToEditList() {
         val intent = Intent(this, EditListActivity::class.java).apply {
-            putExtra(EXTRA_LIST_ID, sourceListId)
+            putExtra(EditListActivity.EXTRA_LIST_ID, sourceListId)
         }
         startActivity(intent)
     }
 
     private fun navigateToAddItem() {
         val intent = Intent(this, AddItemActivity::class.java).apply {
-            putExtra(EXTRA_LIST_ID, sourceListId)
+            putExtra(AddItemActivity.EXTRA_LIST_ID, sourceListId)
         }
         startActivity(intent)
     }
 
     private fun navigateToEditItem(itemId: String) {
         val intent = Intent(this, EditItemActivity::class.java).apply {
-            putExtra(EXTRA_LIST_ID, sourceListId)
-            putExtra(EXTRA_LIST_ITEM_ID, itemId)
+            putExtra(EditItemActivity.EXTRA_LIST_ID, sourceListId)
+            putExtra(EditItemActivity.EXTRA_LIST_ITEM_ID, itemId)
         }
         startActivity(intent)
     }
-
-    // Funções REMOVIDAS:
-    // - loadAndDisplayItemList() → movida para ViewModel.loadData()
-    // - filterItemList() → movida para ViewModel.filterItems()
-    // - getSortedList() → integrada no ViewModel.filterItems()
-    // - setupSearchView() → substituída por setupListeners()
-    // - recyclerViewConfiguration() → renomeada para setupRecyclerView()
-    // Variável REMOVIDA:
-    // - searchMasterItemList → movida para ViewModel.allItems
 }
