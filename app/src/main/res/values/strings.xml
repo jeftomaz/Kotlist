@@ -41,9 +41,14 @@
         <item>ml</item>
     </string-array>
 
-    <string name="unit">Unidade (un)</string>
-    <string name="kilogram">Quilograma (kg)</string>
-    <string name="gram">Grama (g)</string>
-    <string name="liter">Litro (L)</string>
-    <string name="milliliter">Mililitro (ml)</string>
+    <string name="unit_name">Unidade</string>
+    <string name="unit_abbreviation">un</string>
+    <string name="kilogram_name">Quilograma</string>
+    <string name="kilogram_abbreviation">kg</string>
+    <string name="gram_name">Grama</string>
+    <string name="gram_abbreviation">g</string>
+    <string name="liter_name">Litro</string>
+    <string name="liter_abbreviation">L</string>
+    <string name="milliliter_name">Mililitro</string>
+    <string name="milliliter_abbreviation">ml</string>
 </resources>

@@ -6,7 +6,11 @@
     android:layout_height="wrap_content"
     android:textColor="@color/softBlack"
     android:text="Dropdown item description"
-    android:maxLines="1"
     android:ellipsize="end"
+    android:singleLine="true"
+    android:maxLines="1"
+    android:scrollHorizontally="true"
+    android:marqueeRepeatLimit="marquee_forever"
+    android:fadingEdge="horizontal"
     android:padding="@dimen/margin_medium"
     style="@style/TextAppearance.App.Paragraph"/>

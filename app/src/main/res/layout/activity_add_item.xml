@@ -76,7 +76,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="none"
+            android:ellipsize="end"
+            android:singleLine="true"
             android:maxLines="1"
+            android:scrollHorizontally="true"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:fadingEdge="horizontal"
             style="@style/Widget.App.Dropdown" />
     </com.google.android.material.textfield.TextInputLayout>
 

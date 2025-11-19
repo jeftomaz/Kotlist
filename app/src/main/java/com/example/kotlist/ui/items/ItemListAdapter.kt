@@ -41,7 +41,7 @@ class ItemListAdapter (
         fun bind(item: ListItem, onCheckboxClicked: (ListItem, Boolean) -> Unit, onItemClick: (ListItem) -> Unit) {
             categoryIcon.setImageResource(item.category.categoryIconId)
             itemName.text = item.name
-            itemQuantityUnit.text = "${item.quantity} ${context.getString(item.unit.unitNameId)}"
+            itemQuantityUnit.text = "${item.quantity} ${context.getString(item.unit.unitAbbreviationId)}"
             itemCheckbox.isChecked = item.isChecked
 
             updateUI(itemCheckbox.isChecked)
