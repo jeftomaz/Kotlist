@@ -103,7 +103,6 @@ class EditListActivity : AppCompatActivity() {
     private fun setupObservers() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-
                 // load list data
                 launch {
                     viewModel.listToEdit.filterNotNull().collect { list ->
