@@ -3,6 +3,7 @@
     <color name="transparent">#00000000</color>
     <color name="hardBlack">#FF000000</color>
     <color name="softBlack">#181818</color>
+    <color name="darkGrey">#282828</color>
     <color name="white">#FFFFFFFF</color>
     <color name="light_grey">#FFCCCCCC</color>
     <color name="grey">#FF999999</color>
@@ -15,14 +16,15 @@
     <color name="deleteButton">#D95050</color>
 
     <color name="inputError">#FF6666</color>
+    <color name="inputCursor">#B1B1B1</color>
 
     <color name="backgroundInputFilled">#E1D9ED</color>
     <color name="hintTextInputFilled">#8377A2</color>
 
     <color name="primaryButtonRipple">#472C7C</color>
-    <color name="secondaryButtonRipple">#BCBCBC</color>
+    <color name="secondaryButtonRipple">#CECECE</color>
     <color name="deleteButtonRipple">#C74343</color>
 
-    <color name="floatingActionButtonRippleSecundary">#C3B2E0</color>
+    <color name="floatingActionButtonRippleSecondary">#C3B2E0</color>
     <color name="floatingActionButtonRipplePrimary">#D75F2F</color>
 </resources>

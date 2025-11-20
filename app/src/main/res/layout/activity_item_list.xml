@@ -8,6 +8,19 @@
     android:id="@+id/item_list_main"
     android:background="@color/white">
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/item_list_back_button"
+        android:layout_width="50dp"
+        android:layout_height="62dp"
+        android:layout_marginStart="@dimen/margin_medium"
+        app:icon="@drawable/icon_back"
+        app:iconSize="36dp"
+        app:layout_constraintTop_toTopOf="@id/item_list_search_input_wrapper"
+        app:layout_constraintEnd_toStartOf="@id/item_list_search_input_wrapper"
+        app:layout_constraintBottom_toBottomOf="@id/item_list_search_input_wrapper"
+        app:layout_constraintStart_toStartOf="parent"
+        style="@style/Widget.App.Button.Icon.Secondary.WithoutBorders" />
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/item_list_search_input_wrapper"
         android:layout_width="0dp"
@@ -15,18 +28,17 @@
         android:layout_margin="@dimen/margin_medium"
         app:hintEnabled="false"
         app:startIconDrawable="@drawable/icon_search"
-        app:endIconMode="clear_text"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/item_list_back_button"
         app:layout_constraintEnd_toStartOf="@id/item_list_edit_list_button"
-        style="@style/Widget.App.InputWrapper.Filled">
+        style="@style/Widget.App.SearchInputWrapper.Outlined">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/item_list_search_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Buscar listas..."
-            android:textColorHint="@color/hintTextInputFilled"
+            android:hint="Buscar itens..."
+            android:textColorHint="@color/grey"
             android:inputType="text"
             android:maxLines="1"
             android:imeOptions="actionSearch"

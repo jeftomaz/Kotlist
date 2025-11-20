@@ -15,18 +15,16 @@
         android:layout_margin="@dimen/margin_medium"
         app:hintEnabled="false"
         app:startIconDrawable="@drawable/icon_search"
-        app:endIconMode="clear_text"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/lists_logout_button"
-        style="@style/Widget.App.InputWrapper.Filled">
+        style="@style/Widget.App.SearchInputWrapper.Outlined">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/lists_search_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Buscar listas..."
-            android:textColorHint="@color/hintTextInputFilled"
             android:inputType="text"
             android:maxLines="1"
             android:imeOptions="actionSearch"
@@ -38,7 +36,7 @@
         android:layout_width="56dp"
         android:layout_height="62dp"
         android:layout_marginEnd="@dimen/margin_medium"
-        app:icon="@drawable/log_out_icon"
+        app:icon="@drawable/icon_logout"
         app:iconSize="22dp"
         app:layout_constraintTop_toTopOf="@id/lists_search_input_wrapper"
         app:layout_constraintBottom_toBottomOf="@id/lists_search_input_wrapper"
