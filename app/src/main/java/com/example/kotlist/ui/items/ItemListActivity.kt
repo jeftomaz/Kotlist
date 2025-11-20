@@ -89,6 +89,10 @@ class ItemListActivity : AppCompatActivity() {
         binding.itemListAddItemButton.setOnClickListener {
             navigateToAddItem()
         }
+
+        binding.itemListBackButton.setOnClickListener {
+            finish()
+        }
     }
 
     private fun setupObservers() {
