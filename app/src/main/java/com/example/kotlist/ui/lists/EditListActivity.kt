@@ -9,6 +9,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
@@ -87,7 +88,17 @@ class EditListActivity : AppCompatActivity() {
         }
 
         binding.editListDeleteListButton.setOnClickListener {
-            viewModel.deleteList()
+            AlertDialog.Builder(this)
+                .setTitle("Excluir lista")
+                .setMessage("Tem certeza que deseja excluir essa lista? Esta ação não pode ser desfeita.")
+                .setPositiveButton("Excluir") { dialog, _ ->
+                    viewModel.deleteList()
+                    dialog.dismiss()
+                }
+                .setNegativeButton("Cancelar") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .show()
         }
 
         binding.editListSaveListButton.setOnClickListener {
