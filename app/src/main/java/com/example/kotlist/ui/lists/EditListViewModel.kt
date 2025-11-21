@@ -1,5 +1,6 @@
 package com.example.kotlist.ui.lists
 
+import android.os.Build
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.kotlist.data.model.ShoppingList
@@ -9,6 +10,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+
+sealed class GalleryPermissionState {
+    object Idle : GalleryPermissionState()
+    object PermissionGranted : GalleryPermissionState()
+    object ShouldRequestPermission : GalleryPermissionState()
+    object ShouldShowRationale : GalleryPermissionState()
+    object PermissionDenied : GalleryPermissionState()
+}
 
 class EditListViewModel(
     private val shoppingListRepository: ShoppingListRepository
@@ -26,6 +35,12 @@ class EditListViewModel(
 
     private val _deleteEventMessage = MutableSharedFlow<String>()
     val deleteEventMessage: SharedFlow<String> = _deleteEventMessage
+
+    private val _showDeleteConfirmation = MutableSharedFlow<Unit>()
+    val showDeleteConfirmation: SharedFlow<Unit> = _showDeleteConfirmation
+
+    private val _galleryPermissionState = MutableSharedFlow<GalleryPermissionState>()
+    val galleryPermissionState: SharedFlow<GalleryPermissionState> = _galleryPermissionState
 
     fun loadList(listId: String) {
         listOnEditing = shoppingListRepository.getListById(listId)
@@ -54,12 +69,42 @@ class EditListViewModel(
         }
     }
 
+    fun onDeleteListClicked() {
+        viewModelScope.launch {
+            _showDeleteConfirmation.emit(Unit)
+        }
+    }
+
     fun deleteList() {
         val listId = listOnEditing?.id ?: return
         shoppingListRepository.deleteList(listId)
 
         viewModelScope.launch {
             _deleteEventMessage.emit("Lista excluída com sucesso!")
+        }
+    }
+
+    fun onAddImageClicked() {
+        viewModelScope.launch {
+            _galleryPermissionState.emit(GalleryPermissionState.ShouldRequestPermission)
+        }
+    }
+
+    fun onPermissionResult(isGranted: Boolean, shouldShowRationale: Boolean) {
+        viewModelScope.launch {
+            when {
+                isGranted -> _galleryPermissionState.emit(GalleryPermissionState.PermissionGranted)
+                shouldShowRationale -> _galleryPermissionState.emit(GalleryPermissionState.ShouldShowRationale)
+                else -> _galleryPermissionState.emit(GalleryPermissionState.PermissionDenied)
+            }
+        }
+    }
+
+    fun getRequiredPermission(): String {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            android.Manifest.permission.READ_MEDIA_IMAGES
+        } else {
+            android.Manifest.permission.READ_EXTERNAL_STORAGE
         }
     }
 }
