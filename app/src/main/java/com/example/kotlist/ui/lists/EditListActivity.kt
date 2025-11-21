@@ -3,8 +3,10 @@ package com.example.kotlist.ui.lists
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
@@ -38,19 +40,6 @@ class EditListActivity : AppCompatActivity() {
     companion object {
         const val EXTRA_LIST_ID = "EXTRA_LIST_ID"
     }
-
-//    private val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-//        if (uri != null) {
-//            contentResolver.takePersistableUriPermission(
-//                uri,
-//                Intent.FLAG_GRANT_READ_URI_PERMISSION
-//            )
-//            listCoverImageSelectedUri = uri.toString()
-//            binding.editListImagePreview.setImageURI(uri)
-//        } else {
-//            Toast.makeText(this, "Nenhuma imagem selecionada.", Toast.LENGTH_SHORT).show()
-//        }
-//    }
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -214,11 +203,7 @@ class EditListActivity : AppCompatActivity() {
                 showPermissionRationaleDialog()
             }
             is GalleryPermissionState.PermissionDenied -> {
-                Toast.makeText(
-                    this,
-                    "A permissão foi negada. Acesse as configurações para fornecer manualmente.",
-                    Toast.LENGTH_SHORT
-                ).show()
+                showPermissionDeniedDialog()
             }
             is GalleryPermissionState.Idle -> { }
         }
@@ -256,6 +241,23 @@ class EditListActivity : AppCompatActivity() {
             .setMessage("Precisamos de acesso à galeria para você selecionar uma imagem de capa para a lista.")
             .setPositiveButton("Permitir") { dialog, _ ->
                 requestPermissionLauncher.launch(viewModel.getRequiredPermission())
+                dialog.dismiss()
+            }
+            .setNegativeButton("Cancelar") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    private fun showPermissionDeniedDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Permissão negada")
+            .setMessage("Você negou o acesso à galeria. Para que você possa adicionar imagens personalizadas, acesse as configurações do aplicativo e forneça acesso manualmente.")
+            .setPositiveButton("Ir para as configurações") { dialog, _ ->
+                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                val uri = Uri.fromParts("package", packageName, null)
+                intent.data = uri
+                startActivity(intent)
                 dialog.dismiss()
             }
             .setNegativeButton("Cancelar") { dialog, _ ->

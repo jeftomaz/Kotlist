@@ -1,5 +1,6 @@
 package com.example.kotlist.ui.lists
 
+import android.os.Build
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.kotlist.data.model.ShoppingList
@@ -26,6 +27,9 @@ class AddListViewModel(
 
     private val _finishEvent = MutableSharedFlow<String>()
     val finishEvent: SharedFlow<String> = _finishEvent
+
+    private val _galleryPermissionState = MutableSharedFlow<GalleryPermissionState>()
+    val galleryPermissionState: SharedFlow<GalleryPermissionState> = _galleryPermissionState
 
     fun loadInitialPlaceholder() {
         _placeholderImageId.value = shoppingListRepository.getRandomPlaceholderId()
@@ -58,6 +62,30 @@ class AddListViewModel(
 
         viewModelScope.launch {
             _finishEvent.emit("Nova lista criada com sucesso!")
+        }
+    }
+
+    fun onAddImageClicked() {
+        viewModelScope.launch {
+            _galleryPermissionState.emit(GalleryPermissionState.ShouldRequestPermission)
+        }
+    }
+
+    fun onPermissionResult(isGranted: Boolean, shouldShowRationale: Boolean) {
+        viewModelScope.launch {
+            when {
+                isGranted -> _galleryPermissionState.emit(GalleryPermissionState.PermissionGranted)
+                shouldShowRationale -> _galleryPermissionState.emit(GalleryPermissionState.ShouldShowRationale)
+                else -> _galleryPermissionState.emit(GalleryPermissionState.PermissionDenied)
+            }
+        }
+    }
+
+    fun getRequiredPermission(): String {
+        return if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            android.Manifest.permission.READ_MEDIA_IMAGES
+        } else {
+            android.Manifest.permission.READ_EXTERNAL_STORAGE
         }
     }
 }

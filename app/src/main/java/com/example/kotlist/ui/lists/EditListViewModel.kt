@@ -11,14 +11,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-sealed class GalleryPermissionState {
-    object Idle : GalleryPermissionState()
-    object PermissionGranted : GalleryPermissionState()
-    object ShouldRequestPermission : GalleryPermissionState()
-    object ShouldShowRationale : GalleryPermissionState()
-    object PermissionDenied : GalleryPermissionState()
-}
-
 class EditListViewModel(
     private val shoppingListRepository: ShoppingListRepository
 ) : ViewModel() {
