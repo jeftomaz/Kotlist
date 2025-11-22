@@ -238,34 +238,30 @@ class EditListActivity : AppCompatActivity() {
     }
 
     private fun showPermissionRationaleDialog() {
-        AlertDialog.Builder(this)
-            .setTitle("Permissão necessária")
-            .setMessage("Precisamos de acesso à galeria para você selecionar uma imagem de capa para a lista.")
-            .setPositiveButton("Permitir") { dialog, _ ->
+        showCustomDialog(
+            title = "Permissão necessária",
+            message = "É necessário conceder acesso à sua galeria para que você possa selecionar uma capa de lista personalizada.",
+            positiveButtonText = "Entendi",
+            negativeButtonText = "Cancelar",
+            onPositiveClick = {
                 requestPermissionLauncher.launch(viewModel.getRequiredPermission())
-                dialog.dismiss()
             }
-            .setNegativeButton("Cancelar") { dialog, _ ->
-                dialog.dismiss()
-            }
-            .show()
+        )
     }
 
     private fun showPermissionDeniedDialog() {
-        AlertDialog.Builder(this)
-            .setTitle("Permissão negada")
-            .setMessage("Você negou o acesso à galeria. Para que você possa adicionar imagens personalizadas, acesse as configurações do aplicativo e forneça acesso manualmente.")
-            .setPositiveButton("Ir para as configurações") { dialog, _ ->
+        showCustomDialog(
+            title = "Permissão negada",
+            message = "Você negou o acesso à sua galeria. Para adicionar capas personalizadas, acesse as configurações do aplicativo e forneça permissão manualmente.",
+            positiveButtonText = "Conceder",
+            negativeButtonText = "Cancelar",
+            onPositiveClick = {
                 val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                 val uri = Uri.fromParts("package", packageName, null)
                 intent.data = uri
                 startActivity(intent)
-                dialog.dismiss()
             }
-            .setNegativeButton("Cancelar") { dialog, _ ->
-                dialog.dismiss()
-            }
-            .show()
+        )
     }
 
     private fun showDeleteConfirmationDialog() {
