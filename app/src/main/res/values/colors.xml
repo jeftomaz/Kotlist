@@ -12,6 +12,7 @@
     <color name="primaryPastel">#DDD3EB</color>
     <color name="secondary">#E6784C</color>
     <color name="secondaryPastel">#F2D5C5</color>
+    <color name="tertiary">#D74A80</color>
 
     <color name="deleteButton">#D95050</color>
 

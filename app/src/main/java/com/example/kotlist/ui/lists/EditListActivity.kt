@@ -4,13 +4,14 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.provider.Settings
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
@@ -25,6 +26,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.example.kotlist.data.model.ShoppingList
 import com.example.kotlist.data.repository.ShoppingListRepository
 import com.example.kotlist.databinding.ActivityEditListBinding
+import com.example.kotlist.databinding.ComponentDialogDeleteConfirmationBinding
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 
@@ -267,16 +269,45 @@ class EditListActivity : AppCompatActivity() {
     }
 
     private fun showDeleteConfirmationDialog() {
-        AlertDialog.Builder(this)
-            .setTitle("Excluir lista")
-            .setMessage("Tem certeza que deseja excluir essa lista? Esta ação não pode ser desfeita.")
-            .setPositiveButton("Excluir") { dialog, _ ->
-                viewModel.deleteList()
-                dialog.dismiss()
+//        AlertDialog.Builder(this)
+//            .setTitle("Excluir lista")
+//            .setMessage("Tem certeza que deseja excluir essa lista? Esta ação não pode ser desfeita.")
+//            .setPositiveButton("Excluir") { dialog, _ ->
+//                viewModel.deleteList()
+//                dialog.dismiss()
+//            }
+//            .setNegativeButton("Cancelar") { dialog, _ ->
+//                dialog.dismiss()
+//            }
+//            .show()
+
+        val dialogBinding = ComponentDialogDeleteConfirmationBinding.inflate(layoutInflater)
+
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogBinding.root)
+            .setCancelable(true)
+            .create()
+
+        dialog.window?.apply {
+            setBackgroundDrawableResource(android.R.color.transparent)
+            setDimAmount(0.75f)
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND)
+                attributes = attributes?.apply {
+                    blurBehindRadius = 20
+                }
             }
-            .setNegativeButton("Cancelar") { dialog, _ ->
-                dialog.dismiss()
-            }
-            .show()
+        }
+
+        dialogBinding.dialogDeleteCancelButton.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialogBinding.dialogDeleteDeleteButton.setOnClickListener {
+            viewModel.deleteList()
+            dialog.dismiss()
+        }
+
+        dialog.show()
     }
 }
