@@ -1,14 +1,13 @@
 package com.example.kotlist.ui.lists
 
+import com.example.kotlist.R
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.provider.Settings
-import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
@@ -26,7 +25,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.example.kotlist.data.model.ShoppingList
 import com.example.kotlist.data.repository.ShoppingListRepository
 import com.example.kotlist.databinding.ActivityEditListBinding
-import com.example.kotlist.databinding.ComponentDialogDeleteConfirmationBinding
+import com.example.kotlist.extensions.showCustomDialog
+import com.example.kotlist.extensions.showDeleteDialog
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 
@@ -269,45 +269,14 @@ class EditListActivity : AppCompatActivity() {
     }
 
     private fun showDeleteConfirmationDialog() {
-//        AlertDialog.Builder(this)
-//            .setTitle("Excluir lista")
-//            .setMessage("Tem certeza que deseja excluir essa lista? Esta ação não pode ser desfeita.")
-//            .setPositiveButton("Excluir") { dialog, _ ->
-//                viewModel.deleteList()
-//                dialog.dismiss()
-//            }
-//            .setNegativeButton("Cancelar") { dialog, _ ->
-//                dialog.dismiss()
-//            }
-//            .show()
-
-        val dialogBinding = ComponentDialogDeleteConfirmationBinding.inflate(layoutInflater)
-
-        val dialog = AlertDialog.Builder(this)
-            .setView(dialogBinding.root)
-            .setCancelable(true)
-            .create()
-
-        dialog.window?.apply {
-            setBackgroundDrawableResource(android.R.color.transparent)
-            setDimAmount(0.75f)
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND)
-                attributes = attributes?.apply {
-                    blurBehindRadius = 20
-                }
+        showDeleteDialog(
+            title = "Excluir Lista",
+            message = "Tem certeza que deseja excluir essa lista? Esta ação não poderá ser desfeita.",
+            positiveButtonText = "Excluir",
+            negativeButtonText = "Cancelar",
+            onPositiveClick = {
+                viewModel.deleteList()
             }
-        }
-
-        dialogBinding.dialogDeleteCancelButton.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        dialogBinding.dialogDeleteDeleteButton.setOnClickListener {
-            viewModel.deleteList()
-            dialog.dismiss()
-        }
-
-        dialog.show()
+        )
     }
 }
