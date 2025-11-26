@@ -1,8 +1,6 @@
 package com.example.kotlist.ui.lists
 
-// Novo import
 import androidx.recyclerview.widget.DiffUtil
-
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.net.toUri
@@ -28,12 +26,13 @@ class ListsAdapter(
 
                 binding.imageViewListPhoto.load(imageUri) {
                     error(list.placeholderImageId)
+                    placeholder(R.drawable.placeholder_img_list_0)
                 }
-            } else if(list.placeholderImageId != -1) {
-                binding.imageViewListPhoto.setImageResource(list.placeholderImageId)
-            } else {
-                binding.imageViewListPhoto.setImageResource(R.drawable.placeholder_img_list_0)
             }
+            else if(list.placeholderImageId != -1)
+                binding.imageViewListPhoto.load(list.placeholderImageId) { }
+            else
+                binding.imageViewListPhoto.load(R.drawable.placeholder_img_list_0) { }
 
             binding.root.setOnClickListener {
                 onItemClicked(list)
