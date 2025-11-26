@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.kotlist"
+    namespace = "com.kotlist.app"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.kotlist"
+        applicationId = "com.kotlist.app"
         minSdk = 25
         targetSdk = 36
         versionCode = 1

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
@@ -16,7 +15,7 @@
         android:theme="@style/Theme.Kotlist">
 
         <activity
-            android:name="com.example.kotlist.ui.auth.LoginActivity"
+            android:name="com.kotlist.app.ui.auth.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,37 +24,37 @@
         </activity>
 
         <activity
-            android:name="com.example.kotlist.ui.auth.SignUpActivity"
+            android:name="com.kotlist.app.ui.auth.SignUpActivity"
             android:exported="false">
         </activity>
 
         <activity
-            android:name="com.example.kotlist.ui.lists.AddListActivity"
+            android:name="com.kotlist.app.ui.lists.AddListActivity"
             android:exported="false">
         </activity>
 
         <activity
-            android:name="com.example.kotlist.ui.items.AddItemActivity"
+            android:name="com.kotlist.app.ui.items.AddItemActivity"
             android:exported="false">
         </activity>
 
         <activity
-            android:name="com.example.kotlist.ui.items.ItemListActivity"
+            android:name="com.kotlist.app.ui.items.ItemListActivity"
             android:exported="false">
         </activity>
 
         <activity
-            android:name="com.example.kotlist.ui.lists.ListsActivity"
+            android:name="com.kotlist.app.ui.lists.ListsActivity"
             android:exported="false">
         </activity>
 
         <activity
-            android:name="com.example.kotlist.ui.items.EditItemActivity"
+            android:name="com.kotlist.app.ui.items.EditItemActivity"
             android:exported="false">
         </activity>
 
         <activity
-            android:name="com.example.kotlist.ui.lists.EditListActivity"
+            android:name="com.kotlist.app.ui.lists.EditListActivity"
             android:exported="false">
         </activity>
 

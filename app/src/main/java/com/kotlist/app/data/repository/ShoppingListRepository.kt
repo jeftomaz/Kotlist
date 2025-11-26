@@ -1,0 +1,41 @@
+package com.kotlist.app.data.repository
+
+import com.kotlist.app.R
+import com.kotlist.app.data.model.ShoppingList
+
+object ShoppingListRepository {
+    private val shoppingLists = mutableListOf<ShoppingList>()
+    private val placeholderImages = listOf(
+        R.drawable.placeholder_img_list_0,
+        R.drawable.placeholder_img_list_1,
+        R.drawable.placeholder_img_list_2
+    )
+
+    fun addList(newList: ShoppingList) {
+        shoppingLists.add(newList)
+    }
+
+    fun getUserLists(userId: String): List<ShoppingList> {
+        return shoppingLists.filter { it.userId == userId }
+    }
+
+    fun getListById(listId: String): ShoppingList? {
+        return shoppingLists.find { it.id == listId }
+    }
+
+    fun deleteList(listId: String) {
+        ListItemRepository.deleteItemsFromList(listId)
+        shoppingLists.removeAll { it.id == listId }
+    }
+
+    fun updateList(listUpdated: ShoppingList) {
+        val index = shoppingLists.indexOfFirst { it.id == listUpdated.id }
+        if (index != -1) {
+            shoppingLists[index] = listUpdated
+        }
+    }
+
+    fun getRandomPlaceholderId(): Int {
+        return placeholderImages.random()
+    }
+}
