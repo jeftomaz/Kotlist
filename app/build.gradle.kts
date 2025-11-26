@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -40,14 +41,20 @@ android {
 }
 
 dependencies {
-    // Anterior >> implementation("org.mindrot:jbcrypt:0.4")
+    // dependency for hashing and checking the user password
     implementation(libs.jbcrypt)
-    implementation("io.coil-kt:coil:2.7.0")
 
-    // Dependências para ViewModel e LiveData
+    // dependency for managing images on UI
+    implementation(libs.coil)
+
+    // dependencies for using ViewModels on MVVM
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.4")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.9.4")
-    implementation("androidx.activity:activity-ktx:1.11.0")
+
+    // dependencies for firebase
+    implementation(platform("com.google.firebase:firebase-bom:34.6.0"))
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.firebase:firebase-storage")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

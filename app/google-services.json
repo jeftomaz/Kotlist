@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "716363146980",
+    "project_id": "kotlist",
+    "storage_bucket": "kotlist.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:716363146980:android:f7809734494c2de3dc2ef1",
+        "android_client_info": {
+          "package_name": "com.kotlist.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBwntJhFouFIWKTaqzNXddVDYKXPXv8jGM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
