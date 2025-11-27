@@ -3,8 +3,8 @@ package com.kotlist.app.data.model
 import java.util.UUID
 
 data class User (
-    val id: String = UUID.randomUUID().toString(),
+    val id: String = "",
     val name: String,
     val email: String,
-    val password: String
+    val password: String = ""
 )

@@ -43,10 +43,10 @@
     </style>
 
     <style name="Widget.App.InputWrapper.Outlined" parent="Widget.Material3.TextInputLayout.OutlinedBox">
-        <item name="boxStrokeColor">@color/input_color_set</item>
-        <item name="android:textColorHint">@color/input_color_set</item>
-        <item name="hintTextColor">@color/input_color_set</item>
-        <item name="endIconTint">@color/input_color_set</item>
+        <item name="boxStrokeColor">@color/state_colors_input</item>
+        <item name="android:textColorHint">@color/state_colors_input</item>
+        <item name="hintTextColor">@color/state_colors_input</item>
+        <item name="endIconTint">@color/state_colors_input</item>
         <item name="cursorColor">@color/inputCursor</item>
         <item name="boxStrokeErrorColor">@color/inputError</item>
         <item name="errorTextColor">@color/inputError</item>
@@ -59,8 +59,8 @@
     </style>
 
     <style name="Widget.App.SearchInputWrapper.Outlined" parent="Widget.Material3.TextInputLayout.OutlinedBox">
-        <item name="boxStrokeColor">@color/search_input_wrapper_color_set</item>
-        <item name="startIconTint">@color/search_input_wrapper_color_set</item>
+        <item name="boxStrokeColor">@color/state_colors_search_input_wrapper</item>
+        <item name="startIconTint">@color/state_colors_search_input_wrapper</item>
         <item name="cursorColor">@color/inputCursor</item>
         <item name="android:fontFamily">@font/switzer_regular</item>
         <item name="boxCornerRadiusTopStart">8dp</item>
@@ -93,10 +93,10 @@
     </style>
 
     <style name="Widget.App.DropdownWrapper" parent="Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
-        <item name="boxStrokeColor">@color/input_color_set</item>
-        <item name="android:textColorHint">@color/input_color_set</item>
-        <item name="hintTextColor">@color/input_color_set</item>
-        <item name="endIconTint">@color/input_color_set</item>
+        <item name="boxStrokeColor">@color/state_colors_input</item>
+        <item name="android:textColorHint">@color/state_colors_input</item>
+        <item name="hintTextColor">@color/state_colors_input</item>
+        <item name="endIconTint">@color/state_colors_input</item>
         <item name="boxStrokeErrorColor">@color/inputError</item>
         <item name="errorTextColor">@color/inputError</item>
         <item name="errorIconTint">@color/inputError</item>
@@ -115,7 +115,7 @@
     </style>
 
     <style name="Widget.App.Button.Primary" parent="Widget.Material3.Button">
-        <item name="backgroundTint">@color/primary</item>
+        <item name="backgroundTint">@color/state_colors_primary_button_background</item>
         <item name="rippleColor">@color/primaryButtonRipple</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">16sp</item>
@@ -127,12 +127,12 @@
 
     <style name="Widget.App.Button.Secondary" parent="Widget.Material3.Button">
         <item name="backgroundTint">@color/white</item>
-        <item name="rippleColor">@color/secondaryButtonRipple</item>
-        <item name="android:textColor">@color/primary</item>
+        <item name="rippleColor">@color/state_colors_secondary_button_ripple</item>
+        <item name="android:textColor">@color/state_colors_secondary_button_stroke_and_text</item>
         <item name="android:textSize">16sp</item>
         <item name="fontFamily">@font/switzer_regular</item>
         <item name="cornerRadius">8dp</item>
-        <item name="strokeColor">@color/primary</item>
+        <item name="strokeColor">@color/state_colors_secondary_button_stroke_and_text</item>
         <item name="strokeWidth">1dp</item>
         <item name="android:paddingTop">@dimen/margin_medium</item>
         <item name="android:paddingBottom">@dimen/margin_medium</item>

@@ -43,7 +43,8 @@ class AddListViewModel(
 
         _listNameError.value = null
 
-        val userId = userRepository.getUserLoggedIn()?.id
+//        val userId = userRepository.getUserLoggedIn()?.id
+        val userId = null
         if(userId == null) {
             viewModelScope.launch {
                 _toastError.emit("Houve um erro ao tentar criar a lista. (Usuário não encontrado)")

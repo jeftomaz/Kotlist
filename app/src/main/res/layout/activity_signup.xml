@@ -98,6 +98,20 @@
             style="@style/Widget.App.Input" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/signup_loading_indicator"
+        android:visibility="gone"
+        android:indeterminate="true"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:indicatorSize="60dp"
+        app:trackThickness="6dp"
+        app:indicatorColor="@array/loadingIndicatorColors"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/signup_signup_button"
+        app:layout_constraintStart_toStartOf="parent"/>
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/signup_signup_button"
         android:layout_width="match_parent"

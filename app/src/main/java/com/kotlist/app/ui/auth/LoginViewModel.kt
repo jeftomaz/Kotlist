@@ -28,19 +28,19 @@ class LoginViewModel(private val userRepository: UserRepository) : ViewModel() {
     val loginState: StateFlow<LoginUiState> = _loginState
 
     fun login(email: String, password: String) {
-        if(!isEmailValid(email) or !isPasswordValid(password))
-            return
-
-        viewModelScope.launch {
-            _loginState.value = LoginUiState.Loading
-
-            val user = userRepository.loginUser(email, password)
-
-            if(user != null)
-                _loginState.value = LoginUiState.Success(user)
-            else
-                _loginState.value = LoginUiState.Error("E-mail ou senha inválidos.")
-        }
+//        if(!isEmailValid(email) or !isPasswordValid(password))
+//            return
+//
+//        viewModelScope.launch {
+//            _loginState.value = LoginUiState.Loading
+//
+//            val user = userRepository.loginUser(email, password)
+//
+//            if(user != null)
+//                _loginState.value = LoginUiState.Success(user)
+//            else
+//                _loginState.value = LoginUiState.Error("E-mail ou senha inválidos.")
+//        }
     }
 
     private fun isEmailValid(email: String): Boolean {

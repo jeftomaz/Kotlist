@@ -4,6 +4,7 @@ import android.app.ActivityOptions
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
@@ -88,10 +89,10 @@ class SignUpActivity : AppCompatActivity() {
                         when(state) {
                             is SignUpState.Idle -> { }
                             is SignUpState.Loading -> {
-//                                setLoading(true)
+                                setLoading(true)
                             }
                             is SignUpState.Success -> {
-//                                setLoading(false)
+                                setLoading(false)
                                 Toast.makeText(
                                     this@SignUpActivity,
                                     "Conta criada com sucesso",
@@ -100,7 +101,7 @@ class SignUpActivity : AppCompatActivity() {
                                 finish()
                             }
                             is SignUpState.Error -> {
-//                                setLoading(false)
+                                setLoading(false)
                                 Toast.makeText(
                                     this@SignUpActivity,
                                     state.message,
@@ -108,7 +109,7 @@ class SignUpActivity : AppCompatActivity() {
                                 ).show()
                             }
                             is SignUpState.ValidationFailure -> {
-//                                setLoading(false)
+                                setLoading(false)
                                 binding.signupNameInputWrapper.error = state.nameError
                                 binding.signupEmailInputWrapper.error = state.emailError
                                 binding.signupPasswordInputWrapper.error = state.passwordError
@@ -122,6 +123,21 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private fun setLoading(isLoading: Boolean) {
+        if(isLoading) {
+            binding.signupLoadingIndicator.visibility = View.VISIBLE
+            binding.signupNameInputWrapper.visibility = View.GONE
+            binding.signupEmailInputWrapper.visibility = View.GONE
+            binding.signupPasswordInputWrapper.visibility = View.GONE
+            binding.signupConfirmPasswordInputWrapper.visibility = View.GONE
+        }
+        else {
+            binding.signupLoadingIndicator.visibility = View.GONE
+            binding.signupNameInputWrapper.visibility = View.VISIBLE
+            binding.signupEmailInputWrapper.visibility = View.VISIBLE
+            binding.signupPasswordInputWrapper.visibility = View.VISIBLE
+            binding.signupConfirmPasswordInputWrapper.visibility = View.VISIBLE
+        }
+
         binding.signupSignupButton.isEnabled = !isLoading
         binding.signupBackButton.isEnabled = !isLoading
     }

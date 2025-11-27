@@ -1,52 +1,52 @@
 package com.kotlist.app.data.repository
 
-import android.content.SharedPreferences
 import com.kotlist.app.data.model.User
-import com.kotlist.app.util.PasswordHasher
-import androidx.core.content.edit
+import com.google.firebase.auth.FirebaseUser
+import com.kotlist.app.data.datasource.UserRemoteDataSource
 
-class UserRepository(private val prefs: SharedPreferences) {
-    private val users = mutableListOf<User>()
-    private var userLoggedIn: User? = null
-
-    fun loginUser(email: String, password: String): User? {
-        val user = getUserByEmail(email)
-
-        if(user != null && PasswordHasher.checkPassword(password, user.password)) {
-            setUserLoggedIn(user)
-            return user
-        }
-
-        return null
+class UserRepository(
+    private val remoteDataSource: UserRemoteDataSource
+) {
+    suspend fun signUpUser(newUser: User) {
+        remoteDataSource.createUser(
+            newUser.email,
+            newUser.password,
+            newUser.name
+        )
     }
 
-    fun signUpUser(newUser: User) {
-        users.add(newUser)
+    suspend fun signInUser(user: User): User? {
+        val firebaseUser = remoteDataSource.signInWithEmailAndPassword(
+            user.email,
+            user.password
+        )
+
+        return firebaseUser?.toUser()
     }
 
-    fun getUserByEmail(email: String): User? {
-        return users.find {
-            it.email.equals(email, ignoreCase = true)
-        }
+    fun getUserSignedIn(): User? {
+        val firebaseUser = remoteDataSource.getCurrentUser()
+        return firebaseUser?.toUser()
     }
 
-    fun getUserLoggedIn(): User? {
-        return userLoggedIn
+    fun isUserSignedIn(): Boolean {
+        return remoteDataSource.isUserSignedIn()
     }
 
-    fun setUserLoggedIn(user: User) {
-        userLoggedIn = user
+    fun signOut() {
+        remoteDataSource.signOut()
     }
 
-    fun logoutUser() {
-        userLoggedIn = null
+    suspend fun sendPasswordResetEmail(userEmail: String) {
+        remoteDataSource.sendPasswordResetEmail(userEmail)
     }
 
-    fun hasCreatedExampleList(userId: String): Boolean {
-        return prefs.getBoolean("example_list_created_$userId", false)
-    }
-
-    fun setCreatedExampleList(userId: String) {
-        prefs.edit { putBoolean("example_list_created_$userId", true) }
+    private fun FirebaseUser.toUser(): User {
+        return User(
+            id = this.uid,
+            name = this.displayName ?: "",
+            email = this.email ?: "",
+            password = ""
+        )
     }
 }

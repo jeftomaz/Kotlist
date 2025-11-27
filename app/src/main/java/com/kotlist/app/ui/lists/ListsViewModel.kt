@@ -21,9 +21,9 @@ class ListsViewModel(
     private var currentUserId: String = ""
 
     fun loadData() {
-        if(currentUserId == "") {
-            currentUserId = userRepository.getUserLoggedIn()?.id ?: ""
-        }
+//        if(currentUserId == "") {
+//            currentUserId = userRepository.getUserLoggedIn()?.id ?: ""
+//        }
 
         if(currentUserId == "") {
             _feedbackMessage.value = "Erro: Usuário não encontrado."
@@ -31,20 +31,20 @@ class ListsViewModel(
         }
 
         var lists = shoppingListRepository.getUserLists(currentUserId)
-        val isFirstTimeLoggingIn = !userRepository.hasCreatedExampleList(currentUserId)
-
-        if(lists.isEmpty() && isFirstTimeLoggingIn) {
-            val mockList = ShoppingList(
-                title = "Lista Exemplo",
-                coverImageUri = null,
-                placeholderImageId = shoppingListRepository.getRandomPlaceholderId(),
-                userId = currentUserId
-            )
-            shoppingListRepository.addList(mockList)
-            userRepository.setCreatedExampleList(currentUserId)
-
-            lists = shoppingListRepository.getUserLists(currentUserId)
-        }
+//        val isFirstTimeLoggingIn = !userRepository.hasCreatedExampleList(currentUserId)
+//
+//        if(lists.isEmpty() && isFirstTimeLoggingIn) {
+//            val mockList = ShoppingList(
+//                title = "Lista Exemplo",
+//                coverImageUri = null,
+//                placeholderImageId = shoppingListRepository.getRandomPlaceholderId(),
+//                userId = currentUserId
+//            )
+//            shoppingListRepository.addList(mockList)
+//            userRepository.setCreatedExampleList(currentUserId)
+//
+//            lists = shoppingListRepository.getUserLists(currentUserId)
+//        }
 
         allLists = lists
         filterLists("")
@@ -55,7 +55,7 @@ class ListsViewModel(
     }
 
     fun onLogoutClicked() {
-        userRepository.logoutUser()
+//        userRepository.logoutUser()
     }
 
     private fun filterLists(query: String) {

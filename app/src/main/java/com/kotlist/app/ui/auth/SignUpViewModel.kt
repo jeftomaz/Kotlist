@@ -3,9 +3,11 @@ package com.kotlist.app.ui.auth
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.kotlist.app.data.model.User
 import com.kotlist.app.data.repository.UserRepository
-import com.kotlist.app.util.PasswordHasher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -37,15 +39,26 @@ class SignUpViewModel (private val userRepository: UserRepository) : ViewModel()
         _signUpState.value = SignUpState.Loading
         viewModelScope.launch {
             try {
-                val hashedPassword = PasswordHasher.hashPassword(password)
-                val newUser = User(name = name, email = email, password = hashedPassword)
+                val newUser = User(name = name, email = email, password = password)
 
                 userRepository.signUpUser(newUser)
-
                 _signUpState.value = SignUpState.Success
-
-            } catch (e: Exception) {
-                _signUpState.value = SignUpState.Error("Ocorreu um erro: ${e.message}")
+            }
+            catch (e: FirebaseAuthUserCollisionException) {
+                // email already in usage exception
+                _signUpState.value = SignUpState.Error("Erro: já existe uma conta com este e-mail.")
+            }
+            catch(e: FirebaseAuthWeakPasswordException) {
+                // weak password exception
+                _signUpState.value = SignUpState.Error("Erro: a senha deve ter pelo menos 6 caracteres.")
+            }
+            catch(e: FirebaseAuthInvalidCredentialsException) {
+                // invalid email format exception
+                _signUpState.value = SignUpState.Error("Erro: formato de e-mail inválido.")
+            }
+            catch(e: Exception) {
+                // other exceptions
+                _signUpState.value = SignUpState.Error("Erro: ${e.message}")
             }
         }
     }
@@ -75,6 +88,9 @@ class SignUpViewModel (private val userRepository: UserRepository) : ViewModel()
 
         if(password.isEmpty()) {
             passwordError = "A senha não pode ser vazia."
+            hasError = true
+        } else if(password.length < 6) {
+            passwordError = "A senha deve ter pelo menos 6 caracteres."
             hasError = true
         }
 
