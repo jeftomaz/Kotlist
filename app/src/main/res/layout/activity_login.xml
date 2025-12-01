@@ -73,6 +73,20 @@
             style="@style/Widget.App.Input" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/login_loading_indicator"
+        android:visibility="visible"
+        android:indeterminate="true"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:indicatorSize="60dp"
+        app:trackThickness="6dp"
+        app:indicatorColor="@array/loadingIndicatorColors"
+        app:layout_constraintVertical_bias="0.4"
+        app:layout_constraintTop_toBottomOf="@id/login_screen_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/login_access_button"
+        app:layout_constraintStart_toStartOf="parent"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/login_access_button"
