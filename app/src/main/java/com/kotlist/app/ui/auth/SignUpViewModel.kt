@@ -27,16 +27,24 @@ sealed class SignUpState {
 
 class SignUpViewModel (private val userRepository: UserRepository) : ViewModel() {
 
+    private data class ValidationResult(
+        val isFailure: Boolean,
+        val errorState: SignUpState.ValidationFailure? = null
+    )
+
     private val _signUpState = MutableStateFlow<SignUpState>(SignUpState.Idle)
     val signUpState: StateFlow<SignUpState> = _signUpState
 
     fun signUp(name: String, email: String, password: String, confirmPassword: String) {
         val validation = validateInputs(name, email, password, confirmPassword)
+
         if(validation.isFailure) {
             validation.errorState?.let { _signUpState.value = it }
             return
         }
+
         _signUpState.value = SignUpState.Loading
+
         viewModelScope.launch {
             try {
                 val newUser = User(name = name, email = email, password = password)
@@ -109,16 +117,14 @@ class SignUpViewModel (private val userRepository: UserRepository) : ViewModel()
             ValidationResult(
                 isFailure = true,
                 errorState = SignUpState.ValidationFailure(
-                    nameError, emailError, passwordError, confirmPasswordError
+                    nameError = nameError,
+                    emailError = emailError,
+                    passwordError = passwordError,
+                    confirmPasswordError = confirmPasswordError
                 )
             )
         } else {
             ValidationResult(isFailure = false)
         }
     }
-
-    private data class ValidationResult(
-        val isFailure: Boolean,
-        val errorState: SignUpState.ValidationFailure? = null
-    )
 }

@@ -3,6 +3,8 @@ package com.kotlist.app.ui.auth
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.kotlist.app.data.model.User
 import com.kotlist.app.data.repository.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -10,13 +12,22 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 sealed class LoginUiState {
-    data class Success(val user: User) : LoginUiState()
+    data object Idle : LoginUiState()
+    data object Loading : LoginUiState()
+    data class Success(val user: User?) : LoginUiState()
     data class Error(val message: String) : LoginUiState()
-    object Loading : LoginUiState()
-    object Idle : LoginUiState()
+    data class ValidationFailure(
+        val emailError: String? = null,
+        val passwordError: String? = null
+    ) : LoginUiState()
 }
 
 class LoginViewModel(private val userRepository: UserRepository) : ViewModel() {
+
+    private data class ValidationResult(
+        val isFailure: Boolean,
+        val errorState: LoginUiState.ValidationFailure? = null
+    )
 
     private val _emailError = MutableStateFlow<String?>(null)
     val emailError: StateFlow<String?> = _emailError
@@ -28,45 +39,67 @@ class LoginViewModel(private val userRepository: UserRepository) : ViewModel() {
     val loginState: StateFlow<LoginUiState> = _loginState
 
     fun login(email: String, password: String) {
-//        if(!isEmailValid(email) or !isPasswordValid(password))
-//            return
-//
-//        viewModelScope.launch {
-//            _loginState.value = LoginUiState.Loading
-//
-//            val user = userRepository.loginUser(email, password)
-//
-//            if(user != null)
-//                _loginState.value = LoginUiState.Success(user)
-//            else
-//                _loginState.value = LoginUiState.Error("E-mail ou senha inválidos.")
-//        }
+        val validation = validateInputs(email, password)
+
+        if(validation.isFailure) {
+            validation.errorState?.let { _loginState.value = it }
+            return
+        }
+
+        _loginState.value = LoginUiState.Loading
+
+        viewModelScope.launch {
+            try {
+                val loginUser = User(
+                    email = email,
+                    password = password,
+                    name = ""
+                )
+
+                val user = userRepository.signInUser(loginUser)
+                _loginState.value = LoginUiState.Success(user)
+            }
+            catch(e: FirebaseAuthInvalidUserException) {
+                _loginState.value = LoginUiState.Error("Erro: usuário não encontrado.")
+            }
+            catch(e: FirebaseAuthInvalidCredentialsException) {
+                _loginState.value = LoginUiState.Error("Erro: e-mail ou senha inválidos.")
+            }
+            catch(e: Exception) {
+                _loginState.value = LoginUiState.Error("Erro: ${e.message}")
+            }
+        }
     }
 
-    private fun isEmailValid(email: String): Boolean {
-        _emailError.value = null
+    private fun validateInputs(email: String, password: String) : ValidationResult {
+        var emailError: String? = null
+        var passwordError: String? = null
+        var hasError: Boolean = false
 
         if(email.isEmpty()) {
-            _emailError.value = "Insira o e-mail para fazer login."
-            return false
+            emailError = "Insira o e-mail para fazer login."
+            hasError = true
+        } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            emailError = "Insira um e-mail válido."
+            hasError = true
         }
-
-        if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            _emailError.value = "Insira um e-mail válido."
-            return false
-        }
-
-        return true
-    }
-
-    private fun isPasswordValid(password: String): Boolean {
-        _passwordError.value = null
 
         if(password.isEmpty()) {
-            _passwordError.value = "Insira a senha para fazer login."
-            return false
+            passwordError = "Insira a senha para fazer login."
+            hasError = true
         }
 
-        return true
+        return if(hasError) {
+            ValidationResult(
+                isFailure = true,
+                errorState = LoginUiState.ValidationFailure(
+                    emailError = emailError,
+                    passwordError = passwordError
+                )
+            )
+        }
+        else {
+            ValidationResult(isFailure = false)
+        }
     }
 }

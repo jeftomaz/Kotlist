@@ -84,7 +84,7 @@ class SignUpActivity : AppCompatActivity() {
                 launch {
                     viewModel.signUpState.collect { state ->
                         resetErrors()
-//                        setLoading(false)
+                        setLoading(false)
 
                         when(state) {
                             is SignUpState.Idle -> { }

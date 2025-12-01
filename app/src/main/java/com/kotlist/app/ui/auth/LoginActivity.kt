@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import android.app.ActivityOptions
+import android.view.View
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -79,48 +80,65 @@ class LoginActivity : AppCompatActivity() {
     private fun setupObservers() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                // email error
-                launch {
-                    viewModel.emailError.collect { errorMessage ->
-                        binding.loginEmailInputWrapper.error = errorMessage
-                    }
-                }
-
-                // password error
-                launch {
-                    viewModel.passwordError.collect { errorMessage ->
-                        binding.loginPasswordInputWrapper.error = errorMessage
-                    }
-                }
-
-                // activity states
+                // observes states
                 launch {
                     viewModel.loginState.collect { state ->
+                        resetErrors()
+                        setLoading(false)
+
                         when(state) {
                             is LoginUiState.Idle -> { }
+                            is LoginUiState.Loading -> {
+                                setLoading(true)
+                            }
                             is LoginUiState.Success -> {
+                                setLoading(false)
                                 Toast.makeText(
                                     this@LoginActivity,
-                                    "Bem-vindo(a), ${state.user.name}",
+                                    "Bem-vindo(a), ${state.user?.name}",
                                     Toast.LENGTH_SHORT
                                 ).show()
                                 navigateToMainScreen()
                             }
                             is LoginUiState.Error -> {
+                                setLoading(false)
                                 Toast.makeText(
                                     this@LoginActivity,
                                     state.message,
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }
-                            is LoginUiState.Loading -> {
-                                // binding.loginProgressBar.isVisible = true
+                            is LoginUiState.ValidationFailure -> {
+                                setLoading(false)
+                                binding.loginEmailInputWrapper.error = state.emailError
+                                binding.loginPasswordInputWrapper.error = state.passwordError
                             }
                         }
                     }
                 }
             }
         }
+    }
+
+    private fun resetErrors() {
+        binding.loginEmailInputWrapper.error = null
+        binding.loginPasswordInputWrapper.error = null
+    }
+
+    private fun setLoading(isLoading: Boolean) {
+        if(isLoading) {
+            binding.loginLoadingIndicator.visibility = View.VISIBLE
+            binding.loginEmailInputWrapper.visibility = View.GONE
+            binding.loginPasswordInputWrapper.visibility = View.GONE
+        }
+        else {
+            binding.loginLoadingIndicator.visibility = View.GONE
+            binding.loginEmailInputWrapper.visibility = View.VISIBLE
+            binding.loginPasswordInputWrapper.visibility = View.VISIBLE
+        }
+
+        binding.loginAccessButton.isEnabled = !isLoading
+        binding.loginCreateAccountButton.isEnabled = !isLoading
     }
 
     private fun navigateToMainScreen() {
