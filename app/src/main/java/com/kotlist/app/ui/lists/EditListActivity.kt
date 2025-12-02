@@ -21,6 +21,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.kotlist.app.data.model.ShoppingList
+import com.kotlist.app.data.repository.ServiceLocator
 import com.kotlist.app.data.repository.ShoppingListRepository
 import com.kotlist.app.databinding.ActivityEditListBinding
 import com.kotlist.app.extensions.showCustomDialog
@@ -31,8 +32,12 @@ import kotlinx.coroutines.launch
 class EditListActivity : AppCompatActivity() {
     private lateinit var binding: ActivityEditListBinding
 
+    private val shoppingListRepository by lazy {
+        ServiceLocator.provideShoppingListRepository()
+    }
+
     private val viewModel: EditListViewModel by viewModels {
-        EditListViewModelFactory(ShoppingListRepository)
+        EditListViewModelFactory(shoppingListRepository)
     }
 
     private var listCoverImageSelectedUri: String? = null
@@ -181,14 +186,14 @@ class EditListActivity : AppCompatActivity() {
     }
 
     private fun populateInputFields(list: ShoppingList) {
-        binding.editListListNameInput.setText(list.title)
-
-        if(listCoverImageSelectedUri == null) {
-            if(list.coverImageUri != null)
-                binding.editListImagePreview.setImageURI(list.coverImageUri.toUri())
-            else
-                binding.editListImagePreview.setImageURI("android.resource://$packageName/${list.placeholderImageId}".toUri())
-        }
+//        binding.editListListNameInput.setText(list.title)
+//
+//        if(listCoverImageSelectedUri == null) {
+//            if(list.coverImageUri != null)
+//                binding.editListImagePreview.setImageURI(list.coverImageUri.toUri())
+//            else
+//                binding.editListImagePreview.setImageURI("android.resource://$packageName/${list.placeholderImageId}".toUri())
+//        }
     }
 
     private fun handleGalleryPermissionState(state: GalleryPermissionState) {

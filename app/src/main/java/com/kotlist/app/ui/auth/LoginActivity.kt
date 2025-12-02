@@ -15,8 +15,6 @@ import android.view.View
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-
-// imports locais
 import com.kotlist.app.R
 import com.kotlist.app.data.repository.ServiceLocator
 import com.kotlist.app.databinding.ActivityLoginBinding
@@ -27,7 +25,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
 
     private val userRepository by lazy {
-        ServiceLocator.provideUserRepository(this)
+        ServiceLocator.provideUserRepository()
     }
 
     private val viewModel: LoginViewModel by viewModels {

@@ -1,38 +1,40 @@
 package com.kotlist.app.data.repository
 
 import com.kotlist.app.R
+import com.kotlist.app.data.datasource.ShoppingListRemoteDataSource
 import com.kotlist.app.data.model.ShoppingList
 
-object ShoppingListRepository {
-    private val shoppingLists = mutableListOf<ShoppingList>()
+class ShoppingListRepository(
+    private val remoteDataSource: ShoppingListRemoteDataSource
+) {
     private val placeholderImages = listOf(
         R.drawable.placeholder_img_list_0,
         R.drawable.placeholder_img_list_1,
         R.drawable.placeholder_img_list_2
     )
 
-    fun addList(newList: ShoppingList) {
-        shoppingLists.add(newList)
+    suspend fun createList(list: ShoppingList): String {
+        return remoteDataSource.createList(list)
     }
 
-    fun getUserLists(userId: String): List<ShoppingList> {
-        return shoppingLists.filter { it.userId == userId }
+    suspend fun getUserLists(userId: String): List<ShoppingList> {
+        return remoteDataSource.getUserLists(userId)
     }
 
-    fun getListById(listId: String): ShoppingList? {
-        return shoppingLists.find { it.id == listId }
+    suspend fun getListById(listId: String): ShoppingList? {
+        return remoteDataSource.getListById(listId)
     }
 
-    fun deleteList(listId: String) {
-        ListItemRepository.deleteItemsFromList(listId)
-        shoppingLists.removeAll { it.id == listId }
+    suspend fun updateList(list: ShoppingList) {
+        remoteDataSource.updateList(list)
     }
 
-    fun updateList(listUpdated: ShoppingList) {
-        val index = shoppingLists.indexOfFirst { it.id == listUpdated.id }
-        if (index != -1) {
-            shoppingLists[index] = listUpdated
-        }
+    suspend fun deleteList(listId: String) {
+        remoteDataSource.deleteList(listId)
+    }
+
+    suspend fun hasAnyList(userId: String): Boolean {
+        return remoteDataSource.hasAnyList(userId)
     }
 
     fun getRandomPlaceholderId(): Int {

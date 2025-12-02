@@ -16,6 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kotlist.app.data.repository.ListItemRepository
+import com.kotlist.app.data.repository.ServiceLocator
 import com.kotlist.app.data.repository.ShoppingListRepository
 import com.kotlist.app.databinding.ActivityItemListBinding
 import com.kotlist.app.ui.lists.EditListActivity
@@ -26,8 +27,12 @@ class ItemListActivity : AppCompatActivity() {
     private lateinit var itemListAdapter: ItemListAdapter
     private lateinit var sourceListId: String
 
+    private val shoppingListRepository by lazy {
+        ServiceLocator.provideShoppingListRepository()
+    }
+
     private val viewModel: ItemListViewModel by viewModels {
-        ItemListViewModelFactory(ListItemRepository, ShoppingListRepository)
+        ItemListViewModelFactory(ListItemRepository, shoppingListRepository)
     }
 
     companion object {

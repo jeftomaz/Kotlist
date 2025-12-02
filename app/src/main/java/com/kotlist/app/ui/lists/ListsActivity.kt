@@ -30,11 +30,15 @@ class ListsActivity : AppCompatActivity() {
     private lateinit var listsAdapter: ListsAdapter
 
     private val userRepository by lazy {
-        ServiceLocator.provideUserRepository(this)
+        ServiceLocator.provideUserRepository()
+    }
+
+    private val shoppingListRepository by lazy {
+        ServiceLocator.provideShoppingListRepository()
     }
 
     private val viewModel: ListsViewModel by viewModels {
-        ListsViewModelFactory(userRepository, ShoppingListRepository)
+        ListsViewModelFactory(userRepository, shoppingListRepository)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -96,28 +100,56 @@ class ListsActivity : AppCompatActivity() {
     private fun setupObservers() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                // lists
+                // observes the UI state
                 launch {
-                    viewModel.lists.collect { lists ->
-                        listsAdapter.updateData(lists)
+                    viewModel.uiState.collect { state ->
+                        when(state) {
+                            is ListsUiState.Idle -> {
+                                setLoading(false)
+                            }
+                            is ListsUiState.Loading -> {
+                                setLoading(true)
+                            }
+                            is ListsUiState.Success -> {
+                                setLoading(false)
+                                listsAdapter.updateData(state.lists)
+                                binding.recyclerViewLists.visibility = View.VISIBLE
+                                binding.listsFeedbackMessage.visibility = View.GONE
+                            }
+                            is ListsUiState.Error -> {
+                                setLoading(false)
+                                Toast.makeText(this@ListsActivity, state.message, Toast.LENGTH_SHORT).show()
+                                binding.recyclerViewLists.visibility = View.GONE
+                                binding.listsFeedbackMessage.visibility = View.VISIBLE
+                            }
+                            is ListsUiState.Empty -> {
+                                setLoading(false)
+                                listsAdapter.updateData(emptyList())
+                                binding.recyclerViewLists.visibility = View.GONE
+                                binding.listsFeedbackMessage.visibility = View.VISIBLE
+                            }
+                        }
                     }
                 }
 
-                // search/empty feedback message
+                // observes feedback message content
                 launch {
                     viewModel.feedbackMessage.collect { message ->
-                        if(message == null) {
-                            binding.recyclerViewLists.visibility = View.VISIBLE
-                            binding.listsFeedbackMessage.visibility = View.GONE
-                        }
-                        else {
-                            binding.recyclerViewLists.visibility = View.GONE
-                            binding.listsFeedbackMessage.visibility = View.VISIBLE
-                            binding.listsFeedbackMessage.text = message
-                        }
+                        binding.listsFeedbackMessage.text = message
                     }
                 }
             }
+        }
+    }
+
+    private fun setLoading(isLoading: Boolean) {
+        if(isLoading) {
+            binding.listsLoadingIndicator.visibility = View.VISIBLE
+            binding.recyclerViewLists.visibility = View.GONE
+        }
+        else {
+            binding.listsLoadingIndicator.visibility = View.GONE
+            binding.recyclerViewLists.visibility = View.VISIBLE
         }
     }
 

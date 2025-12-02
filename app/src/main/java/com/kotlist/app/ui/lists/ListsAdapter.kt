@@ -19,23 +19,32 @@ class ListsAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(list: ShoppingList, onItemClicked: (ShoppingList) -> Unit) {
-            binding.textViewListTitle.text = list.title
+            binding.textViewListTitle.text = list.name
 
-            if(list.coverImageUri != null) {
-                val imageUri = list.coverImageUri.toUri()
+            if(list.customCoverImageUrl != null && !list.customCoverImageUrl.isEmpty()) {
+                val imageUri = list.customCoverImageUrl.toUri()
 
                 binding.imageViewListPhoto.load(imageUri) {
-                    error(list.placeholderImageId)
+                    error(placeholderIdToDrawable(list.placeholderImageId))
                     placeholder(R.drawable.placeholder_img_list_0)
                 }
             }
             else if(list.placeholderImageId != -1)
-                binding.imageViewListPhoto.load(list.placeholderImageId) { }
+                binding.imageViewListPhoto.load(placeholderIdToDrawable(list.placeholderImageId)) { }
             else
                 binding.imageViewListPhoto.load(R.drawable.placeholder_img_list_0) { }
 
             binding.root.setOnClickListener {
                 onItemClicked(list)
+            }
+        }
+
+        private fun placeholderIdToDrawable(placeholderId: Int): Int {
+            return when (placeholderId) {
+                0 -> R.drawable.placeholder_img_list_0
+                1 -> R.drawable.placeholder_img_list_1
+                2 -> R.drawable.placeholder_img_list_2
+                else -> R.drawable.placeholder_img_list_0
             }
         }
     }

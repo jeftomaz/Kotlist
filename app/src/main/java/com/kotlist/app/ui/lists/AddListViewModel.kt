@@ -52,14 +52,14 @@ class AddListViewModel(
             return
         }
 
-        val newList = ShoppingList(
-            title = listTitle,
-            coverImageUri = coverImageUri,
-            placeholderImageId = placeholderImageId,
-            userId = userId
-        )
+//        val newList = ShoppingList(
+//            title = listTitle,
+//            coverImageUri = coverImageUri,
+//            placeholderImageId = placeholderImageId,
+//            userId = userId
+//        )
 
-        shoppingListRepository.addList(newList)
+//        shoppingListRepository.addList(newList)
 
         viewModelScope.launch {
             _finishEvent.emit("Nova lista criada com sucesso!")

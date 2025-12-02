@@ -27,8 +27,8 @@ class ItemListViewModel(
     fun loadData(listId: String) {
         currentListId = listId
 
-        val list = shoppingListRepository.getListById(listId)
-        _listTitle.value = list?.title
+//        val list = shoppingListRepository.getListById(listId)
+//        _listTitle.value = list?.title
 
         allItems = listItemRepository.getItemsFromList(listId)
         filterItems("")

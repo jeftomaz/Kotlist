@@ -45,7 +45,7 @@
         style="@style/Widget.App.Button.Icon.Primary" />
 
     <TextView
-        android:id="@+id/text_view_section_title"
+        android:id="@+id/lists_title"
         style="@style/TextAppearance.App.Heading1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -67,18 +67,33 @@
         android:textColor="@color/grey"
         android:padding="32dp"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/text_view_section_title"
+        app:layout_constraintTop_toBottomOf="@id/lists_title"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintVertical_bias="0.4" />
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/lists_loading_indicator"
+        android:visibility="visible"
+        android:indeterminate="true"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:indicatorSize="60dp"
+        app:trackThickness="6dp"
+        app:indicatorColor="@array/loadingIndicatorColors"
+        app:layout_constraintVertical_bias="0.4"
+        app:layout_constraintTop_toBottomOf="@id/lists_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_lists"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="@dimen/margin_medium"
-        app:layout_constraintTop_toBottomOf="@id/text_view_section_title"
+        app:layout_constraintTop_toBottomOf="@id/lists_title"
         app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         tools:listitem="@layout/component_list_button"/>

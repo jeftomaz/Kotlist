@@ -5,7 +5,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
 import kotlinx.coroutines.tasks.await
 
-class UserRemoteDataSource(private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()) {
+class UserRemoteDataSource(private val firebaseAuth: FirebaseAuth) {
     suspend fun createUser(email: String, password: String, displayName: String): FirebaseUser {
         val authResult = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
         val firebaseUser = authResult.user ?: throw Exception("Erro ao criar usuário no Firebase.")

@@ -35,8 +35,8 @@ class EditListViewModel(
     val galleryPermissionState: SharedFlow<GalleryPermissionState> = _galleryPermissionState
 
     fun loadList(listId: String) {
-        listOnEditing = shoppingListRepository.getListById(listId)
-        _listToEdit.value = listOnEditing
+//        listOnEditing = shoppingListRepository.getListById(listId)
+//        _listToEdit.value = listOnEditing
     }
 
     fun saveList(newTitle: String, newImageUri: String?) {
@@ -49,12 +49,12 @@ class EditListViewModel(
 
         val currentList = listOnEditing ?: return
 
-        val updatedList = currentList.copy(
-            title = newTitle,
-            coverImageUri = newImageUri ?: currentList.coverImageUri
-        )
+//        val updatedList = currentList.copy(
+//            title = newTitle,
+//            coverImageUri = newImageUri ?: currentList.coverImageUri
+//        )
 
-        shoppingListRepository.updateList(updatedList)
+//        shoppingListRepository.updateList(updatedList)
 
         viewModelScope.launch {
             _updateEventMessage.emit("Lista atualizada com sucesso!")
@@ -68,12 +68,12 @@ class EditListViewModel(
     }
 
     fun deleteList() {
-        val listId = listOnEditing?.id ?: return
-        shoppingListRepository.deleteList(listId)
-
-        viewModelScope.launch {
-            _deleteEventMessage.emit("Lista excluída com sucesso!")
-        }
+//        val listId = listOnEditing?.id ?: return
+//        shoppingListRepository.deleteList(listId)
+//
+//        viewModelScope.launch {
+//            _deleteEventMessage.emit("Lista excluída com sucesso!")
+//        }
     }
 
     fun onAddImageClicked() {

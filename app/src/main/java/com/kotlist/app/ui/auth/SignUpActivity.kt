@@ -24,7 +24,7 @@ class SignUpActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySignupBinding
 
     private val userRepository by lazy {
-        ServiceLocator.provideUserRepository(this)
+        ServiceLocator.provideUserRepository()
     }
 
     private val viewModel: SignUpViewModel by viewModels {

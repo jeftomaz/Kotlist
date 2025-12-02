@@ -31,11 +31,15 @@ class AddListActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddListBinding
 
     private val userRepository by lazy {
-        ServiceLocator.provideUserRepository(this)
+        ServiceLocator.provideUserRepository()
+    }
+
+    private val shoppingListRepository by lazy {
+        ServiceLocator.provideShoppingListRepository()
     }
 
     private val viewModel: AddListViewModel by viewModels {
-        AddListViewModelFactory(userRepository, ShoppingListRepository)
+        AddListViewModelFactory(userRepository, shoppingListRepository)
     }
 
     private var listCoverImageSelectedUri: String? = null
