@@ -1,5 +1,6 @@
 package com.kotlist.app.ui.lists
 
+import android.app.Activity
 import androidx.recyclerview.widget.DiffUtil
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -9,6 +10,7 @@ import coil.load
 import com.kotlist.app.R
 import com.kotlist.app.data.model.ShoppingList
 import com.kotlist.app.databinding.ComponentListButtonBinding
+import com.kotlist.app.extensions.placeholderIdToDrawable
 
 class ListsAdapter(
     private var lists: List<ShoppingList>,
@@ -36,15 +38,6 @@ class ListsAdapter(
 
             binding.root.setOnClickListener {
                 onItemClicked(list)
-            }
-        }
-
-        private fun placeholderIdToDrawable(placeholderId: Int): Int {
-            return when (placeholderId) {
-                0 -> R.drawable.placeholder_img_list_0
-                1 -> R.drawable.placeholder_img_list_1
-                2 -> R.drawable.placeholder_img_list_2
-                else -> R.drawable.placeholder_img_list_0
             }
         }
     }

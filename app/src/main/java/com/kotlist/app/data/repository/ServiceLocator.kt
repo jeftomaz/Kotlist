@@ -2,6 +2,8 @@ package com.kotlist.app.data.repository
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
+import com.kotlist.app.data.datasource.CoverImageRemoteDataSource
 import com.kotlist.app.data.datasource.ShoppingListRemoteDataSource
 import com.kotlist.app.data.datasource.UserRemoteDataSource
 
@@ -12,7 +14,8 @@ object ServiceLocator {
     }
 
     fun provideShoppingListRepository(): ShoppingListRepository {
-        val dataSource = ShoppingListRemoteDataSource(FirebaseFirestore.getInstance())
-        return ShoppingListRepository(dataSource)
+        val listsDataSource = ShoppingListRemoteDataSource(FirebaseFirestore.getInstance())
+        val coversDataSource = CoverImageRemoteDataSource(FirebaseStorage.getInstance())
+        return ShoppingListRepository(listsDataSource, coversDataSource)
     }
 }

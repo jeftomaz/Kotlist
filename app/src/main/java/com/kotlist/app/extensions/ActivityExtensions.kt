@@ -105,3 +105,12 @@ fun Activity.showDeleteDialog(
 
     dialog.show()
 }
+
+fun placeholderIdToDrawable(placeholderId: Int): Int {
+    return when (placeholderId) {
+        0 -> R.drawable.placeholder_img_list_0
+        1 -> R.drawable.placeholder_img_list_1
+        2 -> R.drawable.placeholder_img_list_2
+        else -> R.drawable.placeholder_img_list_0
+    }
+}

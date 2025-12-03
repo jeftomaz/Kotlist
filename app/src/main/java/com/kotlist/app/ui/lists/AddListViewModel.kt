@@ -1,5 +1,6 @@
 package com.kotlist.app.ui.lists
 
+import android.net.Uri
 import android.os.Build
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,74 +13,113 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+sealed class AddListUiState {
+    data object Idle : AddListUiState()
+    data object Loading : AddListUiState()
+    data object Success : AddListUiState()
+    data class Error(val message: String) : AddListUiState()
+    data class ValidationFailure(val nameError: String?) : AddListUiState()
+}
+
+sealed class AddListEvent {
+    data class ShowToast(val message: String) : AddListEvent()
+    data class NavigateBack(val successMessage: String) : AddListEvent()
+    data object OpenGallery : AddListEvent()
+}
+
 class AddListViewModel(
     private val userRepository: UserRepository,
     private val shoppingListRepository: ShoppingListRepository
 ) : ViewModel() {
+    private val _uiState = MutableStateFlow<AddListUiState>(AddListUiState.Idle)
+    val uiState: StateFlow<AddListUiState> = _uiState
+
+    private val _permissionState = MutableStateFlow<GalleryPermissionState>(GalleryPermissionState.Idle)
+    val permissionState: StateFlow<GalleryPermissionState> = _permissionState
+
     private val _placeholderImageId = MutableStateFlow<Int?>(null)
     val placeholderImageId: StateFlow<Int?> = _placeholderImageId
 
-    private val _listNameError = MutableStateFlow<String?>(null)
-    val listNameError: StateFlow<String?> = _listNameError
+    private val _customImageUrl = MutableStateFlow<Uri?>(null)
+    val customImageUrl: StateFlow<Uri?> = _customImageUrl
 
-    private val _toastError = MutableSharedFlow<String>()
-    val toastError: SharedFlow<String> = _toastError
-
-    private val _finishEvent = MutableSharedFlow<String>()
-    val finishEvent: SharedFlow<String> = _finishEvent
-
-    private val _galleryPermissionState = MutableSharedFlow<GalleryPermissionState>()
-    val galleryPermissionState: SharedFlow<GalleryPermissionState> = _galleryPermissionState
+    private val _events = MutableSharedFlow<AddListEvent>()
+    val events: SharedFlow<AddListEvent> = _events
 
     fun loadInitialPlaceholder() {
         _placeholderImageId.value = shoppingListRepository.getRandomPlaceholderId()
     }
 
-    fun createNewList(listTitle: String, coverImageUri: String?, placeholderImageId: Int) {
-        if(listTitle.isEmpty()) {
-            _listNameError.value = "A lista deve ter um nome."
+    fun createNewList(name: String, customCoverImageUrl: Uri?) {
+        if(name.isBlank()) {
+            _uiState.value = AddListUiState.ValidationFailure(
+                nameError = "A lista deve ter um nome"
+            )
             return
         }
 
-        _listNameError.value = null
+        _uiState.value = AddListUiState.Idle
 
-//        val userId = userRepository.getUserLoggedIn()?.id
-        val userId = null
+        val userId = userRepository.getUserSignedIn()?.id
         if(userId == null) {
-            viewModelScope.launch {
-                _toastError.emit("Houve um erro ao tentar criar a lista. (Usuário não encontrado)")
-            }
+            _uiState.value = AddListUiState.Error("Usuário não encontrado. Faça login novamente.")
             return
         }
 
-//        val newList = ShoppingList(
-//            title = listTitle,
-//            coverImageUri = coverImageUri,
-//            placeholderImageId = placeholderImageId,
-//            userId = userId
-//        )
-
-//        shoppingListRepository.addList(newList)
-
+        _uiState.value = AddListUiState.Loading
         viewModelScope.launch {
-            _finishEvent.emit("Nova lista criada com sucesso!")
+            try {
+                val newList = ShoppingList(
+                    name = name.trim(),
+                    ownerId = userId,
+                    customCoverImageUrl = null,
+                    placeholderImageId = _placeholderImageId.value ?: shoppingListRepository.getRandomPlaceholderId()
+                )
+
+                val listId = shoppingListRepository.createList(newList)
+
+                if(customCoverImageUrl != null) {
+                    val uploadedImageUrl = shoppingListRepository.uploadCoverImage(userId, customCoverImageUrl, listId)
+
+                    val updatedList = newList.copy(
+                        id = listId,
+                        customCoverImageUrl = uploadedImageUrl
+                    )
+                    shoppingListRepository.updateList(updatedList)
+                }
+
+                _uiState.value = AddListUiState.Success
+                _events.emit(AddListEvent.NavigateBack("Lista criada com sucesso!"))
+            }
+            catch(e: Exception) {
+                _uiState.value = AddListUiState.Error("Erro ao criar lista: ${e.message}")
+            }
         }
     }
 
     fun onAddImageClicked() {
-        viewModelScope.launch {
-            _galleryPermissionState.emit(GalleryPermissionState.ShouldRequestPermission)
-        }
+        _permissionState.value = GalleryPermissionState.ShouldRequestPermission
     }
 
     fun onPermissionResult(isGranted: Boolean, shouldShowRationale: Boolean) {
-        viewModelScope.launch {
-            when {
-                isGranted -> _galleryPermissionState.emit(GalleryPermissionState.PermissionGranted)
-                shouldShowRationale -> _galleryPermissionState.emit(GalleryPermissionState.ShouldShowRationale)
-                else -> _galleryPermissionState.emit(GalleryPermissionState.PermissionDenied)
+        _permissionState.value = when {
+            isGranted -> {
+                viewModelScope.launch {
+                    _events.emit(AddListEvent.OpenGallery)
+                }
+                GalleryPermissionState.PermissionGranted
             }
+            shouldShowRationale -> GalleryPermissionState.ShouldShowRationale
+            else -> GalleryPermissionState.PermissionDenied
         }
+    }
+
+    fun onImageSelected(imageUri: Uri?) {
+        _customImageUrl.value = imageUri
+    }
+
+    fun resetPermissionState() {
+        _permissionState.value = GalleryPermissionState.Idle
     }
 
     fun getRequiredPermission(): String {
