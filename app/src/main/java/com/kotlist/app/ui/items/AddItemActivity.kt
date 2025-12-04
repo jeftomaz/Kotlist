@@ -2,6 +2,7 @@ package com.kotlist.app.ui.items
 
 import android.graphics.Color
 import android.os.Bundle
+import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.SystemBarStyle
@@ -17,6 +18,7 @@ import com.kotlist.app.R
 import com.kotlist.app.data.model.ItemCategory
 import com.kotlist.app.data.model.ItemUnit
 import com.kotlist.app.data.repository.ListItemRepository
+import com.kotlist.app.data.repository.ServiceLocator
 import com.kotlist.app.databinding.ActivityAddItemBinding
 import kotlinx.coroutines.launch
 
@@ -30,8 +32,12 @@ class AddItemActivity : AppCompatActivity() {
         const val EXTRA_LIST_ID = "EXTRA_LIST_ID"
     }
 
+    private val listItemRepository by lazy {
+        ServiceLocator.provideListItemRepository()
+    }
+
     private val viewModel: AddItemViewModel by viewModels {
-        AddItemViewModelFactory(ListItemRepository)
+        AddItemViewModelFactory(listItemRepository)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -116,35 +122,55 @@ class AddItemActivity : AppCompatActivity() {
     private fun setupObservers() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                // observes input errors
+                // observes UI states
                 launch {
                     viewModel.uiState.collect { state ->
-                        binding.addItemNameInputWrapper.error = state.nameError
-                        binding.addItemQuantityInputWrapper.error = state.quantityError
-                        binding.addItemUnitDropdownWrapper.error = state.unitError
-                        binding.addItemCategoryDropdownWrapper.error = state.categoryError
-                    }
-                }
-
-                // observes events (toasts and finishes)
-                launch {
-                    viewModel.events.collect { event ->
-                        when (event) {
-                            is AddItemEvent.ShowMessage -> {
-                                Toast.makeText(
-                                    this@AddItemActivity,
-                                    event.message,
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                        when (state) {
+                            is AddItemUiState.Idle -> {
+                                setLoading(false)
                             }
-
-                            is AddItemEvent.Success -> {
+                            is AddItemUiState.Loading -> {
+                                setLoading(true)
+                            }
+                            is AddItemUiState.Success -> {
+                                setLoading(false)
                                 finish()
+                            }
+                            is AddItemUiState.Error -> {
+                                setLoading(false)
+                                Toast.makeText(this@AddItemActivity, state.message, Toast.LENGTH_SHORT).show()
+                            }
+                            is AddItemUiState.ValidationFailure -> {
+                                setLoading(false)
+                                binding.addItemNameInputWrapper.error = state.nameError
+                                binding.addItemQuantityInputWrapper.error = state.quantityError
+                                binding.addItemUnitDropdownWrapper.error = state.unitError
+                                binding.addItemCategoryDropdownWrapper.error = state.categoryError
                             }
                         }
                     }
                 }
             }
         }
+    }
+
+    private fun setLoading(isLoading: Boolean) {
+        if(isLoading) {
+            binding.addItemLoadingIndicator.visibility = View.VISIBLE
+            binding.addItemNameInputWrapper.visibility = View.GONE
+            binding.addItemQuantityInputWrapper.visibility = View.GONE
+            binding.addItemUnitDropdownWrapper.visibility = View.GONE
+            binding.addItemCategoryDropdownWrapper.visibility = View.GONE
+        }
+        else {
+            binding.addItemLoadingIndicator.visibility = View.GONE
+            binding.addItemNameInputWrapper.visibility = View.VISIBLE
+            binding.addItemQuantityInputWrapper.visibility = View.VISIBLE
+            binding.addItemUnitDropdownWrapper.visibility = View.VISIBLE
+            binding.addItemCategoryDropdownWrapper.visibility = View.VISIBLE
+        }
+
+        binding.addItemAddItemButton.isEnabled = !isLoading
+        binding.addItemCancelButton.isEnabled = !isLoading
     }
 }

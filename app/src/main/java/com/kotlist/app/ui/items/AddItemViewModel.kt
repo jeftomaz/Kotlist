@@ -6,100 +6,120 @@ import com.kotlist.app.data.model.ItemCategory
 import com.kotlist.app.data.model.ItemUnit
 import com.kotlist.app.data.model.ListItem
 import com.kotlist.app.data.repository.ListItemRepository
+import com.kotlist.app.ui.auth.SignUpState
+import com.kotlist.app.ui.auth.SignUpViewModel.ValidationResult
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlin.compareTo
 
-data class AddItemUiState(
-    val nameError: String? = null,
-    val quantityError: String? = null,
-    val unitError: String? = null,
-    val categoryError: String? = null
-)
-
-sealed class AddItemEvent {
-    data class ShowMessage(val message: String) : AddItemEvent()
-    object Success : AddItemEvent()
+sealed class AddItemUiState {
+    data object Idle : AddItemUiState()
+    data object Loading : AddItemUiState()
+    data object Success : AddItemUiState()
+    data class Error(val message: String) : AddItemUiState()
+    data class ValidationFailure(
+        val nameError: String? = null,
+        val quantityError: String? = null,
+        val unitError: String? = null,
+        val categoryError: String? = null
+    ) : AddItemUiState()
 }
 
 class AddItemViewModel(
     private val listItemRepository: ListItemRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(AddItemUiState())
+    private data class ValidationResult(
+        val isFailure: Boolean,
+        val errorState: AddItemUiState.ValidationFailure? = null
+    )
+
+    private val _uiState = MutableStateFlow<AddItemUiState>(AddItemUiState.Idle)
     val uiState: StateFlow<AddItemUiState> = _uiState
 
-    private val _events = MutableSharedFlow<AddItemEvent>()
-    val events: SharedFlow<AddItemEvent> = _events
-
     fun addItem(listId: String?, name: String, quantityText: String, unit: ItemUnit?, category: ItemCategory?) {
-        _uiState.value = AddItemUiState()
-
-        if(listId == null) {
-            viewModelScope.launch {
-                _events.emit(AddItemEvent.ShowMessage("Algo deu errado ao adicionar o item."))
-            }
-            return
-        }
-
         val trimmedName = name.trim()
         val quantity = quantityText.toIntOrNull()
 
-        var hasError = false
+        val validation = validateInputs(
+            name = trimmedName,
+            quantity = quantity,
+            unit = unit,
+            category = category)
+
+        if(validation.isFailure) {
+            validation.errorState?.let { _uiState.value = it }
+            return
+        }
+
+        _uiState.value = AddItemUiState.Loading
+
+        viewModelScope.launch {
+            try {
+                if(listId.isNullOrEmpty()) {
+                    _uiState.value = AddItemUiState.Error("Erro: lista não encontrada para adicionar o item")
+                    return@launch
+                }
+
+                val newListItem = ListItem(
+                    name = trimmedName,
+                    quantity = quantity!!,
+                    unitEnum = unit!!,
+                    categoryEnum = category!!
+                )
+
+                listItemRepository.addItem(listId, newListItem)
+                _uiState.value = AddItemUiState.Success
+
+            } catch (e: Exception) {
+                _uiState.value = AddItemUiState.Error("Erro ao adicionar item. Tente novamente")
+            }
+        }
+    }
+
+    private fun validateInputs(name: String, quantity: Int?, unit: ItemUnit?, category: ItemCategory?): ValidationResult {
         var nameError: String? = null
         var quantityError: String? = null
         var unitError: String? = null
         var categoryError: String? = null
+        var hasError = false
 
-        if(trimmedName.isEmpty()) {
+        if(name.isEmpty()) {
             nameError = "O nome do item não pode ser vazio."
             hasError = true
         }
 
-        if(quantity == null) {
-            quantityError = "A quantidade do item não pode ser vazia."
+        if(quantity == null || quantity <= 0) {
+            quantityError = "Informe uma quantidade válida."
             hasError = true
         }
 
         if(unit == null) {
-            unitError = "A unidade do item não pode ser vazia."
+            unitError = "Selecione uma unidade."
             hasError = true
         }
 
         if(category == null) {
-            categoryError = "A categoria do item não pode ser vazia."
+            categoryError = "Selecione uma categoria."
             hasError = true
         }
 
-        if(hasError) {
-            _uiState.value = AddItemUiState(
-                nameError = nameError,
-                quantityError = quantityError,
-                unitError = unitError,
-                categoryError = categoryError
+        return if(hasError) {
+            ValidationResult(
+                isFailure = true,
+                errorState = AddItemUiState.ValidationFailure(
+                    nameError = nameError,
+                    quantityError = quantityError,
+                    unitError = unitError,
+                    categoryError = categoryError
+                )
             )
-
-            viewModelScope.launch {
-                _events.emit(AddItemEvent.ShowMessage("Preencha todos os campos para adicionar um item."))
-            }
-            return
         }
-
-        val newListItem = ListItem(
-            listId = listId,
-            name = trimmedName,
-            quantity = quantity!!,
-            unit = unit!!,
-            category = category!!
-        )
-
-        listItemRepository.addItem(newListItem)
-
-        viewModelScope.launch {
-            _events.emit(AddItemEvent.ShowMessage("Novo item da lista criado com sucesso."))
-            _events.emit(AddItemEvent.Success)
+        else {
+            ValidationResult(isFailure = false)
         }
     }
 }

@@ -28,4 +28,6 @@
 
     <color name="floatingActionButtonRippleSecondary">#C3B2E0</color>
     <color name="floatingActionButtonRipplePrimary">#D75F2F</color>
+
+    <color name="checkedItemBackground">#DEDEDE</color>
 </resources>

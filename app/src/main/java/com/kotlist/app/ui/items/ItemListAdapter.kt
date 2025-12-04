@@ -30,7 +30,9 @@ class ItemListAdapter (
         holder.bind(item, onCheckboxClicked, onItemClick)
     }
 
-    class ItemViewHolder(private val binding: ComponentListItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    class ItemViewHolder(
+        private val binding: ComponentListItemBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
         private val context: Context = binding.root.context
 
         private val categoryIcon: ImageView = binding.listItemCategoryIcon
@@ -39,16 +41,21 @@ class ItemListAdapter (
         private val itemCheckbox: MaterialCheckBox = binding.listItemCheckbox
 
         fun bind(item: ListItem, onCheckboxClicked: (ListItem, Boolean) -> Unit, onItemClick: (ListItem) -> Unit) {
-            categoryIcon.setImageResource(item.category.categoryIconId)
-            itemName.text = item.name
-            itemQuantityUnit.text = "${item.quantity} ${context.getString(item.unit.unitAbbreviationId)}"
-            itemCheckbox.isChecked = item.isChecked
+            val category = item.getCategoryEnum()
+            val unit = item.getUnitEnum()
 
-            updateUI(itemCheckbox.isChecked)
+            categoryIcon.setImageResource(category.categoryIconId)
+            itemName.text = item.name
+            itemQuantityUnit.text = "${item.quantity} ${context.getString(unit.unitAbbreviationId)}"
+
+            itemCheckbox.setOnCheckedChangeListener(null)
+            itemCheckbox.isChecked = item.checked
+
+            applyCheckedStyle(itemCheckbox.isChecked)
 
             itemCheckbox.setOnCheckedChangeListener { _, isChecked ->
+                applyCheckedStyle(isChecked)
                 onCheckboxClicked(item, isChecked)
-                updateUI(isChecked)
             }
 
             itemView.setOnClickListener {
@@ -56,15 +63,15 @@ class ItemListAdapter (
             }
         }
 
-        private fun updateUI(isChecked: Boolean) {
+        private fun applyCheckedStyle(isChecked: Boolean) = with(binding) {
             if(isChecked) {
                 itemName.paintFlags = itemName.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
 
                 binding.listItemCard.setCardBackgroundColor(
-                    ContextCompat.getColor(context, R.color.light_grey)
+                    ContextCompat.getColor(context, R.color.checkedItemBackground)
                 )
 
-                binding.root.alpha = 0.7f
+                binding.listItemCard.alpha = 0.6f
             }
             else {
                 itemName.paintFlags = itemName.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
@@ -73,7 +80,7 @@ class ItemListAdapter (
                     ContextCompat.getColor(context, R.color.white)
                 )
 
-                binding.root.alpha = 1.0f
+                binding.listItemCard.alpha = 1.0f
             }
         }
     }

@@ -85,7 +85,6 @@
             style="@style/Widget.App.Dropdown" />
     </com.google.android.material.textfield.TextInputLayout>
 
-
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/add_item_category_dropdown_wrapper"
         android:layout_width="0dp"
@@ -107,6 +106,21 @@
             android:maxLines="1"
             style="@style/Widget.App.Dropdown" />
     </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/add_item_loading_indicator"
+        android:visibility="gone"
+        android:indeterminate="true"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:indicatorSize="60dp"
+        app:trackThickness="6dp"
+        app:indicatorColor="@array/loadingIndicatorColors"
+        app:layout_constraintVertical_bias="0.35"
+        app:layout_constraintTop_toBottomOf="@id/add_item_screen_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/add_item_add_item_button"

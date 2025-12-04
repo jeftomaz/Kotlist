@@ -4,6 +4,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -15,6 +16,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.SimpleItemAnimator
 import com.kotlist.app.data.repository.ListItemRepository
 import com.kotlist.app.data.repository.ServiceLocator
 import com.kotlist.app.data.repository.ShoppingListRepository
@@ -27,12 +29,16 @@ class ItemListActivity : AppCompatActivity() {
     private lateinit var itemListAdapter: ItemListAdapter
     private lateinit var sourceListId: String
 
+    private val listItemRepository by lazy {
+        ServiceLocator.provideListItemRepository()
+    }
+
     private val shoppingListRepository by lazy {
         ServiceLocator.provideShoppingListRepository()
     }
 
     private val viewModel: ItemListViewModel by viewModels {
-        ItemListViewModelFactory(ListItemRepository, shoppingListRepository)
+        ItemListViewModelFactory(listItemRepository, shoppingListRepository)
     }
 
     companion object {
@@ -67,6 +73,16 @@ class ItemListActivity : AppCompatActivity() {
         viewModel.loadData(sourceListId)
     }
 
+    override fun onPause() {
+        super.onPause()
+        viewModel.syncPendingCheckedChanges()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        viewModel.syncPendingCheckedChanges()
+    }
+
     private fun setupRecyclerView() {
         itemListAdapter = ItemListAdapter(
             onCheckboxClicked = { item, isChecked ->
@@ -77,8 +93,11 @@ class ItemListActivity : AppCompatActivity() {
             }
         )
 
-        binding.itemListRecyclerItemsView.layoutManager = LinearLayoutManager(this)
-        binding.itemListRecyclerItemsView.adapter = itemListAdapter
+        binding.itemListRecyclerItemsView.apply {
+            layoutManager = LinearLayoutManager(this@ItemListActivity)
+            adapter = itemListAdapter
+            (itemAnimator as? SimpleItemAnimator)?.supportsChangeAnimations = false
+        }
     }
 
     private fun setupListeners() {
@@ -103,34 +122,64 @@ class ItemListActivity : AppCompatActivity() {
     private fun setupObservers() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                // load list items data
+                // observes the UI state
                 launch {
-                    viewModel.items.collect { items ->
-                        itemListAdapter.submitList(items)
+                    viewModel.uiState.collect { state ->
+                        when (state) {
+                            is ItemListUiState.Idle -> {
+                                setLoading(false)
+                            }
+                            is ItemListUiState.Loading -> {
+                                setLoading(true)
+                            }
+                            is ItemListUiState.Success -> {
+                                setLoading(false)
+                                itemListAdapter.submitList(state.items)
+                                binding.itemListRecyclerItemsView.visibility = View.VISIBLE
+                                binding.listsFeedbackMessage.visibility = View.GONE
+                            }
+                            is ItemListUiState.Error -> {
+                                setLoading(false)
+                                Toast.makeText(this@ItemListActivity, state.message, Toast.LENGTH_SHORT).show()
+                                binding.itemListRecyclerItemsView.visibility = View.GONE
+                                binding.listsFeedbackMessage.visibility = View.VISIBLE
+                            }
+                            is ItemListUiState.Empty -> {
+                                setLoading(false)
+                                itemListAdapter.submitList(emptyList())
+                                binding.itemListRecyclerItemsView.visibility = View.GONE
+                                binding.listsFeedbackMessage.visibility = View.VISIBLE
+                            }
+                        }
                     }
                 }
 
-                // load list title
+                // observes the list title data
                 launch {
                     viewModel.listTitle.collect { title ->
                         binding.itemListListName.text = title
                     }
                 }
 
-                // show search/empty list feedback message
+                // observes the item list feedback message
                 launch {
                     viewModel.feedbackMessage.collect { message ->
-                        if (message == null) {
-                            binding.itemListRecyclerItemsView.visibility = View.VISIBLE
-                            binding.listsFeedbackMessage.visibility = View.GONE
-                        } else {
-                            binding.itemListRecyclerItemsView.visibility = View.GONE
-                            binding.listsFeedbackMessage.visibility = View.VISIBLE
-                            binding.listsFeedbackMessage.text = message
-                        }
+                        binding.listsFeedbackMessage.text = message
                     }
                 }
             }
+        }
+    }
+
+    private fun setLoading(isLoading: Boolean) {
+        if(isLoading) {
+            binding.itemListLoadingIndicator.visibility = View.VISIBLE
+            binding.itemListRecyclerItemsView.visibility = View.GONE
+            binding.listsFeedbackMessage.visibility = View.GONE
+        } else {
+            binding.itemListLoadingIndicator.visibility = View.GONE
+            binding.itemListRecyclerItemsView.visibility = View.VISIBLE
+            binding.listsFeedbackMessage.visibility = View.VISIBLE
         }
     }
 

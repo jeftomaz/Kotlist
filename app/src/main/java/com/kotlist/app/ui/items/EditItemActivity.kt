@@ -18,6 +18,7 @@ import com.kotlist.app.data.model.ItemCategory
 import com.kotlist.app.data.model.ItemUnit
 import com.kotlist.app.data.model.ListItem
 import com.kotlist.app.data.repository.ListItemRepository
+import com.kotlist.app.data.repository.ServiceLocator
 import com.kotlist.app.databinding.ActivityEditItemBinding
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
@@ -36,8 +37,12 @@ class EditItemActivity : AppCompatActivity() {
         const val EXTRA_LIST_ITEM_ID = "EXTRA_LIST_ITEM_ID"
     }
 
+    private val listItemRepository by lazy {
+        ServiceLocator.provideListItemRepository()
+    }
+
     private val viewModel: EditItemViewModel by viewModels {
-        EditItemViewModelFactory(ListItemRepository)
+        EditItemViewModelFactory(listItemRepository)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -168,12 +173,12 @@ class EditItemActivity : AppCompatActivity() {
     }
 
     private fun populateInputFields(item: ListItem) {
-        binding.editItemNameInput.setText(item.name)
-        binding.editItemQuantityInput.setText(item.quantity.toString())
-        binding.editItemUnitDropdown.setText(getString(item.unit.unitNameId), false)
-        binding.editItemCategoryDropdown.setText(getString(item.category.categoryNameId), false)
-
-        selectedUnit = item.unit
-        selectedCategory = item.category
+//        binding.editItemNameInput.setText(item.name)
+//        binding.editItemQuantityInput.setText(item.quantity.toString())
+//        binding.editItemUnitDropdown.setText(getString(item.unit.unitNameId), false)
+//        binding.editItemCategoryDropdown.setText(getString(item.category.categoryNameId), false)
+//
+//        selectedUnit = item.unit
+//        selectedCategory = item.category
     }
 }

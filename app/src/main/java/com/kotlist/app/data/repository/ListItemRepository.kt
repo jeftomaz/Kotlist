@@ -1,33 +1,35 @@
 package com.kotlist.app.data.repository
 
+import com.kotlist.app.data.datasource.ListItemRemoteDataSource
 import com.kotlist.app.data.model.ListItem
 
-object ListItemRepository {
-    private val items = mutableListOf<ListItem>()
+class ListItemRepository(private val dataSource: ListItemRemoteDataSource) {
 
-    fun addItem(newItem: ListItem) {
-        items.add(newItem)
+    suspend fun getItemsFromList(listId: String): List<ListItem> {
+        return dataSource.getItemsFromList(listId)
     }
 
-    fun getItemsFromList(listId: String): MutableList<ListItem> {
-        return items.filter { it.listId == listId } as MutableList<ListItem>
+    suspend fun getItemById(listId: String, itemId: String): ListItem? {
+        return dataSource.getItemById(listId, itemId)
     }
 
-    fun getItemById(itemId: String): ListItem? {
-        return items.find { it.id == itemId }
+    suspend fun addItem(listId: String, item: ListItem): String {
+        return dataSource.addItem(listId, item)
     }
 
-    fun updateItem(itemUpdated: ListItem) {
-        val index = items.indexOfFirst { it.id == itemUpdated.id }
-        if(index != -1)
-            items[index] = itemUpdated
+    suspend fun updateItem(listId: String, item: ListItem) {
+        dataSource.updateItem(listId, item)
     }
 
-    fun deleteItem(itemId: String) {
-        items.removeAll { it.id == itemId }
+    suspend fun deleteItem(listId: String, itemId: String) {
+        dataSource.deleteItem(listId, itemId)
     }
 
-    fun deleteItemsFromList(listId: String) {
-        items.removeAll { it.listId == listId }
+    suspend fun updateItemCheckedStatus(listId: String, itemId: String, isChecked: Boolean) {
+        dataSource.updateItemCheckedStatus(listId, itemId, isChecked)
+    }
+
+    suspend fun updateItemsCheckedStatusBatch(listId: String, changes: Map<String, Boolean>) {
+        dataSource.updateItemsCheckedStatusBatch(listId, changes)
     }
 }
