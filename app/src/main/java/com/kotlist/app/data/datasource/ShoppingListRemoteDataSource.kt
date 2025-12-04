@@ -9,6 +9,7 @@ class ShoppingListRemoteDataSource(private val firestore: FirebaseFirestore) {
     // used to make collection name changing easier (lists firebase collection)
     companion object {
         private const val LISTS_COLLECTION = "lists"
+        private const val ITEMS_COLLECTION = "items"
     }
 
     suspend fun createList(list: ShoppingList): String {
@@ -48,7 +49,25 @@ class ShoppingListRemoteDataSource(private val firestore: FirebaseFirestore) {
     }
 
     suspend fun deleteList(listId: String) {
-        firestore.collection(LISTS_COLLECTION)
+        val itemsSnapshot = firestore
+            .collection(LISTS_COLLECTION)
+            .document(listId)
+            .collection(ITEMS_COLLECTION)
+            .get()
+            .await()
+
+        if(itemsSnapshot.documents.isNotEmpty()) {
+            val batch = firestore.batch()
+
+            itemsSnapshot.documents.forEach { doc ->
+                batch.delete(doc.reference)
+            }
+
+            batch.commit().await()
+        }
+
+        firestore
+            .collection(LISTS_COLLECTION)
             .document(listId)
             .delete()
             .await()

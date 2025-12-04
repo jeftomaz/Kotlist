@@ -32,7 +32,8 @@ class ShoppingListRepository(
 
     suspend fun deleteList(list: ShoppingList) {
         listsRemoteDataSource.deleteList(list.id)
-        coversRemoteDataSource.deleteListCoverImageByUrl(list.customCoverImageUrl.toString())
+        if(!list.customCoverImageUrl.isNullOrBlank())
+            coversRemoteDataSource.deleteListCoverImageByUrl(list.customCoverImageUrl)
     }
 
     suspend fun hasAnyList(userId: String): Boolean {
