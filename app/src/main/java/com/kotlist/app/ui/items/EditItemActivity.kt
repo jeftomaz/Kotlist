@@ -2,6 +2,7 @@ package com.kotlist.app.ui.items
 
 import android.graphics.Color
 import android.os.Bundle
+import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.SystemBarStyle
@@ -68,14 +69,14 @@ class EditItemActivity : AppCompatActivity() {
         shoppingListId = intent.getStringExtra(EXTRA_LIST_ID)
         itemId = intent.getStringExtra(EXTRA_LIST_ITEM_ID)
 
-        viewModel.loadItem(itemId)
+        viewModel.loadItem(shoppingListId, itemId)
 
-        setDropdownAdapters()
+        setupDropdownAdapters()
         setupListeners()
         setupObservers()
     }
 
-    private fun setDropdownAdapters() {
+    private fun setupDropdownAdapters() {
         val itemUnitsStringArray: List<String> =
             ItemUnit.entries.map { getString(it.unitNameId) }
         val itemCategoriesStringArray: List<String> =
@@ -107,22 +108,18 @@ class EditItemActivity : AppCompatActivity() {
 
     private fun setupListeners() {
         binding.editItemDeleteItemButton.setOnClickListener {
-            viewModel.deleteItem(itemId)
+            viewModel.deleteItem()
         }
 
         binding.editItemSaveItemButton.setOnClickListener {
-            val itemListId = shoppingListId
             val itemName = binding.editItemNameInput.text.toString()
             val itemQuantity = binding.editItemQuantityInput.text.toString()
-            val itemCategory = selectedCategory
-            val itemUnit = selectedUnit
 
             viewModel.updateItem(
-                listId = itemListId,
                 name = itemName,
                 quantityText = itemQuantity,
-                unit = itemUnit,
-                category = itemCategory
+                unit = selectedUnit,
+                category = selectedCategory
             )
         }
 
@@ -134,37 +131,44 @@ class EditItemActivity : AppCompatActivity() {
     private fun setupObservers() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                // observes input errors
-                launch {
-                    viewModel.uiState.collect { state ->
-                        binding.editItemNameInputWrapper.error = state.nameError
-                        binding.editItemQuantityInputWrapper.error = state.quantityError
-                        binding.editItemUnitDropdownWrapper.error = state.unitError
-                        binding.editItemCategoryDropdownWrapper.error = state.categoryError
-                    }
-                }
-
-                // observes item data to populate inputs
-                launch {
-                    viewModel.itemToEdit.filterNotNull().collect { item ->
-                        populateInputFields(item)
-                    }
-                }
-
-                // observes events
-                launch {
-                    viewModel.events.collect { event ->
-                        when(event) {
-                            is EditItemEvent.ShowMessage -> {
-                                Toast.makeText(
-                                    this@EditItemActivity,
-                                    event.message,
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-                            is EditItemEvent.Finish -> {
-                                finish()
-                            }
+                // observes UI states
+                viewModel.uiState.collect { state ->
+                    when (state) {
+                        is EditItemUiState.Idle -> {
+                            setLoading(false)
+                            clearErrors()
+                        }
+                        is EditItemUiState.Loading -> {
+                            setLoading(true)
+                            clearErrors()
+                        }
+                        is EditItemUiState.ItemLoaded -> {
+                            setLoading(false)
+                            populateInputFields(state.item)
+                        }
+                        is EditItemUiState.Success -> {
+                            setLoading(false)
+                            Toast.makeText(
+                                this@EditItemActivity,
+                                state.message,
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            finish()
+                        }
+                        is EditItemUiState.Error -> {
+                            setLoading(false)
+                            Toast.makeText(
+                                this@EditItemActivity,
+                                state.message,
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                        is EditItemUiState.ValidationFailure -> {
+                            setLoading(false)
+                            binding.editItemNameInputWrapper.error = state.nameError
+                            binding.editItemQuantityInputWrapper.error = state.quantityError
+                            binding.editItemUnitDropdownWrapper.error = state.unitError
+                            binding.editItemCategoryDropdownWrapper.error = state.categoryError
                         }
                     }
                 }
@@ -173,12 +177,39 @@ class EditItemActivity : AppCompatActivity() {
     }
 
     private fun populateInputFields(item: ListItem) {
-//        binding.editItemNameInput.setText(item.name)
-//        binding.editItemQuantityInput.setText(item.quantity.toString())
-//        binding.editItemUnitDropdown.setText(getString(item.unit.unitNameId), false)
-//        binding.editItemCategoryDropdown.setText(getString(item.category.categoryNameId), false)
-//
-//        selectedUnit = item.unit
-//        selectedCategory = item.category
+        binding.editItemNameInput.setText(item.name)
+        binding.editItemQuantityInput.setText(item.quantity.toString())
+
+        val unit = item.getUnitEnum()
+        val category = item.getCategoryEnum()
+        binding.editItemUnitDropdown.setText(getString(unit.unitNameId), false)
+        binding.editItemCategoryDropdown.setText(getString(category.categoryNameId), false)
+
+        selectedUnit = unit
+        selectedCategory = category
+    }
+
+    private fun clearErrors() {
+        binding.editItemNameInputWrapper.error = null
+        binding.editItemQuantityInputWrapper.error = null
+        binding.editItemUnitDropdownWrapper.error = null
+        binding.editItemCategoryDropdownWrapper.error = null
+    }
+
+    private fun setLoading(isLoading: Boolean) {
+        if(isLoading) {
+            binding.editItemLoadingIndicator.visibility = View.VISIBLE
+            binding.editItemNameInputWrapper.visibility = View.GONE
+            binding.editItemQuantityInputWrapper.visibility = View.GONE
+            binding.editItemUnitDropdownWrapper.visibility = View.GONE
+            binding.editItemCategoryDropdownWrapper.visibility = View.GONE
+        }
+        else {
+            binding.editItemLoadingIndicator.visibility = View.GONE
+            binding.editItemNameInputWrapper.visibility = View.VISIBLE
+            binding.editItemQuantityInputWrapper.visibility = View.VISIBLE
+            binding.editItemUnitDropdownWrapper.visibility = View.VISIBLE
+            binding.editItemCategoryDropdownWrapper.visibility = View.VISIBLE
+        }
     }
 }

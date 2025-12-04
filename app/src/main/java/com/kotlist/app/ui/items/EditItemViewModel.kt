@@ -12,148 +12,183 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-data class EditItemUiState(
-    val nameError: String? = null,
-    val quantityError: String? = null,
-    val unitError: String? = null,
-    val categoryError: String? = null
-)
-
-sealed class EditItemEvent {
-    data class ShowMessage(val message: String) : EditItemEvent()
-    object Finish : EditItemEvent()
+sealed class EditItemUiState {
+    data object Idle : EditItemUiState()
+    data object Loading : EditItemUiState()
+    data class ItemLoaded(val item: ListItem) : EditItemUiState()
+    data class Success(val message: String) : EditItemUiState()
+    data class Error(val message: String) : EditItemUiState()
+    data class ValidationFailure(
+        val nameError: String? = null,
+        val quantityError: String? = null,
+        val unitError: String? = null,
+        val categoryError: String? = null
+    ) : EditItemUiState()
 }
 
 class EditItemViewModel(
     private val listItemRepository: ListItemRepository
 ) : ViewModel() {
 
-    private var itemOnEditing: ListItem? = null
-    private val _itemToEdit = MutableStateFlow<ListItem?>(null)
-    val itemToEdit: StateFlow<ListItem?> = _itemToEdit
+    private data class ValidationResult(
+        val isFailure: Boolean,
+        val errorState: EditItemUiState.ValidationFailure? = null
+    )
 
-    private val _uiState = MutableStateFlow(EditItemUiState())
+    private val _uiState = MutableStateFlow<EditItemUiState>(EditItemUiState.Idle)
     val uiState: StateFlow<EditItemUiState> = _uiState
 
-    private val _events = MutableSharedFlow<EditItemEvent>()
-    val events: SharedFlow<EditItemEvent> = _events
+    private var currentItem: ListItem? = null
+    private var currentListId: String? = null
 
-    fun loadItem(itemId: String?) {
-//        if(itemId == null) {
-//            viewModelScope.launch {
-//                _events.emit(EditItemEvent.ShowMessage("Algo deu errado ao carregar o item."))
-//                _events.emit(EditItemEvent.Finish)
-//            }
-//            return
-//        }
-//
-//        val item = listItemRepository.getItemById(itemId)
-//        if(item == null) {
-//            viewModelScope.launch {
-//                _events.emit(EditItemEvent.ShowMessage("Item não encontrado."))
-//                _events.emit(EditItemEvent.Finish)
-//            }
-//            return
-//        }
-//
-//        itemOnEditing = item
-//        _itemToEdit.value = item
-    }
+    fun loadItem(listId: String?, itemId: String?) {
+        if(listId.isNullOrEmpty()) {
+            _uiState.value = EditItemUiState.Error("Erro ao encontrar a lista relacionada")
+            return
+        }
 
-    fun deleteItem(itemId: String?) {
-//        if(itemId == null) {
-//            viewModelScope.launch {
-//                _events.emit(EditItemEvent.ShowMessage("Algo deu errado ao excluir o item."))
-//            }
-//            return
-//        }
-//
-//        listItemRepository.deleteItem(itemId)
-//
-//        viewModelScope.launch {
-//            _events.emit(EditItemEvent.ShowMessage("Item excluído com sucesso!"))
-//            _events.emit(EditItemEvent.Finish)
-//        }
+        if(itemId.isNullOrEmpty()) {
+            _uiState.value = EditItemUiState.Error("Erro ao encontrar o item para editar")
+            return
+        }
+
+        currentListId = listId
+        _uiState.value = EditItemUiState.Loading
+
+        viewModelScope.launch {
+            try {
+                val item = listItemRepository.getItemById(listId, itemId)
+
+                if(item == null) {
+                    _uiState.value = EditItemUiState.Error("Erro ao encontrar o item para editar")
+                    return@launch
+                }
+
+                currentItem = item
+                _uiState.value = EditItemUiState.ItemLoaded(item)
+
+            } catch (e: Exception) {
+                _uiState.value = EditItemUiState.Error("Erro ao carregar item. Tente novamente.")
+            }
+        }
     }
 
     fun updateItem(
-        listId: String?,
         name: String,
         quantityText: String,
         unit: ItemUnit?,
         category: ItemCategory?
     ) {
-//        _uiState.value = EditItemUiState()
-//
-//        val currentItem = itemOnEditing
-//        if(listId == null || currentItem == null) {
-//            viewModelScope.launch {
-//                _events.emit(EditItemEvent.ShowMessage("Algo deu errado ao editar o item."))
-//                _events.emit(EditItemEvent.Finish)
-//            }
-//            return
-//        }
-//
-//        val trimmedName = name.trim()
-//        val quantity = quantityText.toIntOrNull()
-//
-//        var hasError = false
-//        var nameError: String? = null
-//        var quantityError: String? = null
-//        var unitError: String? = null
-//        var categoryError: String? = null
-//
-//        if(trimmedName.isEmpty()) {
-//            nameError = "O nome do item não pode ser vazio."
-//            hasError = true
-//        }
-//
-//        if(quantity == null) {
-//            quantityError = "A quantidade do item não pode ser vazia."
-//            hasError = true
-//        }
-//
-//        if(unit == null) {
-//            unitError = "A unidade do item não pode ser vazia."
-//            hasError = true
-//        }
-//
-//        if(category == null) {
-//            categoryError = "A categoria do item não pode ser vazia."
-//            hasError = true
-//        }
-//
-//        if(hasError) {
-//            _uiState.value = EditItemUiState(
-//                nameError = nameError,
-//                quantityError = quantityError,
-//                unitError = unitError,
-//                categoryError = categoryError
-//            )
-//
-//            viewModelScope.launch {
-//                _events.emit(
-//                    EditItemEvent.ShowMessage(
-//                        "Preencha todos os campos para adicionar um item."
-//                    )
-//                )
-//            }
-//            return
-//        }
-//
-//        val updatedItem = currentItem.copy(
-//            name = trimmedName,
-//            quantity = quantity!!,
-//            unit = unit!!,
-//            category = category!!
-//        )
-//
-//        listItemRepository.updateItem(updatedItem)
-//        itemOnEditing = updatedItem
-//
-//        viewModelScope.launch {
-//            _events.emit(EditItemEvent.ShowMessage("Item editado com sucesso!"))
-//            _events.emit(EditItemEvent.Finish)
-//        }
+        val trimmedName = name.trim()
+        val quantity = quantityText.toIntOrNull()
+
+        val validation = validateInputs(
+            name = trimmedName,
+            quantity = quantity,
+            unit = unit,
+            category = category
+        )
+
+        if(validation.isFailure) {
+            validation.errorState?.let { _uiState.value = it }
+            return
+        }
+
+        val item = currentItem
+        val listId = currentListId
+
+        if(item == null || listId.isNullOrEmpty()) {
+            _uiState.value = EditItemUiState.Error("Erro: não possível atualizar o item")
+            return
+        }
+
+        _uiState.value = EditItemUiState.Loading
+
+        viewModelScope.launch {
+            try {
+                val updatedItem = item.copy(
+                    name = trimmedName,
+                    quantity = quantity!!,
+                    unit = unit!!.name,
+                    category = category!!.name
+                )
+
+                listItemRepository.updateItem(listId, updatedItem)
+                currentItem = updatedItem
+                _uiState.value = EditItemUiState.Success("Item atualizado com sucesso")
+
+            } catch (e: Exception) {
+                _uiState.value = EditItemUiState.Error("Erro ao atualizar item. Tente novamente.")
+            }
+        }
+    }
+
+    fun deleteItem() {
+        val item = currentItem
+        val listId = currentListId
+
+        if(item == null || listId.isNullOrEmpty()) {
+            _uiState.value = EditItemUiState.Error("Erro: não foi possível excluir o item")
+            return
+        }
+
+        _uiState.value = EditItemUiState.Loading
+
+        viewModelScope.launch {
+            try {
+                listItemRepository.deleteItem(listId, item.id)
+                _uiState.value = EditItemUiState.Success("Item excluído com sucesso")
+
+            } catch (e: Exception) {
+                _uiState.value = EditItemUiState.Error("Erro ao deletar item. Tente novamente.")
+            }
+        }
+    }
+
+    private fun validateInputs(
+        name: String,
+        quantity: Int?,
+        unit: ItemUnit?,
+        category: ItemCategory?
+    ): ValidationResult {
+        var nameError: String? = null
+        var quantityError: String? = null
+        var unitError: String? = null
+        var categoryError: String? = null
+        var hasError = false
+
+        if (name.isEmpty()) {
+            nameError = "O nome do item não pode ser vazio."
+            hasError = true
+        }
+
+        if (quantity == null || quantity <= 0) {
+            quantityError = "Informe uma quantidade válida."
+            hasError = true
+        }
+
+        if (unit == null) {
+            unitError = "Selecione uma unidade."
+            hasError = true
+        }
+
+        if (category == null) {
+            categoryError = "Selecione uma categoria."
+            hasError = true
+        }
+
+        return if (hasError) {
+            ValidationResult(
+                isFailure = true,
+                errorState = EditItemUiState.ValidationFailure(
+                    nameError = nameError,
+                    quantityError = quantityError,
+                    unitError = unitError,
+                    categoryError = categoryError
+                )
+            )
+        } else {
+            ValidationResult(isFailure = false)
+        }
     }
 }
