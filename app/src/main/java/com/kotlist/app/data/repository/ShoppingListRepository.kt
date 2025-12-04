@@ -30,8 +30,9 @@ class ShoppingListRepository(
         listsRemoteDataSource.updateList(list)
     }
 
-    suspend fun deleteList(listId: String) {
-        listsRemoteDataSource.deleteList(listId)
+    suspend fun deleteList(list: ShoppingList) {
+        listsRemoteDataSource.deleteList(list.id)
+        coversRemoteDataSource.deleteListCoverImageByUrl(list.customCoverImageUrl.toString())
     }
 
     suspend fun hasAnyList(userId: String): Boolean {

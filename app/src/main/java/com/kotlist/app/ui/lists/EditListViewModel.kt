@@ -1,5 +1,6 @@
 package com.kotlist.app.ui.lists
 
+import android.net.Uri
 import android.os.Build
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,85 +12,153 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+sealed class EditListUiState {
+    data object Idle : EditListUiState()
+    data object Loading : EditListUiState()
+    data object Success : EditListUiState()
+    data class Error(val message: String) : EditListUiState()
+    data class ValidationFailure(val nameError: String?) : EditListUiState()
+}
+
+sealed class EditListEvent {
+    data class ShowToast(val message: String) : EditListEvent()
+    data class NavigateBack(val successMessage: String, val navigateToListsScreen: Boolean = false) : EditListEvent()
+    data object OpenGallery : EditListEvent()
+    data object ShowDeleteConfirmation : EditListEvent()
+}
+
 class EditListViewModel(
     private val shoppingListRepository: ShoppingListRepository
 ) : ViewModel() {
 
-    private var listOnEditing: ShoppingList? = null
+    private val _uiState = MutableStateFlow<EditListUiState>(EditListUiState.Idle)
+    val uiState: StateFlow<EditListUiState> = _uiState
+
     private val _listToEdit = MutableStateFlow<ShoppingList?>(null)
     val listToEdit: StateFlow<ShoppingList?> = _listToEdit
 
-    private val _listNameError = MutableStateFlow<String?>(null)
-    val listNameError: StateFlow<String?> = _listNameError
+    private val _permissionState = MutableStateFlow<GalleryPermissionState>(GalleryPermissionState.Idle)
+    val permissionState: StateFlow<GalleryPermissionState> = _permissionState
 
-    private val _updateEventMessage = MutableSharedFlow<String>()
-    val updateEventMessage: SharedFlow<String> = _updateEventMessage
+    private val _customImageUrl = MutableStateFlow<Uri?>(null)
+    val customImageUrl: StateFlow<Uri?> = _customImageUrl
 
-    private val _deleteEventMessage = MutableSharedFlow<String>()
-    val deleteEventMessage: SharedFlow<String> = _deleteEventMessage
-
-    private val _showDeleteConfirmation = MutableSharedFlow<Unit>()
-    val showDeleteConfirmation: SharedFlow<Unit> = _showDeleteConfirmation
-
-    private val _galleryPermissionState = MutableSharedFlow<GalleryPermissionState>()
-    val galleryPermissionState: SharedFlow<GalleryPermissionState> = _galleryPermissionState
+    private val _events = MutableSharedFlow<EditListEvent>()
+    val events: SharedFlow<EditListEvent> = _events
 
     fun loadList(listId: String) {
-//        listOnEditing = shoppingListRepository.getListById(listId)
-//        _listToEdit.value = listOnEditing
+        _uiState.value = EditListUiState.Loading
+        viewModelScope.launch {
+            try {
+                val list = shoppingListRepository.getListById(listId)
+                if(list != null) {
+                    _listToEdit.value = list
+                    _uiState.value = EditListUiState.Idle
+                } else {
+                    _uiState.value = EditListUiState.Error("Lista não encontrada")
+                }
+            } catch (e: Exception) {
+                _uiState.value = EditListUiState.Error("Erro ao carregar lista: ${e.message}")
+            }
+        }
     }
 
-    fun saveList(newTitle: String, newImageUri: String?) {
-        if(newTitle.isEmpty()) {
-            _listNameError.value = "A lista deve ter um nome."
+    fun saveList(newName: String, newImageUri: Uri?) {
+        if(newName.isBlank()) {
+            _uiState.value = EditListUiState.ValidationFailure(
+                nameError = "A lista deve ter um nome"
+            )
             return
         }
 
-        _listNameError.value = null
+        val currentList = _listToEdit.value
+        if(currentList == null) {
+            _uiState.value = EditListUiState.Error("Erro: lista não encontrada")
+            return
+        }
 
-        val currentList = listOnEditing ?: return
-
-//        val updatedList = currentList.copy(
-//            title = newTitle,
-//            coverImageUri = newImageUri ?: currentList.coverImageUri
-//        )
-
-//        shoppingListRepository.updateList(updatedList)
-
+        _uiState.value = EditListUiState.Loading
         viewModelScope.launch {
-            _updateEventMessage.emit("Lista atualizada com sucesso!")
+            try {
+                val updatedList = currentList.copy(
+                    name = newName.trim()
+                )
+
+                if(newImageUri != null) {
+                    val uploadedImageUrl = shoppingListRepository.uploadCoverImage(
+                        userId = currentList.ownerId,
+                        imageUri = newImageUri,
+                        listId = currentList.id
+                    )
+
+                    val listWithNewImage = updatedList.copy(
+                        customCoverImageUrl = uploadedImageUrl
+                    )
+                    shoppingListRepository.updateList(listWithNewImage)
+                } else {
+                    shoppingListRepository.updateList(updatedList)
+                }
+
+                _uiState.value = EditListUiState.Success
+                _events.emit(EditListEvent.NavigateBack("Lista atualizada com sucesso!"))
+            } catch (e: Exception) {
+                _uiState.value = EditListUiState.Error("Erro ao atualizar lista: ${e.message}")
+            }
         }
     }
 
     fun onDeleteListClicked() {
         viewModelScope.launch {
-            _showDeleteConfirmation.emit(Unit)
+            _events.emit(EditListEvent.ShowDeleteConfirmation)
         }
     }
 
     fun deleteList() {
-//        val listId = listOnEditing?.id ?: return
-//        shoppingListRepository.deleteList(listId)
-//
-//        viewModelScope.launch {
-//            _deleteEventMessage.emit("Lista excluída com sucesso!")
-//        }
+        val list = _listToEdit.value ?: run {
+            _uiState.value = EditListUiState.Error("Erro: lista não encontrada")
+            return
+        }
+
+        _uiState.value = EditListUiState.Loading
+        viewModelScope.launch {
+            try {
+                shoppingListRepository.deleteList(list)
+                _uiState.value = EditListUiState.Success
+                _events.emit(
+                    EditListEvent.NavigateBack(
+                        successMessage = "Lista excluída com sucesso!",
+                        navigateToListsScreen = true
+                    )
+                )
+            } catch (e: Exception) {
+                _uiState.value = EditListUiState.Error("Erro ao excluir lista: ${e.message}")
+            }
+        }
     }
 
     fun onAddImageClicked() {
-        viewModelScope.launch {
-            _galleryPermissionState.emit(GalleryPermissionState.ShouldRequestPermission)
-        }
+        _permissionState.value = GalleryPermissionState.ShouldRequestPermission
     }
 
     fun onPermissionResult(isGranted: Boolean, shouldShowRationale: Boolean) {
-        viewModelScope.launch {
-            when {
-                isGranted -> _galleryPermissionState.emit(GalleryPermissionState.PermissionGranted)
-                shouldShowRationale -> _galleryPermissionState.emit(GalleryPermissionState.ShouldShowRationale)
-                else -> _galleryPermissionState.emit(GalleryPermissionState.PermissionDenied)
+        _permissionState.value = when {
+            isGranted -> {
+                viewModelScope.launch {
+                    _events.emit(EditListEvent.OpenGallery)
+                }
+                GalleryPermissionState.PermissionGranted
             }
+            shouldShowRationale -> GalleryPermissionState.ShouldShowRationale
+            else -> GalleryPermissionState.PermissionDenied
         }
+    }
+
+    fun onImageSelected(imageUri: Uri?) {
+        _customImageUrl.value = imageUri
+    }
+
+    fun resetPermissionState() {
+        _permissionState.value = GalleryPermissionState.Idle
     }
 
     fun getRequiredPermission(): String {

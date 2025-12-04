@@ -52,6 +52,35 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/edit_list_loading_indicator"
+        android:visibility="gone"
+        android:indeterminate="true"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:indicatorSize="60dp"
+        app:trackThickness="6dp"
+        app:indicatorColor="@array/loadingIndicatorColors"
+        app:layout_constraintTop_toBottomOf="@id/edit_list_list_name_input_wrapper"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/edit_list_delete_list_button"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/edit_list_image_loading_indicator"
+        android:visibility="gone"
+        android:indeterminate="true"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:indicatorSize="60dp"
+        app:trackThickness="6dp"
+        app:indicatorColor="@array/loadingIndicatorColors"
+        android:elevation="1dp"
+        app:layout_constraintTop_toTopOf="@id/edit_list_image_preview"
+        app:layout_constraintEnd_toEndOf="@id/edit_list_image_preview"
+        app:layout_constraintBottom_toBottomOf="@id/edit_list_image_preview"
+        app:layout_constraintStart_toStartOf="@id/edit_list_image_preview"/>
+
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/edit_list_image_preview"
         android:layout_width="match_parent"
@@ -62,6 +91,7 @@
         android:layout_marginHorizontal="@dimen/margin_medium"
         android:background="#DCDCDC"
         android:contentDescription="Foto da lista"
+        android:elevation="0dp"
         app:shapeAppearanceOverlay="@style/ShapeAppearance.App.RoundedCorners"
         app:layout_constraintTop_toBottomOf="@id/edit_list_image_label"
         app:layout_constraintStart_toStartOf="parent"

@@ -12,4 +12,9 @@ class CoverImageRemoteDataSource(private val storage: FirebaseStorage) {
         storageRef.putFile(imageUri).await()
         return storageRef.downloadUrl.await().toString()
     }
+
+    suspend fun deleteListCoverImageByUrl(imageUrl: String) {
+        val ref = storage.getReferenceFromUrl(imageUrl)
+        ref.delete().await()
+    }
 }

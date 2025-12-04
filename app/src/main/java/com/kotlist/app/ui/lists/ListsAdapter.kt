@@ -3,7 +3,9 @@ package com.kotlist.app.ui.lists
 import android.app.Activity
 import androidx.recyclerview.widget.DiffUtil
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
@@ -23,21 +25,32 @@ class ListsAdapter(
         fun bind(list: ShoppingList, onItemClicked: (ShoppingList) -> Unit) {
             binding.textViewListTitle.text = list.name
 
-            if(list.customCoverImageUrl != null && !list.customCoverImageUrl.isEmpty()) {
-                val imageUri = list.customCoverImageUrl.toUri()
-
-                binding.imageViewListPhoto.load(imageUri) {
-                    error(placeholderIdToDrawable(list.placeholderImageId))
-                    placeholder(R.drawable.placeholder_img_list_0)
-                }
-            }
+            if(list.customCoverImageUrl != null && !list.customCoverImageUrl.isBlank())
+                loadImageWithProgress(list.customCoverImageUrl.toUri())
             else if(list.placeholderImageId != -1)
-                binding.imageViewListPhoto.load(placeholderIdToDrawable(list.placeholderImageId)) { }
+                loadImageWithProgress(placeholderIdToDrawable(list.placeholderImageId))
             else
-                binding.imageViewListPhoto.load(R.drawable.placeholder_img_list_0) { }
+                loadImageWithProgress(placeholderIdToDrawable(0))
 
             binding.root.setOnClickListener {
                 onItemClicked(list)
+            }
+        }
+
+        private fun loadImageWithProgress(imageUrl: Any) {
+            binding.componentListButtonLoadingIndicator.visibility = View.VISIBLE
+
+            binding.componentListButtonCoverImage.load(imageUrl) {
+                crossfade(true)
+                crossfade(300)
+                listener(
+                    onSuccess = { _, _ ->
+                        binding.componentListButtonLoadingIndicator.visibility = View.GONE
+                    },
+                    onError = { _, _ ->
+                        binding.componentListButtonLoadingIndicator.visibility = View.GONE
+                    }
+                )
             }
         }
     }

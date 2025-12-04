@@ -211,11 +211,13 @@ class AddListActivity : AppCompatActivity() {
     private fun setLoading(isLoading: Boolean) {
         if(isLoading) {
             binding.addListLoadingIndicator.visibility = View.VISIBLE
+            binding.addListImageLabel.visibility = View.GONE
             binding.addListImagePreview.visibility = View.GONE
             binding.addListAddImageButton.visibility = View.GONE
         }
         else {
             binding.addListLoadingIndicator.visibility = View.GONE
+            binding.addListImageLabel.visibility = View.VISIBLE
             binding.addListImagePreview.visibility = View.VISIBLE
             binding.addListAddImageButton.visibility = View.VISIBLE
         }

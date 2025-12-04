@@ -1,5 +1,6 @@
 package com.kotlist.app.ui.lists
 
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -7,6 +8,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.provider.Settings
+import android.view.View
 import android.widget.Toast
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
@@ -20,10 +22,12 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import coil.load
 import com.kotlist.app.data.model.ShoppingList
 import com.kotlist.app.data.repository.ServiceLocator
 import com.kotlist.app.data.repository.ShoppingListRepository
 import com.kotlist.app.databinding.ActivityEditListBinding
+import com.kotlist.app.extensions.placeholderIdToDrawable
 import com.kotlist.app.extensions.showCustomDialog
 import com.kotlist.app.extensions.showDeleteDialog
 import kotlinx.coroutines.flow.filterNotNull
@@ -40,8 +44,6 @@ class EditListActivity : AppCompatActivity() {
         EditListViewModelFactory(shoppingListRepository)
     }
 
-    private var listCoverImageSelectedUri: String? = null
-
     companion object {
         const val EXTRA_LIST_ID = "EXTRA_LIST_ID"
     }
@@ -55,25 +57,12 @@ class EditListActivity : AppCompatActivity() {
         viewModel.onPermissionResult(isGranted, shouldShowRationale)
     }
 
-    private val pickImageFromGallery = registerForActivityResult(
+    private val pickImageLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
-        if(result.resultCode == RESULT_OK) {
-            result.data?.data?.let { uri ->
-                try {
-                    contentResolver.takePersistableUriPermission(
-                        uri,
-                        Intent.FLAG_GRANT_READ_URI_PERMISSION
-                    )
-                    listCoverImageSelectedUri = uri.toString()
-                    binding.editListImagePreview.setImageURI(uri)
-                } catch (e: SecurityException) {
-                    listCoverImageSelectedUri = uri.toString()
-                    binding.editListImagePreview.setImageURI(uri)
-                }
-            }
-        } else {
-            Toast.makeText(this, "Nenhuma imagem selecionada.", Toast.LENGTH_SHORT).show()
+        if (result.resultCode == RESULT_OK) {
+            val uri = result.data?.data
+            viewModel.onImageSelected(uri)
         }
     }
 
@@ -105,7 +94,6 @@ class EditListActivity : AppCompatActivity() {
         }
 
         viewModel.loadList(listId)
-
         setupListeners()
         setupObservers()
     }
@@ -120,8 +108,9 @@ class EditListActivity : AppCompatActivity() {
         }
 
         binding.editListSaveListButton.setOnClickListener {
-            val listTitle = binding.editListListNameInput.text.toString().trim()
-            viewModel.saveList(listTitle, listCoverImageSelectedUri)
+            val listName = binding.editListListNameInput.text.toString().trim()
+            val customImageUri = viewModel.customImageUrl.value
+            viewModel.saveList(listName, customImageUri)
         }
 
         binding.editListCancelButton.setOnClickListener {
@@ -132,53 +121,109 @@ class EditListActivity : AppCompatActivity() {
     private fun setupObservers() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                // observes gallery permission state
+                // observes ui state
                 launch {
-                    viewModel.galleryPermissionState.collect { state ->
-                        handleGalleryPermissionState(state)
+                    viewModel.uiState.collect { state ->
+                        when (state) {
+                            is EditListUiState.Idle -> {
+                                setLoading(false)
+                                clearErrors()
+                            }
+                            is EditListUiState.Loading -> {
+                                setLoading(true)
+                                clearErrors()
+                            }
+                            is EditListUiState.Success -> {
+                                setLoading(false)
+                            }
+                            is EditListUiState.Error -> {
+                                setLoading(false)
+                                Toast.makeText(
+                                    this@EditListActivity,
+                                    state.message,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                            is EditListUiState.ValidationFailure -> {
+                                setLoading(false)
+                                binding.editListListNameInputWrapper.error = state.nameError
+                            }
+                        }
                     }
                 }
 
-                // load list data
+                // observes ui events
+                launch {
+                    viewModel.events.collect { event ->
+                        when (event) {
+                            is EditListEvent.ShowToast -> {
+                                Toast.makeText(
+                                    this@EditListActivity,
+                                    event.message,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                            is EditListEvent.NavigateBack -> {
+                                Toast.makeText(
+                                    this@EditListActivity,
+                                    event.successMessage,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+
+                                if(event.navigateToListsScreen)
+                                    navigateToListsScreen()
+                                else
+                                    finish()
+                            }
+                            is EditListEvent.OpenGallery -> {
+                                val intent = Intent(
+                                    Intent.ACTION_PICK,
+                                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                                )
+                                pickImageLauncher.launch(intent)
+                            }
+                            is EditListEvent.ShowDeleteConfirmation -> {
+                                showDeleteConfirmationDialog()
+                            }
+                        }
+                    }
+                }
+
+                // observes list data to load
                 launch {
                     viewModel.listToEdit.filterNotNull().collect { list ->
                         populateInputFields(list)
                     }
                 }
 
-                // name error message
+                // observes gallery permission state
                 launch {
-                    viewModel.listNameError.collect { errorMessage ->
-                        binding.editListListNameInputWrapper.error = errorMessage
-                    }
-                }
-
-                // update list event
-                launch {
-                    viewModel.updateEventMessage.collect { message ->
-                        Toast.makeText(this@EditListActivity, message, Toast.LENGTH_SHORT).show()
-                        finish()
-                    }
-                }
-
-                // observes confirmation dialog event
-                launch {
-                    viewModel.showDeleteConfirmation.collect {
-                        showDeleteConfirmationDialog()
-                    }
-                }
-
-                // delete list event
-                launch {
-                    viewModel.deleteEventMessage.collect { message ->
-                        Toast.makeText(this@EditListActivity, message, Toast.LENGTH_SHORT).show()
-
-                        val intent = Intent(this@EditListActivity, ListsActivity::class.java).apply {
-                            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                    viewModel.permissionState.collect { state ->
+                        when (state) {
+                            is GalleryPermissionState.Idle -> { }
+                            is GalleryPermissionState.ShouldRequestPermission -> {
+                                requestPermissionLauncher.launch(viewModel.getRequiredPermission())
+                                viewModel.resetPermissionState()
+                            }
+                            is GalleryPermissionState.PermissionGranted -> {
+                                // event handled by ViewModel
+                            }
+                            is GalleryPermissionState.PermissionDenied -> {
+                                showPermissionDeniedDialog()
+                            }
+                            is GalleryPermissionState.ShouldShowRationale -> {
+                                showPermissionRationaleDialog()
+                            }
                         }
+                    }
+                }
 
-                        startActivity(intent)
-                        finish()
+                // observes custom image
+                launch {
+                    viewModel.customImageUrl.collect { imageUrl ->
+                        if(imageUrl != null) {
+                            loadImageWithProgress(imageUrl.toString())
+                        }
                     }
                 }
             }
@@ -186,58 +231,70 @@ class EditListActivity : AppCompatActivity() {
     }
 
     private fun populateInputFields(list: ShoppingList) {
-//        binding.editListListNameInput.setText(list.title)
-//
-//        if(listCoverImageSelectedUri == null) {
-//            if(list.coverImageUri != null)
-//                binding.editListImagePreview.setImageURI(list.coverImageUri.toUri())
-//            else
-//                binding.editListImagePreview.setImageURI("android.resource://$packageName/${list.placeholderImageId}".toUri())
-//        }
-    }
+        binding.editListListNameInput.setText(list.name)
 
-    private fun handleGalleryPermissionState(state: GalleryPermissionState) {
-        when (state) {
-            is GalleryPermissionState.ShouldRequestPermission -> {
-                checkAndRequestPermission()
-            }
-            is GalleryPermissionState.PermissionGranted -> {
-                openGallery()
-            }
-            is GalleryPermissionState.ShouldShowRationale -> {
-                showPermissionRationaleDialog()
-            }
-            is GalleryPermissionState.PermissionDenied -> {
-                showPermissionDeniedDialog()
-            }
-            is GalleryPermissionState.Idle -> { }
-        }
-    }
-
-    private fun checkAndRequestPermission() {
-        val permission = viewModel.getRequiredPermission()
-
-        when {
-            ContextCompat.checkSelfPermission(
-                this,
-                permission
-            ) == PackageManager.PERMISSION_GRANTED -> {
-                viewModel.onPermissionResult(isGranted = true, shouldShowRationale = false)
-            }
-            shouldShowRequestPermissionRationale(permission) -> {
-                viewModel.onPermissionResult(isGranted = false, shouldShowRationale = true)
-            }
-            else -> {
-                requestPermissionLauncher.launch(permission)
+        if(viewModel.customImageUrl.value == null) {
+            if(list.customCoverImageUrl != null) {
+                loadImageWithProgress(list.customCoverImageUrl)
+            } else {
+                binding.editListImagePreview.setImageResource(
+                    placeholderIdToDrawable(list.placeholderImageId)
+                )
             }
         }
     }
 
-    private fun openGallery() {
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI).apply {
-            type = "image/*"
+    private fun loadImageWithProgress(imageUrl: String) {
+        binding.editListImageLoadingIndicator.visibility = View.VISIBLE
+
+        binding.editListImagePreview.load(imageUrl) {
+            crossfade(true)
+            crossfade(300)
+            listener(
+                onSuccess = { _, _ ->
+                    binding.editListImageLoadingIndicator.visibility = View.GONE
+                },
+                onError = { _, _ ->
+                    binding.editListImageLoadingIndicator.visibility = View.GONE
+                    Toast.makeText(
+                        this@EditListActivity,
+                        "Houve um erro ao carregar a capa da lista",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            )
         }
-        pickImageFromGallery.launch(intent)
+    }
+
+    private fun setLoading(isLoading: Boolean) {
+        if (isLoading) {
+            binding.editListLoadingIndicator.visibility = View.VISIBLE
+            binding.editListListNameInputWrapper.visibility = View.GONE
+            binding.editListImageLabel.visibility = View.GONE
+            binding.editListImagePreview.visibility = View.GONE
+            binding.editListAddImage.visibility = View.GONE
+        } else {
+            binding.editListLoadingIndicator.visibility = View.GONE
+            binding.editListListNameInputWrapper.visibility = View.VISIBLE
+            binding.editListImageLabel.visibility = View.VISIBLE
+            binding.editListImagePreview.visibility = View.VISIBLE
+            binding.editListAddImage.visibility = View.VISIBLE
+        }
+
+        binding.editListSaveListButton.isEnabled = !isLoading
+        binding.editListCancelButton.isEnabled = !isLoading
+        binding.editListDeleteListButton.isEnabled = !isLoading
+    }
+
+    private fun clearErrors() {
+        binding.editListListNameInputWrapper.error = null
+    }
+
+    private fun navigateToListsScreen() {
+        val intent = Intent(this@EditListActivity, ListsActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+        }
+        startActivity(intent)
     }
 
     private fun showPermissionRationaleDialog() {
