@@ -22,6 +22,13 @@ sealed class LoginUiState {
     ) : LoginUiState()
 }
 
+sealed class PasswordResetDialogState {
+    data object Idle : PasswordResetDialogState()
+    data object Loading : PasswordResetDialogState()
+    data class Success(val message: String) : PasswordResetDialogState()
+    data class Error(val message: String) : PasswordResetDialogState()
+}
+
 class LoginViewModel(private val userRepository: UserRepository) : ViewModel() {
 
     private data class ValidationResult(
@@ -37,6 +44,9 @@ class LoginViewModel(private val userRepository: UserRepository) : ViewModel() {
 
     private val _loginState = MutableStateFlow<LoginUiState>(LoginUiState.Idle)
     val loginState: StateFlow<LoginUiState> = _loginState
+
+    private val _passwordResetDialogState = MutableStateFlow<PasswordResetDialogState>(PasswordResetDialogState.Idle)
+    val passwordResetDialogState = _passwordResetDialogState
 
     fun login(email: String, password: String) {
         val validation = validateInputs(email, password)
@@ -71,6 +81,18 @@ class LoginViewModel(private val userRepository: UserRepository) : ViewModel() {
         }
     }
 
+    fun sendPasswordResetEmail(email: String) {
+        _passwordResetDialogState.value = PasswordResetDialogState.Loading
+        viewModelScope.launch {
+            try {
+                userRepository.sendPasswordResetEmail(email)
+                _passwordResetDialogState.value = PasswordResetDialogState.Success("E-mail de recuperação enviado!")
+            } catch (e: Exception) {
+                _passwordResetDialogState.value = PasswordResetDialogState.Error("Não foi possível enviar o e-mail de recuperação. Tente novamente.")
+            }
+        }
+    }
+
     private fun validateInputs(email: String, password: String) : ValidationResult {
         var emailError: String? = null
         var passwordError: String? = null
@@ -101,5 +123,9 @@ class LoginViewModel(private val userRepository: UserRepository) : ViewModel() {
         else {
             ValidationResult(isFailure = false)
         }
+    }
+
+    fun resetPasswordResetDialogState() {
+        _passwordResetDialogState.value = PasswordResetDialogState.Idle
     }
 }

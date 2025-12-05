@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/component_dialog_background">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/custom_input_content_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/margin_medium"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/custom_input_dialog_bottom_line">
+
+        <TextView
+            android:id="@+id/custom_input_dialog_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Dialog Title"
+            android:textSize="26sp"
+            android:textColor="@color/softBlack"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            style="@style/TextAppearance.App.Heading1" />
+
+        <TextView
+            android:id="@+id/custom_input_dialog_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Dialog message"
+            android:textColor="@color/softBlack"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/custom_input_dialog_title"
+            app:layout_constraintStart_toStartOf="parent"
+            style="@style/TextAppearance.App.Paragraph"/>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/custom_input_dialog_central_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_small"
+            app:layout_constraintTop_toBottomOf="@id/custom_input_dialog_message"
+            app:layout_constraintBottom_toTopOf="@id/custom_input_buttons_container">
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/custom_input_dialog_input_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Input title"
+                style="@style/Widget.App.InputWrapper.Outlined"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/custom_input_dialog_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/Widget.App.Input"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:id="@+id/custom_input_loading_indicator"
+                android:visibility="gone"
+                android:indeterminate="true"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                app:indicatorSize="40dp"
+                app:trackThickness="6dp"
+                app:indicatorColor="@array/loadingIndicatorColors"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <LinearLayout
+            android:id="@+id/custom_input_buttons_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="24dp"
+            android:layout_gravity="center_horizontal"
+            app:layout_constraintTop_toBottomOf="@id/custom_input_dialog_central_container"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/custom_input_dialog_negative_button"
+                android:layout_width="130dp"
+                android:layout_height="60dp"
+                android:text="Cancelar"
+                android:layout_marginEnd="32dp"
+                style="@style/Widget.App.Button.Secondary"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/custom_input_dialog_positive_button"
+                android:layout_width="130dp"
+                android:layout_height="60dp"
+                android:text="Confirmar"
+                style="@style/Widget.App.Button.Primary"/>
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:id="@+id/custom_input_dialog_bottom_line"
+        android:layout_width="match_parent"
+        android:layout_height="8dp"
+        android:background="@drawable/component_dialog_bottom_line"
+        app:layout_constraintTop_toBottomOf="@id/custom_input_content_container"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

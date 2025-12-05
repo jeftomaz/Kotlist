@@ -11,6 +11,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import android.app.ActivityOptions
+import android.app.AlertDialog
+import android.text.InputType
+import android.util.Patterns
 import android.view.View
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -18,11 +21,16 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.kotlist.app.R
 import com.kotlist.app.data.repository.ServiceLocator
 import com.kotlist.app.databinding.ActivityLoginBinding
+import com.kotlist.app.databinding.ComponentCustomInputDialogBinding
+import com.kotlist.app.extensions.DialogInputConfig
+import com.kotlist.app.extensions.showCustomInputDialog
 import com.kotlist.app.ui.lists.ListsActivity
 import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
+    private var passwordResetDialog: AlertDialog? = null
+    private var passwordResetDialogBinding: ComponentCustomInputDialogBinding? = null
 
     private val userRepository by lazy {
         ServiceLocator.provideUserRepository()
@@ -73,6 +81,10 @@ class LoginActivity : AppCompatActivity() {
             )
             startActivity(intent, options.toBundle())
         }
+
+        binding.loginPasswordRecoveryButton.setOnClickListener {
+            showPasswordRecoveryDialog()
+        }
     }
 
     private fun setupObservers() {
@@ -114,6 +126,30 @@ class LoginActivity : AppCompatActivity() {
                         }
                     }
                 }
+
+                // observes recovery password dialog states
+                launch {
+                    viewModel.passwordResetDialogState.collect { state ->
+                        when (state) {
+                            is PasswordResetDialogState.Idle -> {
+                                setDialogLoading(false)
+                            }
+                            is PasswordResetDialogState.Loading -> {
+                                setDialogLoading(true)
+                            }
+                            is PasswordResetDialogState.Success -> {
+                                setDialogLoading(false)
+                                passwordResetDialog?.dismiss()
+                                Toast.makeText(this@LoginActivity, state.message, Toast.LENGTH_SHORT).show()
+                                viewModel.resetPasswordResetDialogState()
+                            }
+                            is PasswordResetDialogState.Error -> {
+                                setDialogLoading(false)
+                                passwordResetDialogBinding?.customInputDialogInputWrapper?.error = state.message
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -139,6 +175,20 @@ class LoginActivity : AppCompatActivity() {
         binding.loginCreateAccountButton.isEnabled = !isLoading
     }
 
+    private fun setDialogLoading(isLoading: Boolean) {
+        if(isLoading) {
+            passwordResetDialogBinding?.customInputLoadingIndicator?.visibility = View.VISIBLE
+            passwordResetDialogBinding?.customInputDialogInputWrapper?.visibility = View.GONE
+        }
+        else {
+            passwordResetDialogBinding?.customInputLoadingIndicator?.visibility = View.GONE
+            passwordResetDialogBinding?.customInputDialogInputWrapper?.visibility = View.VISIBLE
+        }
+
+        passwordResetDialogBinding?.customInputDialogPositiveButton?.isEnabled = !isLoading
+        passwordResetDialogBinding?.customInputDialogNegativeButton?.isEnabled = !isLoading
+    }
+
     private fun navigateToMainScreen() {
         val intent = Intent(this, ListsActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -152,5 +202,31 @@ class LoginActivity : AppCompatActivity() {
 
         startActivity(intent, options.toBundle())
         finish()
+    }
+
+    private fun showPasswordRecoveryDialog() {
+        viewModel.resetPasswordResetDialogState()
+
+        val (dialog, dialogBinding) = showCustomInputDialog(
+            title = "Recuperar senha",
+            message = "Insira o e-mail da sua conta. Iremos enviar um link para você redefinir sua senha.",
+            positiveButtonText = "Enviar",
+            negativeButtonText = "Cancelar",
+            inputConfig = DialogInputConfig(
+                label = "E-mail",
+                inputType = InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS,
+                errorMessage = "Digite um email válido",
+                validator = { email ->
+                    Patterns.EMAIL_ADDRESS.matcher(email).matches()
+                }
+            ),
+            onPositiveClick = { email ->
+                viewModel.sendPasswordResetEmail(email)
+            }
+        )
+
+        passwordResetDialog = dialog
+        passwordResetDialogBinding = dialogBinding
+        dialogBinding.customInputDialogInputWrapper.error = null
     }
 }
